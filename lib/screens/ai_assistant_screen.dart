@@ -1,0 +1,352 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../core/theme.dart';
+import '../services/ai/gemini_service.dart';
+import '../state/app_state.dart';
+import 'premium_screen.dart';
+
+/// SAYFA 9 — YAPAY ZEKÂ ASİSTANI
+/// Soru-cevap. Yanıt yapısı: Özet · Risk Analizi · Öneriler · Kaynaklar.
+/// (Gerçek Claude API bağlantısı Faz 3'te; şimdilik örnek yanıt üretir.)
+class AiAssistantScreen extends StatefulWidget {
+  const AiAssistantScreen({super.key});
+
+  @override
+  State<AiAssistantScreen> createState() => _AiAssistantScreenState();
+}
+
+class _Message {
+  final String text;
+  final bool isUser;
+  _Message(this.text, this.isUser);
+}
+
+class _AiAssistantScreenState extends State<AiAssistantScreen> {
+  final _controller = TextEditingController();
+  final _messages = <_Message>[];
+  final _gemini = GeminiService();
+  bool _loading = false;
+
+  static const _examples = [
+    'Bu savaş Türkiye\'yi etkiler mi?',
+    'Bu hastalık tehlikeli mi?',
+    'Altın neden yükseliyor?',
+    'Bu haber hakkında ne yapmalıyım?',
+  ];
+
+  Future<void> _send(String text) async {
+    final q = text.trim();
+    if (q.isEmpty || _loading) return;
+
+    final state = context.read<AppState>();
+    if (!state.canAskAi) {
+      _showLimitDialog();
+      return;
+    }
+    state.registerAiQuestion();
+
+    setState(() {
+      _messages.add(_Message(q, true));
+      _controller.clear();
+    });
+
+    // Anahtar yoksa örnek yanıt; varsa gerçek Gemini çağrısı.
+    if (!state.hasApiKey) {
+      setState(() => _messages.add(_Message(_mockAnswer(q), false)));
+      return;
+    }
+
+    setState(() => _loading = true);
+    final answer = await _gemini.ask(
+      apiKey: state.apiKey,
+      question: q,
+      context: state.userContext,
+    );
+    if (!mounted) return;
+    setState(() {
+      _loading = false;
+      _messages.add(_Message(answer, false));
+    });
+  }
+
+  void _showLimitDialog() {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Günlük soru limiti doldu'),
+        content: const Text(
+          'Ücretsiz planda günde 5 soru sorabilirsiniz. Sınırsız soru için '
+          'Premium\'a yükseltin.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Kapat'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const PremiumScreen()),
+              );
+            },
+            child: const Text('Premium\'a Bak'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Faz 3'te Claude API ile değiştirilecek; guardrail'lere uygun örnek yanıt.
+  String _mockAnswer(String q) {
+    return 'Özet:\n'
+        'Sorunuzu güvenilir kaynaklara ve profilinize göre değerlendiriyorum. '
+        '(Bu bir örnek yanıttır; gerçek analiz için Profil ekranından Claude API '
+        'anahtarınızı ekleyin.)\n\n'
+        'Risk Analizi:\n'
+        'Mevcut verilere göre doğrudan kişisel riskiniz orta-düşük seviyede '
+        'görünüyor. Durum geliştikçe radar puanınız güncellenir.\n\n'
+        'Öneriler:\n'
+        '• Resmi kurum açıklamalarını takip edin\n'
+        '• Doğrulanmamış bilgileri paylaşmayın\n'
+        '• Gerekiyorsa hazırlık listenizi gözden geçirin\n\n'
+        'Kaynaklar:\n'
+        'WHO, Reuters, resmi afet ve meteoroloji kurumları.';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final state = context.watch<AppState>();
+    final hasKey = state.hasApiKey;
+    final remaining = state.remainingAiQuestions;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Row(
+          children: const [
+            Icon(Icons.auto_awesome, color: LifeRadarColors.turquoise),
+            SizedBox(width: 8),
+            Text('Yapay Zekâ Asistanı'),
+          ],
+        ),
+      ),
+      body: Column(
+        children: [
+          if (!hasKey)
+            Container(
+              width: double.infinity,
+              color: LifeRadarColors.riskMedium.withOpacity(0.15),
+              padding: const EdgeInsets.all(12),
+              child: const Text(
+                'Gerçek AI analizi için Profil > Claude API anahtarı ekleyin. '
+                'Şimdilik örnek yanıt gösteriliyor.',
+                style: TextStyle(fontSize: 12, color: LifeRadarColors.navy),
+              ),
+            ),
+          if (remaining != null)
+            Container(
+              width: double.infinity,
+              color: LifeRadarColors.cardBackground,
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              child: Row(
+                children: [
+                  const Icon(Icons.info_outline,
+                      size: 16, color: LifeRadarColors.textSecondary),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      'Ücretsiz plan: bugün $remaining soru hakkınız kaldı.',
+                      style: const TextStyle(
+                          fontSize: 12, color: LifeRadarColors.textSecondary),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () => Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const PremiumScreen()),
+                    ),
+                    child: const Text('Yükselt'),
+                  ),
+                ],
+              ),
+            ),
+          Expanded(
+            child: _messages.isEmpty
+                ? _EmptyState(examples: _examples, onPick: _send)
+                : ListView.builder(
+                    padding: const EdgeInsets.all(16),
+                    itemCount: _messages.length + (_loading ? 1 : 0),
+                    itemBuilder: (_, i) {
+                      if (_loading && i == _messages.length) {
+                        return const _TypingIndicator();
+                      }
+                      return _Bubble(message: _messages[i]);
+                    },
+                  ),
+          ),
+          _Composer(controller: _controller, onSend: () => _send(_controller.text)),
+        ],
+      ),
+    );
+  }
+}
+
+class _EmptyState extends StatelessWidget {
+  final List<String> examples;
+  final void Function(String) onPick;
+  const _EmptyState({required this.examples, required this.onPick});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.all(24),
+      children: [
+        const SizedBox(height: 24),
+        const Icon(Icons.auto_awesome,
+            size: 56, color: LifeRadarColors.turquoise),
+        const SizedBox(height: 12),
+        const Text(
+          'Merak ettiğin gelişmeyi sor.\nSana etkisini ve ne yapman gerektiğini anlatayım.',
+          textAlign: TextAlign.center,
+          style: TextStyle(color: LifeRadarColors.textSecondary, height: 1.4),
+        ),
+        const SizedBox(height: 24),
+        ...examples.map(
+          (e) => Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: OutlinedButton(
+              onPressed: () => onPick(e),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: LifeRadarColors.navy,
+                side: const BorderSide(color: LifeRadarColors.cardBackground),
+                padding: const EdgeInsets.all(14),
+                alignment: Alignment.centerLeft,
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.chat_bubble_outline, size: 18),
+                  const SizedBox(width: 10),
+                  Expanded(child: Text(e)),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _Bubble extends StatelessWidget {
+  final _Message message;
+  const _Bubble({required this.message});
+
+  @override
+  Widget build(BuildContext context) {
+    final isUser = message.isUser;
+    return Align(
+      alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(14),
+        constraints: BoxConstraints(
+          maxWidth: MediaQuery.of(context).size.width * 0.82,
+        ),
+        decoration: BoxDecoration(
+          color: isUser
+              ? LifeRadarColors.turquoise
+              : LifeRadarColors.cardBackground,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Text(
+          message.text,
+          style: TextStyle(
+            color: isUser ? Colors.white : LifeRadarColors.textPrimary,
+            height: 1.4,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _TypingIndicator extends StatelessWidget {
+  const _TypingIndicator();
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        decoration: BoxDecoration(
+          color: LifeRadarColors.cardBackground,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: const Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              width: 16,
+              height: 16,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: LifeRadarColors.turquoise,
+              ),
+            ),
+            SizedBox(width: 10),
+            Text('Analiz ediliyor...',
+                style: TextStyle(color: LifeRadarColors.textSecondary)),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _Composer extends StatelessWidget {
+  final TextEditingController controller;
+  final VoidCallback onSend;
+  const _Composer({required this.controller, required this.onSend});
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Row(
+          children: [
+            Expanded(
+              child: TextField(
+                controller: controller,
+                textInputAction: TextInputAction.send,
+                onSubmitted: (_) => onSend(),
+                decoration: InputDecoration(
+                  hintText: 'Bir soru sor...',
+                  filled: true,
+                  fillColor: LifeRadarColors.cardBackground,
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(24),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            CircleAvatar(
+              radius: 24,
+              backgroundColor: LifeRadarColors.turquoise,
+              child: IconButton(
+                onPressed: onSend,
+                icon: const Icon(Icons.send, color: Colors.white),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
