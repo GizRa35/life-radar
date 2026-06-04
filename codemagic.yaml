@@ -22,10 +22,16 @@ workflows:
     scripts:
       - name: Flutter paketlerini al
         script: flutter pub get
+      - name: İmzalama sertifikası + profili oluştur/getir
+        script: |
+          keychain initialize
+          app-store-connect fetch-signing-files "com.liferadar.lifeRadar" \
+            --type IOS_APP_STORE \
+            --create
+          keychain add-certificates
+          xcode-project use-profiles
       - name: CocoaPods kurulumu
         script: find . -name "Podfile" -execdir pod install \;
-      - name: İmzalama profillerini ayarla
-        script: xcode-project use-profiles
       - name: iOS IPA derle (bulut backend'e bağlı)
         script: |
           flutter build ipa --release \
