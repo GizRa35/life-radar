@@ -9,6 +9,7 @@ import '../screens/home_screen.dart';
 import '../screens/notifications_screen.dart';
 import '../screens/profile_screen.dart';
 import '../screens/radar_screen.dart';
+import '../screens/search_screen.dart';
 import '../state/app_state.dart';
 
 /// Uygulamanın ana kabuğu: 5 sekmeli alt navigasyon, üst barda bildirim zili,
@@ -21,8 +22,6 @@ class MainScaffold extends StatefulWidget {
 }
 
 class _MainScaffoldState extends State<MainScaffold> {
-  int _index = 0;
-
   static const _titles = ['Ana Sayfa', 'Gündem', 'Radar', 'Rehber', 'Profil'];
 
   final _screens = const [
@@ -45,9 +44,17 @@ class _MainScaffoldState extends State<MainScaffold> {
     );
   }
 
+  void _openSearch() {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => const SearchScreen()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final unread = context.watch<AppState>().unreadNotificationCount;
+    final state = context.watch<AppState>();
+    final unread = state.unreadNotificationCount;
+    final index = state.navIndex;
 
     return Scaffold(
       appBar: AppBar(
@@ -55,10 +62,15 @@ class _MainScaffoldState extends State<MainScaffold> {
           children: [
             const Icon(Icons.radar, color: LifeRadarColors.turquoise),
             const SizedBox(width: 8),
-            Text(_titles[_index]),
+            Text(_titles[index]),
           ],
         ),
         actions: [
+          IconButton(
+            tooltip: 'Ara',
+            onPressed: _openSearch,
+            icon: const Icon(Icons.search),
+          ),
           Stack(
             alignment: Alignment.center,
             children: [
@@ -94,16 +106,16 @@ class _MainScaffoldState extends State<MainScaffold> {
           const SizedBox(width: 4),
         ],
       ),
-      body: IndexedStack(index: _index, children: _screens),
+      body: IndexedStack(index: index, children: _screens),
       floatingActionButton: FloatingActionButton(
         onPressed: _openAssistant,
         backgroundColor: LifeRadarColors.turquoise,
-        tooltip: 'Yapay Zekâ Asistanı',
+        tooltip: 'Life Radar Asistan',
         child: const Icon(Icons.auto_awesome, color: Colors.white),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _index,
-        onTap: (i) => setState(() => _index = i),
+        currentIndex: index,
+        onTap: (i) => context.read<AppState>().goToTab(i),
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home_outlined),

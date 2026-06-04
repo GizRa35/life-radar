@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../core/theme.dart';
-import '../services/ai/gemini_service.dart';
+import '../services/ai/groq_service.dart';
 import '../state/app_state.dart';
 import 'premium_screen.dart';
 
@@ -25,7 +25,7 @@ class _Message {
 class _AiAssistantScreenState extends State<AiAssistantScreen> {
   final _controller = TextEditingController();
   final _messages = <_Message>[];
-  final _gemini = GeminiService();
+  final _ai = GroqService();
   bool _loading = false;
 
   static const _examples = [
@@ -58,7 +58,7 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
     }
 
     setState(() => _loading = true);
-    final answer = await _gemini.ask(
+    final answer = await _ai.ask(
       apiKey: state.apiKey,
       question: q,
       context: state.userContext,
@@ -127,7 +127,7 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
           children: const [
             Icon(Icons.auto_awesome, color: LifeRadarColors.turquoise),
             SizedBox(width: 8),
-            Text('Yapay Zekâ Asistanı'),
+            Text('Life Radar Asistan'),
           ],
         ),
       ),
@@ -139,7 +139,7 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
               color: LifeRadarColors.riskMedium.withOpacity(0.15),
               padding: const EdgeInsets.all(12),
               child: const Text(
-                'Gerçek AI analizi için Profil > Claude API anahtarı ekleyin. '
+                'Gerçek Life Radar Asistan analizi için Profil > Groq API anahtarı ekleyin. '
                 'Şimdilik örnek yanıt gösteriliyor.',
                 style: TextStyle(fontSize: 12, color: LifeRadarColors.navy),
               ),

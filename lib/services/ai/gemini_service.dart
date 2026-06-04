@@ -27,12 +27,38 @@ class GeminiService {
     return _generate(apiKey: apiKey, system: system, userText: question);
   }
 
+  /// Ana Sayfa "Yapay Zekâ Günlük Analizi" — günün gerçek başlıklarından
+  /// kısa, kişiselleştirilmiş bir değerlendirme üretir.
+  Future<String> dailyBriefing({
+    required String apiKey,
+    required String headlines,
+    required UserContext context,
+  }) async {
+    final system = '''
+Sen "Life Radar Asistan"sın, Life Radar uygulamasının analistisin. Kendinden söz
+ederken "Life Radar Asistan" de; "yapay zeka" deme.
+${AppConstants.aiGuardrail}
+
+Kullanıcı bağlamı: Konum: ${context.location}, Meslek: ${context.profession.isEmpty ? 'belirtilmedi' : context.profession}.
+
+Görev: Aşağıdaki güncel başlıklara bakarak kullanıcının bugün dikkat etmesi
+gereken EN ÖNEMLİ noktaları 2-3 cümlede, sakin ve kişisel bir dille TÜRKÇE özetle.
+Başlık veya madde kullanma, tek paragraf yaz.''';
+
+    return _generate(
+      apiKey: apiKey,
+      system: system,
+      userText: 'Güncel başlıklar:\n$headlines',
+    );
+  }
+
   /// Sistem prompt'u: guardrail + kullanıcı bağlamı + yanıt formatı.
   String _systemPrompt(UserContext c) {
     return '''
-Sen "Life Radar" uygulamasının yapay zekâ asistanısın. Görevin: dünya gündemini,
+Sen "Life Radar Asistan"sın, Life Radar uygulamasının asistanısın. Görevin: dünya gündemini,
 sağlık, ekonomi, afet ve küresel riskleri kullanıcının kişisel durumuna göre
-değerlendirmek ve "ne yapmalıyım?" sorusunu yanıtlamak.
+değerlendirmek ve "ne yapmalıyım?" sorusunu yanıtlamak. Kendinden söz ederken
+"Life Radar Asistan" de; "yapay zeka" deme.
 
 ${AppConstants.aiGuardrail}
 
@@ -93,7 +119,7 @@ Kaynaklar:
       final data = jsonDecode(utf8.decode(res.bodyBytes)) as Map<String, dynamic>;
       final candidates = data['candidates'] as List?;
       if (candidates == null || candidates.isEmpty) {
-        return 'AI yanıt üretemedi (güvenlik filtresi veya boş yanıt). '
+        return 'Life Radar Asistan yanıt üretemedi (güvenlik filtresi veya boş yanıt). '
             'Lütfen sorunuzu farklı ifade edin.';
       }
       final parts = (candidates.first['content']?['parts'] as List?) ?? [];
@@ -101,7 +127,7 @@ Kaynaklar:
           .map((p) => (p as Map)['text']?.toString() ?? '')
           .join('\n')
           .trim();
-      return text.isEmpty ? 'AI boş yanıt döndürdü.' : text;
+      return text.isEmpty ? 'Life Radar Asistan boş yanıt döndürdü.' : text;
     } catch (e) {
       return 'Bağlantı hatası: $e\n\nİnternet bağlantınızı ve API anahtarınızı '
           'kontrol edin.';
@@ -119,6 +145,6 @@ Kaynaklar:
       return 'Erişim reddedildi (403). Anahtarın Generative Language API için '
           'etkin olduğundan emin olun.';
     }
-    return 'AI hatası ($code). Lütfen tekrar deneyin.';
+    return 'Life Radar Asistan hatası ($code). Lütfen tekrar deneyin.';
   }
 }

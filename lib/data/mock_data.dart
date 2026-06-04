@@ -151,6 +151,61 @@ class MockData {
       publishedAt: _ago(26),
       risk: RiskLevel.medium,
     ),
+    RadarEvent(
+      id: 'e8',
+      title: 'Merkez Bankası faiz kararını açıkladı',
+      summary:
+          'Para Politikası Kurulu faiz oranına ilişkin kararını duyurdu. '
+          'Piyasalar açıklamanın ardından dengelenme eğiliminde.',
+      category: EventCategory.turkey,
+      source: 'Anadolu Ajansı',
+      publishedAt: _ago(3),
+      risk: RiskLevel.medium,
+    ),
+    RadarEvent(
+      id: 'e9',
+      title: 'Ulaşımda yeni düzenleme yürürlüğe girdi',
+      summary:
+          'Şehirler arası ulaşımı etkileyen yeni düzenleme bugün itibarıyla '
+          'uygulanmaya başlandı. Vatandaşların bilgilendirilmesi sürüyor.',
+      category: EventCategory.turkey,
+      source: 'TRT Haber',
+      publishedAt: _ago(7),
+      risk: RiskLevel.low,
+    ),
+    RadarEvent(
+      id: 'e10',
+      title: 'Kritik altyapıya yönelik siber saldırı girişimi engellendi',
+      summary:
+          'Yetkililer, kritik altyapıyı hedef alan bir siber saldırı girişiminin '
+          'önlendiğini açıkladı. Kullanıcıların parolalarını güncellemesi öneriliyor.',
+      category: EventCategory.security,
+      source: 'Reuters',
+      publishedAt: _ago(9),
+      risk: RiskLevel.high,
+    ),
+    RadarEvent(
+      id: 'e11',
+      title: 'Sınır bölgesinde güvenlik önlemleri artırıldı',
+      summary:
+          'Bölgesel gelişmeler nedeniyle sınır hattında güvenlik tedbirleri '
+          'yükseltildi. Resmi kaynaklar durumu yakından izliyor.',
+      category: EventCategory.security,
+      source: 'AP News',
+      publishedAt: _ago(15),
+      risk: RiskLevel.medium,
+    ),
+    RadarEvent(
+      id: 'e12',
+      title: 'Yapay zekâ alanında yeni model tanıtıldı',
+      summary:
+          'Teknoloji şirketleri, günlük hayatı etkilemesi beklenen yeni bir '
+          'yapay zekâ modelini duyurdu. Uzmanlar olası etkileri değerlendiriyor.',
+      category: EventCategory.technology,
+      source: 'BBC',
+      publishedAt: _ago(11),
+      risk: RiskLevel.low,
+    ),
   ];
 
   // ---- Radar (Sayfa 3) ----

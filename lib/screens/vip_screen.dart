@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../core/api_config.dart';
 import '../core/theme.dart';
 import '../models/subscription.dart';
 import '../state/app_state.dart';
 import '../widgets/plan_comparison.dart';
+import 'vip_hub_screen.dart';
 
 const Color _gold = Color(0xFFC9A227);
 const Color _goldLight = Color(0xFFE9C766);
@@ -23,6 +25,53 @@ class VipScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          // Görsel banner
+          ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: SizedBox(
+              height: 120,
+              width: double.infinity,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  const ColoredBox(color: _gold),
+                  Image.network(
+                    '${ApiConfig.base}/api/pexels?q=luxury%20gold%20abstract',
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+                    loadingBuilder: (c, ch, p) =>
+                        p == null ? ch : const SizedBox.shrink(),
+                  ),
+                  const DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Colors.transparent, Colors.black87],
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                      ),
+                    ),
+                  ),
+                  const Positioned(
+                    left: 16,
+                    bottom: 14,
+                    child: Row(
+                      children: [
+                        Icon(Icons.workspace_premium, color: _gold, size: 26),
+                        SizedBox(width: 8),
+                        Text('VIP',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 26,
+                                fontWeight: FontWeight.w900,
+                                letterSpacing: 3)),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
           // VIP kartı — altın detaylar, premium görünüm
           Container(
             decoration: BoxDecoration(
@@ -142,15 +191,21 @@ class VipScreen extends StatelessWidget {
 
           const SizedBox(height: 24),
           _GoldButton(
-            label: active ? 'VIP Aktif' : 'VIP\'e Yükselt — 7 Gün Ücretsiz',
-            onPressed: active
-                ? null
-                : () {
-                    context.read<AppState>().setTier(SubscriptionTier.vip);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('VIP etkinleştirildi (deneme)')),
-                    );
-                  },
+            label: active
+                ? 'VIP Merkezini Aç'
+                : 'VIP\'e Yükselt — 7 Gün Ücretsiz',
+            onPressed: () {
+              if (active) {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const VipHubScreen()),
+                );
+              } else {
+                context.read<AppState>().setTier(SubscriptionTier.vip);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('VIP etkinleştirildi (deneme)')),
+                );
+              }
+            },
           ),
           const SizedBox(height: 24),
         ],

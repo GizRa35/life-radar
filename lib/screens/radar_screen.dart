@@ -42,6 +42,56 @@ class RadarScreen extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.symmetric(vertical: 16),
       children: [
+        // Konum çubuğu — risk skoru bu konuma göre hesaplanır
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            decoration: BoxDecoration(
+              color: LifeRadarColors.cardBackground,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.location_on_outlined,
+                    color: LifeRadarColors.turquoise, size: 20),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('Konumunuz',
+                          style: TextStyle(
+                              fontSize: 11,
+                              color: LifeRadarColors.textSecondary)),
+                      Text(
+                        state.locationLabel,
+                        style: const TextStyle(
+                            fontWeight: FontWeight.w700,
+                            color: LifeRadarColors.navy),
+                      ),
+                    ],
+                  ),
+                ),
+                if (state.locating)
+                  const SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(
+                        strokeWidth: 2, color: LifeRadarColors.turquoise),
+                  )
+                else
+                  TextButton.icon(
+                    onPressed: () => context.read<AppState>().detectLocation(),
+                    icon: const Icon(Icons.my_location, size: 16),
+                    label: const Text('Güncelle'),
+                    style: TextButton.styleFrom(
+                        foregroundColor: LifeRadarColors.turquoise),
+                  ),
+              ],
+            ),
+          ),
+        ),
         // Kişisel Risk Puanı
         Center(
           child: Column(

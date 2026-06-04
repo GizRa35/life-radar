@@ -29,8 +29,31 @@
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
 
-  <title>life_radar</title>
+  <title>Life Radar</title>
   <link rel="manifest" href="manifest.json">
+
+  <!-- Google Identity Services (Google ile giriş) -->
+  <script src="https://accounts.google.com/gsi/client" async></script>
+  <script>
+    window.lifeRadarGoogleSignIn = function () {
+      return new Promise(function (resolve, reject) {
+        try {
+          var client = google.accounts.oauth2.initTokenClient({
+            client_id: '16315127325-3nsg79tajk2ikjuindt59p88o3g5a67i.apps.googleusercontent.com',
+            scope: 'openid email profile',
+            callback: function (resp) {
+              if (resp && resp.access_token) resolve(resp.access_token);
+              else reject('no_token');
+            },
+            error_callback: function (err) { reject(String(err && err.type || err)); }
+          });
+          client.requestAccessToken();
+        } catch (e) {
+          reject(String(e));
+        }
+      });
+    };
+  </script>
 
   <script>
     // The value below is injected by flutter build, do not touch.

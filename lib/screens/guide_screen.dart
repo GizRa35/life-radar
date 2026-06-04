@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 
+import '../core/api_config.dart';
 import '../core/theme.dart';
 import '../data/mock_data.dart';
 import '../models/emergency_guide.dart';
 
 /// SAYFA 8 — ACİL DURUM REHBERİ
-/// Kategori kartları → detayda Hazırlık / İlk 24 Saat / Malzemeler / İlk Yardım.
+/// Kategori kartları → detayda görsel başlık + renk kodlu listeler.
 class GuideScreen extends StatelessWidget {
   const GuideScreen({super.key});
 
@@ -36,13 +37,56 @@ class GuideScreen extends StatelessWidget {
           physics: const NeverScrollableScrollPhysics(),
           mainAxisSpacing: 12,
           crossAxisSpacing: 12,
-          childAspectRatio: 1.1,
-          children: guides
-              .map((g) => _GuideCategoryCard(guide: g))
-              .toList(),
+          childAspectRatio: 1.05,
+          children:
+              guides.map((g) => _GuideCategoryCard(guide: g)).toList(),
         ),
       ],
     );
+  }
+}
+
+/// Kategoriye göre Pexels arama kelimesi (gerçek fotoğraf için).
+String guideQuery(String title) {
+  switch (title) {
+    case 'Deprem':
+      return 'earthquake collapsed building rubble';
+    case 'Sel':
+      return 'flooded street city disaster';
+    case 'Yangın':
+      return 'forest fire flames night';
+    case 'Elektrik Kesintisi':
+      return 'electricity power lines sunset';
+    case 'Su Kesintisi':
+      return 'cracked dry earth drought';
+    case 'Salgın Hastalık':
+      return 'person wearing face mask';
+    case 'Aşırı Hava Olayları':
+      return 'lightning thunderstorm sky';
+    default:
+      return 'emergency';
+  }
+}
+
+/// Kategoriye göre tema rengi.
+Color guideColor(String title) {
+  switch (title) {
+    case 'Deprem':
+      return const Color(0xFFC0392B);
+    case 'Sel':
+      return const Color(0xFF2980B9);
+    case 'Yangın':
+      return const Color(0xFFE67E22);
+    case 'Elektrik Kesintisi':
+      return const Color(0xFF8E44AD);
+    case 'Su Kesintisi':
+      return const Color(0xFF16A085);
+    case 'Salgın Hastalık':
+      return const Color(0xFF27AE60);
+    case 'Aşırı Hava Olayları':
+      return const Color(0xFF2C3E50);
+    default:
+      return LifeRadarColors.turquoise;
   }
 }
 
@@ -52,6 +96,7 @@ class _GuideCategoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final color = guideColor(guide.title);
     return InkWell(
       borderRadius: BorderRadius.circular(16),
       onTap: () {
@@ -61,30 +106,41 @@ class _GuideCategoryCard extends StatelessWidget {
       },
       child: Container(
         decoration: BoxDecoration(
-          color: LifeRadarColors.cardBackground,
+          gradient: LinearGradient(
+            colors: [color, Color.lerp(color, Colors.black, 0.25)!],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
           borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: color.withOpacity(0.3),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
         padding: const EdgeInsets.all(16),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              width: 56,
-              height: 56,
+              width: 60,
+              height: 60,
               decoration: BoxDecoration(
-                color: LifeRadarColors.turquoise.withOpacity(0.12),
+                color: Colors.white.withOpacity(0.2),
                 shape: BoxShape.circle,
               ),
-              child: Icon(guide.icon,
-                  color: LifeRadarColors.turquoise, size: 28),
+              child: Icon(guide.icon, color: Colors.white, size: 32),
             ),
             const SizedBox(height: 12),
             Text(
               guide.title,
               textAlign: TextAlign.center,
               style: const TextStyle(
-                fontWeight: FontWeight.w700,
-                color: LifeRadarColors.navy,
+                fontWeight: FontWeight.w800,
+                color: Colors.white,
+                fontSize: 14,
               ),
             ),
           ],
@@ -100,29 +156,101 @@ class _GuideDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final color = guideColor(guide.title);
+
     return Scaffold(
       appBar: AppBar(title: Text(guide.title)),
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 90),
         children: [
+          // Görsel başlık (Pexels fotoğrafı + gradyan kaplama)
+          ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: SizedBox(
+              height: 170,
+              width: double.infinity,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  // Arka plan: önce renkli gradyan (fallback)
+                  DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [color, Color.lerp(color, Colors.black, 0.3)!],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                    ),
+                  ),
+                  // Pexels fotoğrafı (yüklenince gradyanın üstüne biner)
+                  Image.network(
+                    '${ApiConfig.base}/api/pexels?q=${Uri.encodeComponent(guideQuery(guide.title))}',
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+                    loadingBuilder: (ctx, child, progress) =>
+                        progress == null ? child : const SizedBox.shrink(),
+                  ),
+                  // Okunabilirlik için koyu gradyan kaplama
+                  const DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Colors.transparent, Colors.black87],
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Icon(guide.icon, color: Colors.white, size: 34),
+                        const SizedBox(height: 6),
+                        Text(
+                          guide.title,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 24,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
+                        const Text(
+                          'Hazırlık ve acil durum rehberi',
+                          style: TextStyle(color: Colors.white70, fontSize: 13),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+
           _GuideBlock(
             title: 'Hazırlık Listesi',
             icon: Icons.fact_check_outlined,
+            accent: LifeRadarColors.turquoise,
             items: guide.preparation,
           ),
           _GuideBlock(
             title: 'İlk 24 Saat',
             icon: Icons.timer_outlined,
+            accent: LifeRadarColors.riskMedium,
             items: guide.first24Hours,
           ),
           _GuideBlock(
             title: 'Gerekli Malzemeler',
             icon: Icons.inventory_2_outlined,
+            accent: LifeRadarColors.navy,
             items: guide.supplies,
           ),
           _GuideBlock(
             title: 'İlk Yardım Bilgileri',
             icon: Icons.medical_services_outlined,
+            accent: LifeRadarColors.riskHigh,
             items: guide.firstAid,
           ),
         ],
@@ -134,55 +262,83 @@ class _GuideDetailScreen extends StatelessWidget {
 class _GuideBlock extends StatelessWidget {
   final String title;
   final IconData icon;
+  final Color accent;
   final List<String> items;
   const _GuideBlock({
     required this.title,
     required this.icon,
+    required this.accent,
     required this.items,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: accent.withOpacity(0.25)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Başlık şeridi
+          Container(
+            decoration: BoxDecoration(
+              color: accent.withOpacity(0.1),
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Row(
               children: [
-                Icon(icon, color: LifeRadarColors.turquoise, size: 20),
-                const SizedBox(width: 8),
+                Container(
+                  width: 34,
+                  height: 34,
+                  decoration: BoxDecoration(
+                    color: accent.withOpacity(0.18),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Icon(icon, color: accent, size: 20),
+                ),
+                const SizedBox(width: 10),
                 Text(
                   title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.w800,
-                    fontSize: 16,
-                    color: LifeRadarColors.navy,
+                    fontSize: 15,
+                    color: accent,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 10),
-            ...items.map(
-              (i) => Padding(
-                padding: const EdgeInsets.only(bottom: 6),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.only(top: 6),
-                      child: Icon(Icons.circle,
-                          size: 6, color: LifeRadarColors.turquoise),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 14),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: items
+                  .map(
+                    (i) => Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Icon(Icons.check_circle, size: 18, color: accent),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Text(i,
+                                style: const TextStyle(
+                                    height: 1.35, fontSize: 14)),
+                          ),
+                        ],
+                      ),
                     ),
-                    const SizedBox(width: 10),
-                    Expanded(child: Text(i, style: const TextStyle(height: 1.35))),
-                  ],
-                ),
-              ),
+                  )
+                  .toList(),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+import '../core/media.dart';
 import '../core/theme.dart';
 import '../models/event_category.dart';
 import '../models/radar_event.dart';
@@ -56,24 +57,56 @@ class EventCard extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 10),
-              Text(
-                event.title,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                  color: LifeRadarColors.textPrimary,
-                  height: 1.25,
-                ),
-              ),
-              const SizedBox(height: 6),
-              Text(
-                event.summary,
-                maxLines: 3,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  color: LifeRadarColors.textSecondary,
-                  height: 1.35,
-                ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          event.title,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            color: LifeRadarColors.textPrimary,
+                            height: 1.25,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          event.summary,
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            color: LifeRadarColors.textSecondary,
+                            height: 1.35,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (event.imageUrl != null) ...[
+                    const SizedBox(width: 12),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Image.network(
+                        Media.proxiedImage(event.imageUrl!),
+                        width: 86,
+                        height: 86,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+                        loadingBuilder: (c, child, p) => p == null
+                            ? child
+                            : Container(
+                                width: 86,
+                                height: 86,
+                                color: LifeRadarColors.background,
+                              ),
+                      ),
+                    ),
+                  ],
+                ],
               ),
               const SizedBox(height: 10),
               Row(
@@ -109,9 +142,19 @@ class EventCard extends StatelessWidget {
                     ),
                     IconButton(
                       tooltip: 'Paylaş',
-                      onPressed: () {
+                      onPressed: () async {
+                        final res = await Media.share(
+                          title: event.title,
+                          text: '${event.title}\n\n${event.summary}\n\n(Life Radar)',
+                          url: event.url ?? '',
+                        );
+                        if (!context.mounted || res == 'shared') return;
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Paylaşım yakında')),
+                          SnackBar(
+                            content: Text(res == 'copied'
+                                ? 'Haber panoya kopyalandı.'
+                                : 'Paylaşım yapılamadı.'),
+                          ),
                         );
                       },
                       icon: const Icon(Icons.share_outlined,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../core/api_config.dart';
 import '../core/theme.dart';
 import '../models/subscription.dart';
 import '../state/app_state.dart';
@@ -21,6 +22,47 @@ class PremiumScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          // Görsel banner
+          ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: SizedBox(
+              height: 120,
+              width: double.infinity,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  const ColoredBox(color: LifeRadarColors.turquoise),
+                  Image.network(
+                    '${ApiConfig.base}/api/pexels?q=technology%20blue%20abstract',
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+                    loadingBuilder: (c, ch, p) =>
+                        p == null ? ch : const SizedBox.shrink(),
+                  ),
+                  const DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Colors.transparent, Colors.black54],
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                      ),
+                    ),
+                  ),
+                  const Positioned(
+                    left: 16,
+                    bottom: 14,
+                    child: Text('PREMIUM',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 26,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 2)),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
           // Üst bölüm — başlık, rozet, fiyatlar, deneme
           Container(
             decoration: BoxDecoration(

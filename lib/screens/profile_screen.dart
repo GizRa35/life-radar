@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../core/media.dart';
 import '../core/theme.dart';
 import '../models/event_category.dart';
 import '../models/subscription.dart';
 import '../state/app_state.dart';
 import '../widgets/event_card.dart';
+import 'account_management_screen.dart';
+import 'notification_settings_screen.dart';
+import 'personal_info_screen.dart';
+import 'privacy_screen.dart';
 import 'premium_screen.dart';
 import 'vip_screen.dart';
 
@@ -22,32 +27,11 @@ class ProfileScreen extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.symmetric(vertical: 12),
       children: [
-        // Profil başlığı
-        const Padding(
-          padding: EdgeInsets.all(16),
-          child: Row(
-            children: [
-              CircleAvatar(
-                radius: 28,
-                backgroundColor: LifeRadarColors.navy,
-                child: Icon(Icons.person, color: Colors.white, size: 30),
-              ),
-              SizedBox(width: 14),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Kullanıcı',
-                      style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w800,
-                          color: LifeRadarColors.navy)),
-                  Text('İstanbul, Türkiye',
-                      style: TextStyle(color: LifeRadarColors.textSecondary)),
-                ],
-              ),
-            ],
-          ),
-        ),
+        // Profil başlığı (abonelik renkli çerçeve, resme tıkla → avatar seç)
+        const _ProfileHeader(),
+
+        _SectionTitle('Kişisel Bilgiler', icon: Icons.badge_outlined),
+        const _PersonalInfoTile(),
 
         _SectionTitle('Aboneliğiniz', icon: Icons.workspace_premium_outlined),
         const _UpgradeCards(),
@@ -87,14 +71,46 @@ class ProfileScreen extends StatelessWidget {
           ),
         ),
 
-        _SectionTitle('Yapay Zekâ', icon: Icons.auto_awesome),
+        _SectionTitle('Life Radar Asistan', icon: Icons.auto_awesome),
         const _ApiKeyTile(),
 
         _SectionTitle('Ayarlar', icon: Icons.settings_outlined),
-        const _SettingTile(icon: Icons.notifications_outlined, title: 'Bildirim Ayarları'),
-        const _SettingTile(icon: Icons.language, title: 'Dil Seçimi', trailing: 'Türkçe'),
-        const _SettingTile(icon: Icons.lock_outline, title: 'Gizlilik'),
-        const _SettingTile(icon: Icons.manage_accounts_outlined, title: 'Hesap Yönetimi'),
+        _SettingTile(
+          icon: Icons.notifications_outlined,
+          title: 'Bildirim Ayarları',
+          trailing: state.alertsEnabled ? 'Açık' : 'Kapalı',
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute(
+                builder: (_) => const NotificationSettingsScreen()),
+          ),
+        ),
+        _SettingTile(
+          icon: Icons.language,
+          title: 'Dil Seçimi',
+          trailing: state.userContext.language == 'en' ? 'English' : 'Türkçe',
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute(builder: (_) => const PersonalInfoScreen()),
+          ),
+        ),
+        _SettingTile(
+          icon: Icons.lock_outline,
+          title: 'Gizlilik',
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute(builder: (_) => const PrivacyScreen()),
+          ),
+        ),
+        _SettingTile(
+          icon: Icons.manage_accounts_outlined,
+          title: 'Hesap Yönetimi',
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute(
+                builder: (_) => const AccountManagementScreen()),
+          ),
+        ),
+
+        _SectionTitle('Hesap', icon: Icons.account_circle_outlined),
+        const _AccountTile(),
+
         const SizedBox(height: 24),
         const Center(
           child: Text(
@@ -143,14 +159,14 @@ class _ApiKeyTileState extends State<_ApiKeyTile> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Google Gemini API Anahtarı',
+              'Groq API Anahtarı',
               style: TextStyle(
                   fontWeight: FontWeight.w700, color: LifeRadarColors.navy),
             ),
             const SizedBox(height: 4),
             const Text(
-              'AI asistanı ve etki analizi için ücretsiz Gemini anahtarınızı girin. '
-              'aistudio.google.com → "Get API key" (kredi kartı gerekmez). '
+              'Life Radar Asistan ve günlük analiz için ücretsiz Groq anahtarınızı girin. '
+              'console.groq.com → API Keys (kredi kartı gerekmez, Türkiye\'de çalışır). '
               'Anahtar yalnızca cihazınızda tutulur.',
               style: TextStyle(
                   color: LifeRadarColors.textSecondary, fontSize: 12),
@@ -160,7 +176,7 @@ class _ApiKeyTileState extends State<_ApiKeyTile> {
               controller: _controller,
               obscureText: _obscure,
               decoration: InputDecoration(
-                hintText: 'AIza...',
+                hintText: 'gsk_...',
                 filled: true,
                 fillColor: LifeRadarColors.background,
                 suffixIcon: IconButton(
@@ -187,6 +203,268 @@ class _ApiKeyTileState extends State<_ApiKeyTile> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// Abonelik tonuna göre çerçeve rengi.
+Color _tierRingColor(SubscriptionTier tier) {
+  switch (tier) {
+    case SubscriptionTier.vip:
+      return const Color(0xFFC9A227); // altın
+    case SubscriptionTier.premium:
+      return LifeRadarColors.turquoise;
+    case SubscriptionTier.free:
+      return LifeRadarColors.navy;
+  }
+}
+
+/// Seçilebilir avatarlar — DiceBear "avataaars" (canlı, renkli), net cinsiyetli.
+const String _avBase = 'https://api.dicebear.com/9.x/avataaars/png?seed=';
+
+/// Kadın: uzun/feminen saç, sakalsız.
+String _avWoman(String seed) =>
+    '$_avBase$seed&top=straight01,straight02,bob,bun,curvy,longButNotTooLong,miaWallace,bigHair'
+    '&facialHairProbability=0&accessoriesProbability=10';
+
+/// Erkek: kısa saç, sakallı.
+String _avMan(String seed) =>
+    '$_avBase$seed&top=shortFlat,shortRound,theCaesar,shortCurly,shortWaved,dreads01'
+    '&facialHair=beardLight,beardMedium,beardMajestic&facialHairProbability=100';
+
+/// Unisex: karışık (varsayılan).
+String _avUnisex(String seed) => '$_avBase$seed';
+
+final Map<String, List<String>> _avatarGroups = {
+  'Kadın': [
+    for (final s in ['Zoe', 'Mia', 'Aria', 'Luna', 'Nora', 'Ela', 'Defne', 'Ada'])
+      _avWoman(s),
+  ],
+  'Erkek': [
+    for (final s in ['Can', 'Emir', 'Ali', 'Mert', 'Kerem', 'Baran', 'Efe', 'Aras'])
+      _avMan(s),
+  ],
+  'Unisex': [
+    for (final s in ['Sky', 'River', 'Robin', 'Alex', 'Jules', 'Toni', 'Rio', 'Sam'])
+      _avUnisex(s),
+  ],
+};
+
+/// Profil resmine tıklayınca açılan avatar seçim modalı.
+void showAvatarSheet(BuildContext context) {
+  showModalBottomSheet(
+    context: context,
+    backgroundColor: Colors.white,
+    isScrollControlled: true,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+    ),
+    builder: (sheetCtx) {
+      final ring = _tierRingColor(sheetCtx.read<AppState>().tier);
+      final current = sheetCtx.watch<AppState>().avatar;
+      return DraggableScrollableSheet(
+        expand: false,
+        initialChildSize: 0.7,
+        maxChildSize: 0.92,
+        builder: (_, controller) => ListView(
+          controller: controller,
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+          children: [
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                margin: const EdgeInsets.only(bottom: 12),
+                decoration: BoxDecoration(
+                  color: LifeRadarColors.cardBackground,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            const Text(
+              'Avatar Seç',
+              style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                  color: LifeRadarColors.navy),
+            ),
+            const SizedBox(height: 8),
+            for (final group in _avatarGroups.entries) ...[
+              Padding(
+                padding: const EdgeInsets.fromLTRB(2, 14, 0, 8),
+                child: Text(
+                  group.key,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w700,
+                    color: LifeRadarColors.textSecondary,
+                  ),
+                ),
+              ),
+              Wrap(
+                spacing: 12,
+                runSpacing: 12,
+                children: group.value.map((url) {
+                  final selected = current == url;
+                  return GestureDetector(
+                    onTap: () {
+                      sheetCtx.read<AppState>().setAvatar(url);
+                      Navigator.of(sheetCtx).pop();
+                    },
+                    child: Container(
+                      width: 64,
+                      height: 64,
+                      decoration: BoxDecoration(
+                        color: LifeRadarColors.cardBackground,
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: selected ? ring : Colors.transparent,
+                          width: 3,
+                        ),
+                      ),
+                      child: ClipOval(
+                        child: Image.network(
+                          Media.proxiedImage(url),
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => const Icon(
+                              Icons.person, color: LifeRadarColors.navy),
+                          loadingBuilder: (c, child, p) => p == null
+                              ? child
+                              : const Center(
+                                  child: SizedBox(
+                                      width: 18,
+                                      height: 18,
+                                      child: CircularProgressIndicator(
+                                          strokeWidth: 2))),
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ],
+          ],
+        ),
+      );
+    },
+  );
+}
+
+class _ProfileHeader extends StatelessWidget {
+  const _ProfileHeader();
+
+  @override
+  Widget build(BuildContext context) {
+    final state = context.watch<AppState>();
+    final tier = state.tier;
+    final ring = _tierRingColor(tier);
+    final loc = state.location?.label ?? state.userContext.location;
+
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Row(
+        children: [
+          // Abonelik renkli çerçeve — tıklayınca avatar seçimi açılır
+          GestureDetector(
+            onTap: () => showAvatarSheet(context),
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(3),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: tier == SubscriptionTier.vip
+                        ? const LinearGradient(
+                            colors: [Color(0xFFC9A227), Color(0xFFE9C766)])
+                        : null,
+                    color: tier == SubscriptionTier.vip ? null : ring,
+                  ),
+                  child: CircleAvatar(
+                    radius: 30,
+                    backgroundColor: Colors.white,
+                    child: ClipOval(
+                      child: SizedBox(
+                        width: 54,
+                        height: 54,
+                        child: Image.network(
+                          Media.proxiedImage(state.avatar),
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => const Icon(Icons.person,
+                              size: 30, color: LifeRadarColors.navy),
+                          loadingBuilder: (c, child, p) => p == null
+                              ? child
+                              : const Center(
+                                  child: SizedBox(
+                                      width: 18,
+                                      height: 18,
+                                      child: CircularProgressIndicator(
+                                          strokeWidth: 2))),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  right: -2,
+                  bottom: -2,
+                  child: Container(
+                    padding: const EdgeInsets.all(5),
+                    decoration: BoxDecoration(
+                      color: ring,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.white, width: 2),
+                    ),
+                    child: const Icon(Icons.edit, size: 12, color: Colors.white),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Flexible(
+                      child: Text(state.displayName,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w800,
+                              color: LifeRadarColors.navy)),
+                    ),
+                    if (tier != SubscriptionTier.free) ...[
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: ring.withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: ring),
+                        ),
+                        child: Text(
+                          tier.label,
+                          style: TextStyle(
+                            color: ring,
+                            fontWeight: FontWeight.w800,
+                            fontSize: 11,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+                Text(loc,
+                    style: const TextStyle(
+                        color: LifeRadarColors.textSecondary)),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -227,7 +505,7 @@ class _UpgradeCards extends StatelessWidget {
           ),
           _UpgradeTile(
             title: 'Life Radar Premium',
-            subtitle: 'Sınırsız AI, kişisel risk analizi, reklamsız.',
+            subtitle: 'Sınırsız Life Radar Asistan, kişisel risk analizi, reklamsız.',
             icon: Icons.star,
             color: LifeRadarColors.turquoise,
             onTap: () => Navigator.of(context).push(
@@ -282,11 +560,74 @@ class _UpgradeTile extends StatelessWidget {
   }
 }
 
+class _PersonalInfoTile extends StatelessWidget {
+  const _PersonalInfoTile();
+
+  @override
+  Widget build(BuildContext context) {
+    final filled = context.watch<AppState>().hasPersonalInfo;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Card(
+        child: ListTile(
+          leading: Icon(
+            filled ? Icons.badge : Icons.badge_outlined,
+            color: filled ? LifeRadarColors.turquoise : LifeRadarColors.navy,
+          ),
+          title: const Text('Kişisel Bilgilerim',
+              style: TextStyle(fontWeight: FontWeight.w700)),
+          subtitle: Text(filled
+              ? 'Life Radar Asistan analizleri bilgilerine göre kişiselleştiriliyor.'
+              : 'Doldur → analizler sana özel olsun (yaş, sağlık, ev, aile...).'),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute(builder: (_) => const PersonalInfoScreen()),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _AccountTile extends StatelessWidget {
+  const _AccountTile();
+
+  @override
+  Widget build(BuildContext context) {
+    final state = context.watch<AppState>();
+    final loggedIn = state.isLoggedIn;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Card(
+        child: ListTile(
+          leading: Icon(
+            loggedIn ? Icons.verified_user : Icons.person_outline,
+            color: loggedIn ? LifeRadarColors.turquoise : LifeRadarColors.navy,
+          ),
+          title: Text(
+            loggedIn ? (state.authEmail ?? 'Hesap') : 'Misafir kullanıcı',
+            style: const TextStyle(fontWeight: FontWeight.w700),
+          ),
+          subtitle: Text(loggedIn
+              ? 'Giriş yapıldı'
+              : 'Verileriniz yalnızca bu cihazda. Giriş yapın.'),
+          trailing: TextButton(
+            onPressed: () => state.logout(),
+            child: Text(loggedIn ? 'Çıkış Yap' : 'Giriş Yap'),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _SettingTile extends StatelessWidget {
   final IconData icon;
   final String title;
   final String? trailing;
-  const _SettingTile({required this.icon, required this.title, this.trailing});
+  final VoidCallback? onTap;
+  const _SettingTile(
+      {required this.icon, required this.title, this.trailing, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -305,11 +646,12 @@ class _SettingTile extends StatelessWidget {
             const Icon(Icons.chevron_right, color: LifeRadarColors.textSecondary),
           ],
         ),
-        onTap: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('$title yakında')),
-          );
-        },
+        onTap: onTap ??
+            () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('$title yakında')),
+              );
+            },
       ),
     );
   }

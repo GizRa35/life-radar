@@ -68,32 +68,45 @@ class _GaugePainter extends CustomPainter {
     const startAngle = math.pi * 0.75;
     const sweepTotal = math.pi * 1.5;
 
-    final bg = Paint()
-      ..color = LifeRadarColors.cardBackground
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 14
-      ..strokeCap = StrokeCap.round;
+    final rect = Rect.fromCircle(center: center, radius: radius);
 
+    // Renkli risk bölgeleri (düşük→yeşil, orta→sarı, yüksek→kırmızı)
+    void zone(double from, double to, Color c) {
+      final p = Paint()
+        ..color = c.withOpacity(0.28)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 14
+        ..strokeCap = StrokeCap.butt;
+      canvas.drawArc(rect, startAngle + sweepTotal * from,
+          sweepTotal * (to - from), false, p);
+    }
+
+    zone(0.0, 0.40, LifeRadarColors.riskLow);
+    zone(0.40, 0.70, LifeRadarColors.riskMedium);
+    zone(0.70, 1.0, LifeRadarColors.riskHigh);
+
+    // Değer yayı (skora göre dolan, renkli)
     final fg = Paint()
       ..color = color
       ..style = PaintingStyle.stroke
       ..strokeWidth = 14
       ..strokeCap = StrokeCap.round;
-
     canvas.drawArc(
-      Rect.fromCircle(center: center, radius: radius),
-      startAngle,
-      sweepTotal,
-      false,
-      bg,
-    );
-    canvas.drawArc(
-      Rect.fromCircle(center: center, radius: radius),
+      rect,
       startAngle,
       sweepTotal * (score.clamp(0, 100) / 100),
       false,
       fg,
     );
+
+    // Skor ucunda küçük gösterge noktası
+    final angle = startAngle + sweepTotal * (score.clamp(0, 100) / 100);
+    final dot = Offset(
+      center.dx + radius * math.cos(angle),
+      center.dy + radius * math.sin(angle),
+    );
+    canvas.drawCircle(dot, 8, Paint()..color = color);
+    canvas.drawCircle(dot, 4, Paint()..color = Colors.white);
   }
 
   @override

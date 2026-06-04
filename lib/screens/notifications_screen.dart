@@ -6,6 +6,7 @@ import '../core/theme.dart';
 import '../models/app_notification.dart';
 import '../state/app_state.dart';
 import '../widgets/risk_badge.dart';
+import 'event_detail_screen.dart';
 
 /// SAYFA 10 — BİLDİRİMLER (üst bardaki zilden açılan ayrı tam ekran)
 /// Kategoriler: Sağlık · Ekonomi · Afet · Dünya · Sistem
@@ -100,7 +101,16 @@ class _NotificationTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final timeStr = DateFormat('d MMM, HH:mm', 'tr').format(item.time);
     return Card(
-      child: Padding(
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: item.eventId == null
+            ? null
+            : () => Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => EventDetailScreen(eventId: item.eventId!),
+                  ),
+                ),
+        child: Padding(
         padding: const EdgeInsets.all(14),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -154,6 +164,7 @@ class _NotificationTile extends StatelessWidget {
             ),
           ],
         ),
+      ),
       ),
     );
   }

@@ -43,11 +43,15 @@ class AppNotification {
   final NotificationCategory category;
   final RiskLevel risk;
 
+  /// İlgili olay (varsa) — bildirime tıklayınca detay açılır.
+  final String? eventId;
+
   const AppNotification({
     required this.title,
     required this.summary,
     required this.time,
     required this.category,
     required this.risk,
+    this.eventId,
   });
 }

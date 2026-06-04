@@ -4,11 +4,15 @@ import 'package:provider/provider.dart';
 
 import 'core/constants.dart';
 import 'core/theme.dart';
+import 'screens/auth_screen.dart';
+import 'screens/onboarding_screen.dart';
+import 'services/local_store.dart';
 import 'state/app_state.dart';
 import 'widgets/main_scaffold.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await lsInit(); // kalıcı depolamayı belleğe yükle (mobil/masaüstü)
   await initializeDateFormatting('tr', null);
   runApp(const LifeRadarApp());
 }
@@ -24,7 +28,12 @@ class LifeRadarApp extends StatelessWidget {
         title: AppConstants.appName,
         debugShowCheckedModeBanner: false,
         theme: LifeRadarTheme.light,
-        home: const MainScaffold(),
+        home: Consumer<AppState>(
+          builder: (_, state, __) {
+            if (!state.onboardingDone) return const OnboardingScreen();
+            return state.gateOpen ? const MainScaffold() : const AuthScreen();
+          },
+        ),
       ),
     );
   }

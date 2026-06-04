@@ -1,0 +1,40 @@
+# Codemagic CI/CD — Life Radar iOS (TestFlight) yapılandırması
+# Codemagic, kodu GitHub'dan alıp bulut Mac'te iOS derler ve TestFlight'a gönderir.
+#
+# Codemagic arayüzünde yapılması gerekenler:
+#  1) Team Settings → Integrations → App Store Connect → API anahtarını "LifeRadar ASC" adıyla ekle.
+#  2) Bu workflow'u seç ve "Start new build".
+
+workflows:
+  ios-testflight:
+    name: iOS TestFlight
+    instance_type: mac_mini_m2
+    max_build_duration: 60
+    integrations:
+      app_store_connect: LifeRadar ASC      # ← Codemagic UI'da bu isimle eklenecek API anahtarı
+    environment:
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.liferadar.lifeRadar
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+    scripts:
+      - name: Flutter paketlerini al
+        script: flutter pub get
+      - name: CocoaPods kurulumu
+        script: find . -name "Podfile" -execdir pod install \;
+      - name: İmzalama profillerini ayarla
+        script: xcode-project use-profiles
+      - name: iOS IPA derle (bulut backend'e bağlı)
+        script: |
+          flutter build ipa --release \
+            --dart-define=API_BASE=https://life-radar.liferadar-kaya.workers.dev \
+            --export-options-plist=/Users/builder/export_options.plist
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - flutter_drive.log
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true

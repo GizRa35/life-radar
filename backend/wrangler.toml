@@ -1,0 +1,15 @@
+# Life Radar — Cloudflare Worker yapılandırması
+# Kurulum: backend/worker.js başındaki adımları izle.
+name = "life-radar"
+main = "worker.js"
+compatibility_date = "2024-11-01"
+
+# Flutter web build'ini de aynı worker'dan sun (pages.dev engeline takılmaz).
+[assets]
+directory = "../build/web"
+binding = "ASSETS"
+not_found_handling = "single-page-application"
+
+# Anahtarlar BURAYA YAZILMAZ. Komutla gizli eklenir:
+#   wrangler secret put GROQ_KEY
+#   wrangler secret put PEXELS_KEY

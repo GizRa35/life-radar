@@ -60,7 +60,7 @@ class SubscriptionData {
   // ---- Premium özellikleri ----
   static const List<PlanFeature> premiumFeatures = [
     PlanFeature(
-      title: 'Sınırsız Yapay Zekâ Soruları',
+      title: 'Sınırsız Life Radar Asistan Soruları',
       description: 'Kullanıcı sınırsız soru sorabilir.',
       examples: [
         'Bu savaş beni etkiler mi?',
@@ -70,7 +70,7 @@ class SubscriptionData {
     ),
     PlanFeature(
       title: 'Kişisel Risk Analizi',
-      description: 'AI kullanıcıya özel analiz oluşturur.',
+      description: 'Life Radar Asistan kullanıcıya özel analiz oluşturur.',
       examples: [
         'Sağlık Riski',
         'Ekonomik Risk',
@@ -113,11 +113,11 @@ class SubscriptionData {
   static const List<PlanFeature> vipFeatures = [
     PlanFeature(
       title: 'Aile Koruma Merkezi',
-      description: 'Eş, çocuk, anne, baba eklenebilir; AI aile üyeleri için '
+      description: 'Eş, çocuk, anne, baba eklenebilir; Life Radar Asistan aile üyeleri için '
           'özel analizler oluşturur.',
     ),
     PlanFeature(
-      title: 'Kişisel AI Analisti',
+      title: 'Kişisel Life Radar Asistanı',
       description: 'Sistem her gün otomatik analiz üretir.',
       examples: ['"Bugün sizi etkileyebilecek 3 önemli gelişme bulundu."'],
     ),
@@ -150,7 +150,7 @@ class SubscriptionData {
     ),
     PlanFeature(
       title: 'Haber Doğrulama Sistemi',
-      description: 'Link, ekran görüntüsü veya haber metni yüklenir; AI '
+      description: 'Link, ekran görüntüsü veya haber metni yüklenir; Life Radar Asistan '
           'doğruluk, kaynak ve manipülasyon riski analizi yapar.',
     ),
     PlanFeature(
@@ -165,7 +165,7 @@ class SubscriptionData {
     ),
     PlanFeature(
       title: 'Gelişmiş Risk Skoru',
-      description: 'AI aşağıdaki puanları oluşturur.',
+      description: 'Life Radar Asistan aşağıdaki puanları oluşturur.',
       examples: [
         'Sağlık',
         'Finans',
@@ -177,12 +177,12 @@ class SubscriptionData {
       ],
     ),
     PlanFeature(
-      title: 'Öncelikli AI Sunucusu',
+      title: 'Öncelikli Life Radar Asistan Sunucusu',
       description: 'Daha hızlı yanıtlar, öncelikli işlem.',
     ),
     PlanFeature(
       title: 'Gelecek Radarı',
-      description: 'AI mevcut verileri analiz ederek olası riskler, dikkat '
+      description: 'Life Radar Asistan mevcut verileri analiz ederek olası riskler, dikkat '
           'edilmesi gereken trendler ve yaklaşan gelişmeler hakkında bilgi '
           'verir. Kesin tahmin veya kehanet yapılmaz.',
     ),
@@ -192,11 +192,11 @@ class SubscriptionData {
   static const List<String> freePlan = [
     'Günlük Haberler',
     'Temel Risk Analizi',
-    'Günde 5 AI Sorusu',
+    'Günde 5 Life Radar Asistan Sorusu',
   ];
 
   static const List<String> premiumPlan = [
-    'Sınırsız AI',
+    'Sınırsız Life Radar Asistan',
     'Kişisel Risk Analizi',
     'Bölgesel Uyarılar',
     'Haftalık Özet',
@@ -205,14 +205,14 @@ class SubscriptionData {
 
   static const List<String> vipPlan = [
     'Aile Koruma Merkezi',
-    'Kişisel AI Analisti',
+    'Kişisel Life Radar Asistanı',
     'VIP İstihbarat Raporu',
     'Şehir Bazlı Risk Merkezi',
     'Haber Doğrulama',
     'Kişisel Acil Durum Planı',
     'Erken Uyarı Sistemi',
     'Gelişmiş Risk Skorları',
-    'Öncelikli AI',
+    'Öncelikli Life Radar Asistan',
     'Gelecek Radarı',
   ];
 }
