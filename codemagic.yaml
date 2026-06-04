@@ -15,8 +15,8 @@ workflows:
     environment:
       groups:
         - appstore
-      flutter: stable
-      xcode: latest
+      flutter: 3.19.6
+      xcode: 15.4
       cocoapods: default
     scripts:
       - name: Flutter paketlerini al
