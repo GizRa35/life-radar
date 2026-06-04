@@ -13,9 +13,6 @@ workflows:
     integrations:
       app_store_connect: LifeRadar ASC      # ← Codemagic UI'da bu isimle eklenecek API anahtarı
     environment:
-      ios_signing:
-        distribution_type: app_store
-        bundle_identifier: com.liferadar.lifeRadar
       flutter: stable
       xcode: latest
       cocoapods: default
