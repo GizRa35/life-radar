@@ -13,6 +13,9 @@ workflows:
     integrations:
       app_store_connect: LifeRadar ASC      # ← Codemagic UI'da bu isimle eklenecek API anahtarı
     environment:
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.liferadar.lifeRadar
       flutter: stable
       xcode: latest
       cocoapods: default
@@ -26,9 +29,10 @@ workflows:
             --type IOS_APP_STORE \
             --create
           keychain add-certificates
-          xcode-project use-profiles
       - name: CocoaPods kurulumu
         script: find . -name "Podfile" -execdir pod install \;
+      - name: İmzalama profillerini Xcode projesine uygula
+        script: xcode-project use-profiles
       - name: iOS IPA derle (bulut backend'e bağlı)
         script: |
           flutter build ipa --release \
