@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+import '../core/api_config.dart';
 import '../core/media.dart';
 import '../core/theme.dart';
 import 'ai_result_screen.dart';
@@ -63,7 +64,12 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
     final state = context.read<AppState>();
     final event = state.eventById(widget.eventId);
     final url = event?.url;
-    if (url != null) {
+    // USGS deprem sayfaları JavaScript ile yüklenir; kazıma anlamsız "tarayıcı
+    // desteği" metni döndürür. Bu kaynaklarda zengin özetimizi kullanırız.
+    final isScrapeable = url != null &&
+        !url.contains('earthquake.usgs.gov') &&
+        !url.contains('/earthquakes/eventpage/');
+    if (isScrapeable) {
       final base = _articleService.fetch(url);
       final userLang = state.userContext.language == 'en' ? 'en' : 'tr';
       // Kaynak orijinal dili kullanıcının dilinden farklıysa makale gövdesini çevir.
@@ -162,32 +168,33 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
             ),
           ),
           const SizedBox(height: 14),
-          // Başlığın altında ana görsel
-          if (event.imageUrl != null) ...[
-            ClipRRect(
-              borderRadius: BorderRadius.circular(16),
-              child: Image.network(
-                Media.proxiedImage(event.imageUrl!),
-                width: double.infinity,
-                height: 210,
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => const SizedBox.shrink(),
-                loadingBuilder: (ctx, child, progress) => progress == null
-                    ? child
-                    : Container(
-                        height: 210,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: LifeRadarColors.cardBackground,
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: const CircularProgressIndicator(
-                            color: LifeRadarColors.turquoise),
+          // Başlığın altında ana görsel. Habere ait görsel varsa onu, yoksa
+          // kategoriye uygun bir görseli (Pexels) gösteririz.
+          ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: Image.network(
+              event.imageUrl != null
+                  ? Media.proxiedImage(event.imageUrl!)
+                  : '${ApiConfig.base}/api/pexels?q=${Uri.encodeComponent(_categoryQuery(event.category))}',
+              width: double.infinity,
+              height: 210,
+              fit: BoxFit.cover,
+              errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+              loadingBuilder: (ctx, child, progress) => progress == null
+                  ? child
+                  : Container(
+                      height: 210,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: LifeRadarColors.cardBackground,
+                        borderRadius: BorderRadius.circular(16),
                       ),
-              ),
+                      child: const CircularProgressIndicator(
+                          color: LifeRadarColors.turquoise),
+                    ),
             ),
-            const SizedBox(height: 14),
-          ],
+          ),
+          const SizedBox(height: 14),
 
           // Bana özel, miktarlı aksiyon planı (AI) — haberin üstünde, Premium/VIP'e özel
           _ActionPlanButton(event: event),

@@ -27,24 +27,118 @@ class EarthquakeSource {
         final place = props['place']?.toString() ?? 'Bilinmeyen konum';
         final time = props['time'] as int?;
         final url = props['url']?.toString();
+        final felt = (props['felt'] as num?)?.toInt();
+        final tsunami = (props['tsunami'] as num?)?.toInt() == 1;
+        final alert = props['alert']?.toString();
+        // Derinlik geometri koordinatlarının 3. değerinde (km).
+        final coords = ((f['geometry'] as Map?)?['coordinates'] as List?);
+        final lng = coords != null && coords.isNotEmpty
+            ? (coords[0] as num?)?.toDouble()
+            : null;
+        final lat = coords != null && coords.length > 1
+            ? (coords[1] as num?)?.toDouble()
+            : null;
+        final depth = coords != null && coords.length > 2
+            ? (coords[2] as num?)?.toDouble()
+            : null;
+        final when = time != null
+            ? DateTime.fromMillisecondsSinceEpoch(time)
+            : DateTime.now();
         events.add(RadarEvent(
           id: f['id']?.toString() ?? url ?? place,
           title: 'M${mag.toStringAsFixed(1)} deprem — $place',
-          summary: 'USGS verisine göre $place bölgesinde büyüklüğü '
-              '${mag.toStringAsFixed(1)} olan bir deprem kaydedildi.',
+          summary: _buildSummary(
+            mag: mag,
+            place: place,
+            depth: depth,
+            felt: felt,
+            tsunami: tsunami,
+            alert: alert,
+            when: when,
+          ),
           category: EventCategory.disaster,
           source: 'USGS',
-          publishedAt: time != null
-              ? DateTime.fromMillisecondsSinceEpoch(time)
-              : DateTime.now(),
+          publishedAt: when,
           risk: _riskFromMagnitude(mag),
           url: url,
+          imageUrl: (lat != null && lng != null) ? _mapImage(lat, lng) : null,
         ));
       }
       return events;
     } catch (_) {
       return [];
     }
+  }
+
+  /// USGS verisinden okunaklı, çok cümleli Türkçe açıklama üretir.
+  String _buildSummary({
+    required double mag,
+    required String place,
+    double? depth,
+    int? felt,
+    bool tsunami = false,
+    String? alert,
+    required DateTime when,
+  }) {
+    final buf = StringBuffer();
+    final h = when.hour.toString().padLeft(2, '0');
+    final m = when.minute.toString().padLeft(2, '0');
+    buf.write(
+        'USGS (ABD Jeoloji Araştırmaları Kurumu) verilerine göre $place '
+        'bölgesinde, yerel saatle yaklaşık $h:$m sıralarında büyüklüğü '
+        '${mag.toStringAsFixed(1)} olan bir deprem kaydedildi. ');
+
+    if (depth != null) {
+      final d = depth.round();
+      final derinlikYorum = d < 70
+          ? 'Sığ odaklı (yüzeye yakın) bir deprem olduğu için yüzeydeki '
+              'sarsıntı etkisi daha belirgin hissedilebilir.'
+          : 'Orta-derin odaklı bir deprem olduğu için yüzeydeki sarsıntı '
+              'etkisi göreceli olarak daha sınırlı kalabilir.';
+      buf.write('Depremin yer altındaki odak derinliği yaklaşık $d km. '
+          '$derinlikYorum ');
+    }
+
+    // Büyüklüğe göre genel beklenti.
+    if (mag >= 6) {
+      buf.write('Bu büyüklükteki depremler, kaynağa yakın yerleşimlerde '
+          'hasara ve artçı sarsıntılara yol açabilir. ');
+    } else if (mag >= 5) {
+      buf.write('Bu büyüklükteki depremler geniş bir alanda hissedilebilir; '
+          'yapısal açıdan zayıf binalarda hafif hasar görülebilir. ');
+    } else if (mag >= 4) {
+      buf.write('Bu büyüklükteki depremler çevrede hissedilebilir ancak '
+          'genellikle ciddi hasara yol açmaz. ');
+    }
+
+    if (felt != null && felt > 0) {
+      buf.write('İlk verilere göre çevredeki $felt kişi depremi hissettiğini '
+          'bildirdi. ');
+    }
+    if (tsunami) {
+      buf.write('⚠️ Bu deprem için tsunami değerlendirmesi yapılmaktadır; '
+          'kıyı bölgelerindekiler resmi uyarıları takip etmelidir. ');
+    }
+    if (alert == 'yellow' || alert == 'orange' || alert == 'red') {
+      const map = {
+        'yellow': 'sarı (sınırlı etki bekleniyor)',
+        'orange': 'turuncu (belirgin etki olası)',
+        'red': 'kırmızı (ciddi etki olası)',
+      };
+      buf.write('USGS bu olay için ${map[alert]} düzeyinde bir uyarı seviyesi '
+          'belirledi. ');
+    }
+    buf.write('Resmi güncellemeler için USGS sayfasını takip edebilirsiniz.');
+    return buf.toString();
+  }
+
+  /// Deprem merkez üssünün açık kaynaklı (anahtarsız) statik harita görseli.
+  String _mapImage(double lat, double lng) {
+    final la = lat.toStringAsFixed(4);
+    final ln = lng.toStringAsFixed(4);
+    return 'https://staticmap.openstreetmap.de/staticmap.php'
+        '?center=$la,$ln&zoom=6&size=600x320&maptype=mapnik'
+        '&markers=$la,$ln,red-pushpin';
   }
 
   RiskLevel _riskFromMagnitude(double mag) {
