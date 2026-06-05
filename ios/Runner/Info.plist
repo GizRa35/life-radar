@@ -49,5 +49,9 @@
 	<false/>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Bulunduğun bölgeye göre afet ve risk analizini gösterebilmemiz için konumun kullanılır.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Bulunduğun bölgeye göre afet ve risk analizini gösterebilmemiz için konumun kullanılır.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Bulunduğun bölgeye göre afet ve risk analizini gösterebilmemiz için konumun kullanılır.</string>
 </dict>
 </plist>
