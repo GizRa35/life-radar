@@ -50,3 +50,7 @@ serve.secrets.ps1
 
 # iOS imzalama özel anahtarı (repoya girmez)
 ios_signing_key.pem
+
+# gecici Apple API araclari
+asc_list.js
+asc_revoke.js
