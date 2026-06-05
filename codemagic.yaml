@@ -43,4 +43,6 @@ workflows:
     publishing:
       app_store_connect:
         auth: integration
-        submit_to_testflight: true
+        # Yalnızca App Store Connect'e yükle. İç test (internal) build'leri
+        # otomatik alır; dış-test (external) göndermeyi denemez (kırmızı vermez).
+        submit_to_testflight: false
