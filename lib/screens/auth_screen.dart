@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -187,6 +188,8 @@ class _AuthScreenState extends State<AuthScreen> {
                   ),
                   const SizedBox(height: 28),
 
+                  // Sosyal giriş yalnızca web'de (mobilde native kurulum gerekir)
+                  if (kIsWeb) ...[
                   // Google ile devam et
                   _SocialButton(
                     label: 'Google ile devam et',
@@ -225,6 +228,7 @@ class _AuthScreenState extends State<AuthScreen> {
                     ],
                   ),
                   const SizedBox(height: 16),
+                  ],
 
                   Container(
                     padding: const EdgeInsets.all(20),

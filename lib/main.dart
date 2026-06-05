@@ -28,6 +28,8 @@ class LifeRadarApp extends StatelessWidget {
         title: AppConstants.appName,
         debugShowCheckedModeBanner: false,
         theme: LifeRadarTheme.light,
+        darkTheme: LifeRadarTheme.light, // koyu modda da açık temayı kullan
+        themeMode: ThemeMode.light, // sistem koyu modu metinleri bozmasın
         home: Consumer<AppState>(
           builder: (_, state, __) {
             if (!state.onboardingDone) return const OnboardingScreen();

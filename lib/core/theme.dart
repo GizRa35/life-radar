@@ -128,7 +128,22 @@ class LifeRadarTheme {
           color: LifeRadarColors.textPrimary,
           fontWeight: FontWeight.w600,
         ),
+        // Metin kutusu (TextField) yazısı bunu kullanır → koyu renk garanti.
+        bodyLarge: TextStyle(color: LifeRadarColors.textPrimary),
         bodyMedium: TextStyle(color: LifeRadarColors.textSecondary),
+      ),
+      // Metin girişi: yazı koyu, etiket/ipucu gri, imleç turkuaz.
+      inputDecorationTheme: const InputDecorationTheme(
+        labelStyle: TextStyle(color: LifeRadarColors.textSecondary),
+        hintStyle: TextStyle(color: LifeRadarColors.textSecondary),
+        floatingLabelStyle: TextStyle(color: LifeRadarColors.turquoise),
+        prefixIconColor: LifeRadarColors.textSecondary,
+        suffixIconColor: LifeRadarColors.textSecondary,
+      ),
+      textSelectionTheme: const TextSelectionThemeData(
+        cursorColor: LifeRadarColors.turquoise,
+        selectionColor: Color(0x3300B8D9),
+        selectionHandleColor: LifeRadarColors.turquoise,
       ),
     );
   }
