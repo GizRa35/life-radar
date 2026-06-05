@@ -71,9 +71,6 @@ class ProfileScreen extends StatelessWidget {
           ),
         ),
 
-        _SectionTitle('Life Radar Asistan', icon: Icons.auto_awesome),
-        const _ApiKeyTile(),
-
         _SectionTitle('Ayarlar', icon: Icons.settings_outlined),
         _SettingTile(
           icon: Icons.notifications_outlined,
@@ -123,87 +120,6 @@ class ProfileScreen extends StatelessWidget {
         ),
         const SizedBox(height: 24),
       ],
-    );
-  }
-}
-
-class _ApiKeyTile extends StatefulWidget {
-  const _ApiKeyTile();
-
-  @override
-  State<_ApiKeyTile> createState() => _ApiKeyTileState();
-}
-
-class _ApiKeyTileState extends State<_ApiKeyTile> {
-  late final TextEditingController _controller;
-  bool _obscure = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = TextEditingController(text: context.read<AppState>().apiKey);
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Groq API Anahtarı',
-              style: TextStyle(
-                  fontWeight: FontWeight.w700, color: LifeRadarColors.navy),
-            ),
-            const SizedBox(height: 4),
-            const Text(
-              'Life Radar Asistan ve günlük analiz için ücretsiz Groq anahtarınızı girin. '
-              'console.groq.com → API Keys (kredi kartı gerekmez, Türkiye\'de çalışır). '
-              'Anahtar yalnızca cihazınızda tutulur.',
-              style: TextStyle(
-                  color: LifeRadarColors.textSecondary, fontSize: 12),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: _controller,
-              obscureText: _obscure,
-              decoration: InputDecoration(
-                hintText: 'gsk_...',
-                filled: true,
-                fillColor: LifeRadarColors.background,
-                suffixIcon: IconButton(
-                  icon: Icon(_obscure ? Icons.visibility : Icons.visibility_off),
-                  onPressed: () => setState(() => _obscure = !_obscure),
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-            ),
-            const SizedBox(height: 10),
-            Align(
-              alignment: Alignment.centerRight,
-              child: ElevatedButton(
-                onPressed: () {
-                  context.read<AppState>().setApiKey(_controller.text);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('API anahtarı kaydedildi')),
-                  );
-                },
-                child: const Text('Kaydet'),
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
