@@ -111,14 +111,16 @@ class PremiumScreen extends StatelessWidget {
                     Expanded(
                       child: _PriceBox(
                         label: 'Aylık',
-                        price: SubscriptionData.premiumMonthly,
+                        price: _priceText(state, AppState.premiumMonthlyId,
+                            SubscriptionData.premiumMonthly),
                       ),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: _PriceBox(
                         label: 'Yıllık',
-                        price: SubscriptionData.premiumYearly,
+                        price: _priceText(state, AppState.premiumYearlyId,
+                            SubscriptionData.premiumYearly),
                         highlight: true,
                       ),
                     ),
@@ -169,7 +171,7 @@ class PremiumScreen extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                   minimumSize: const Size.fromHeight(52)),
               child: Text(
-                'Aylık  ${_priceText(state, AppState.premiumMonthlyId, "₺49,99/ay")}',
+                'Aylık  ${_priceText(state, AppState.premiumMonthlyId, SubscriptionData.premiumMonthly)}',
               ),
             ),
             const SizedBox(height: 10),
@@ -182,7 +184,7 @@ class PremiumScreen extends StatelessWidget {
                 side: const BorderSide(color: LifeRadarColors.turquoise),
               ),
               child: Text(
-                'Yıllık  ${_priceText(state, AppState.premiumYearlyId, "₺499,99/yıl")}  ·  2 ay bedava',
+                'Yıllık  ${_priceText(state, AppState.premiumYearlyId, SubscriptionData.premiumYearly)}  ·  2 ay bedava',
                 style: const TextStyle(color: LifeRadarColors.turquoise),
               ),
             ),

@@ -154,14 +154,16 @@ class VipScreen extends StatelessWidget {
                     Expanded(
                       child: _GoldPriceBox(
                         label: 'Aylık',
-                        price: SubscriptionData.vipMonthly,
+                        price: _vipPrice(state, AppState.vipMonthlyId,
+                            SubscriptionData.vipMonthly),
                       ),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: _GoldPriceBox(
                         label: 'Yıllık',
-                        price: SubscriptionData.vipYearly,
+                        price: _vipPrice(state, AppState.vipYearlyId,
+                            SubscriptionData.vipYearly),
                         highlight: true,
                       ),
                     ),
@@ -205,14 +207,14 @@ class VipScreen extends StatelessWidget {
             )
           else ...[
             _GoldButton(
-              label: 'VIP Aylık  ${_vipPrice(state, AppState.vipMonthlyId, "₺99,99/ay")}',
+              label: 'VIP Aylık  ${_vipPrice(state, AppState.vipMonthlyId, SubscriptionData.vipMonthly)}',
               onPressed: () =>
                   context.read<AppState>().buySubscription(AppState.vipMonthlyId),
             ),
             const SizedBox(height: 10),
             _GoldButton(
               label:
-                  'VIP Yıllık  ${_vipPrice(state, AppState.vipYearlyId, "₺999,99/yıl")}  ·  2 ay bedava',
+                  'VIP Yıllık  ${_vipPrice(state, AppState.vipYearlyId, SubscriptionData.vipYearly)}  ·  2 ay bedava',
               onPressed: () =>
                   context.read<AppState>().buySubscription(AppState.vipYearlyId),
             ),
