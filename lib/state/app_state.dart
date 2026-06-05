@@ -135,7 +135,7 @@ class AppState extends ChangeNotifier {
     'lr_quiet', 'lr_quiet_s', 'lr_quiet_e',
     'lr_riskhist', 'lr_daily_last', 'lr_follow_last',
     'lr_loc_on', 'lr_ai_share',
-    'lr_saved', 'lr_follows', 'lr_onboard',
+    'lr_saved', 'lr_follows', 'lr_onboard', 'lr_tier',
   ];
 
   int get savedCount => _savedEventIds.length;
@@ -522,6 +522,10 @@ class AppState extends ChangeNotifier {
     _authEmail = null;
     _authName = null;
     _guest = false;
+    // Abonelik cihaza değil mağaza hesabına bağlıdır: çıkışta sıfırla.
+    // Gerçek bir abonelik varsa yeni girişte restorePurchases ile geri gelir.
+    _tier = SubscriptionTier.free;
+    lsRemove('lr_tier');
     lsRemove('lr_token');
     lsRemove('lr_email');
     lsRemove('lr_name');
