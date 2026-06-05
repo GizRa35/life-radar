@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:http/http.dart' as http;
 
 import '../../core/api_config.dart';
@@ -80,7 +79,8 @@ class RssSource {
 
   Future<List<RadarEvent>> fetchCategory(EventCategory category) async {
     final feeds = _feeds[category];
-    if (feeds == null || !kIsWeb) return [];
+    // RSS ayrıştırma worker proxy'sinde (/api/rss) yapılır; her platformda çalışır.
+    if (feeds == null) return [];
 
     final all = <RadarEvent>[];
     for (final feed in feeds) {
