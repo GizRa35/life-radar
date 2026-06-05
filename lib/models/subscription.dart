@@ -46,10 +46,10 @@ class SubscriptionData {
   SubscriptionData._();
 
   // ---- Fiyatlandırma (örnek; mağaza entegrasyonu Faz sonrası) ----
-  static const String premiumMonthly = '₺149 / ay';
-  static const String premiumYearly = '₺990 / yıl';
-  static const String vipMonthly = '₺399 / ay';
-  static const String vipYearly = '₺2.990 / yıl';
+  static const String premiumMonthly = '₺49,99 / ay';
+  static const String premiumYearly = '₺499,99 / yıl';
+  static const String vipMonthly = '₺99,99 / ay';
+  static const String vipYearly = '₺999,99 / yıl';
   static const String freeTrial = '7 Gün Ücretsiz Deneme';
 
   static const String premiumSubtitle =
