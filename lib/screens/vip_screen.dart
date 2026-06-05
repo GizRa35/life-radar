@@ -8,6 +8,12 @@ import '../state/app_state.dart';
 import '../widgets/plan_comparison.dart';
 import 'vip_hub_screen.dart';
 
+/// Store fiyatını döndürür; gelmezse yedek metni gösterir.
+String _vipPrice(AppState state, String id, String fallback) {
+  final p = state.subscriptionPrice(id);
+  return p.isEmpty ? fallback : p;
+}
+
 const Color _gold = Color(0xFFC9A227);
 const Color _goldLight = Color(0xFFE9C766);
 
@@ -190,23 +196,32 @@ class VipScreen extends StatelessWidget {
           const PlanComparison(),
 
           const SizedBox(height: 24),
-          _GoldButton(
-            label: active
-                ? 'VIP Merkezini Aç'
-                : 'VIP\'e Yükselt — 7 Gün Ücretsiz',
-            onPressed: () {
-              if (active) {
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const VipHubScreen()),
-                );
-              } else {
-                context.read<AppState>().setTier(SubscriptionTier.vip);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('VIP etkinleştirildi (deneme)')),
-                );
-              }
-            },
-          ),
+          if (active)
+            _GoldButton(
+              label: 'VIP Merkezini Aç',
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const VipHubScreen()),
+              ),
+            )
+          else ...[
+            _GoldButton(
+              label: 'VIP Aylık  ${_vipPrice(state, AppState.vipMonthlyId, "₺99,99/ay")}',
+              onPressed: () =>
+                  context.read<AppState>().buySubscription(AppState.vipMonthlyId),
+            ),
+            const SizedBox(height: 10),
+            _GoldButton(
+              label:
+                  'VIP Yıllık  ${_vipPrice(state, AppState.vipYearlyId, "₺999,99/yıl")}  ·  2 ay bedava',
+              onPressed: () =>
+                  context.read<AppState>().buySubscription(AppState.vipYearlyId),
+            ),
+            const SizedBox(height: 6),
+            TextButton(
+              onPressed: () => context.read<AppState>().restorePurchases(),
+              child: const Text('Satın almaları geri yükle'),
+            ),
+          ],
           const SizedBox(height: 24),
         ],
       ),

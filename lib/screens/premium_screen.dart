@@ -8,6 +8,12 @@ import '../state/app_state.dart';
 import '../widgets/plan_comparison.dart';
 import 'vip_screen.dart';
 
+/// Store'dan gelen fiyatı döndürür; gelmezse yedek metni gösterir.
+String _priceText(AppState state, String id, String fallback) {
+  final p = state.subscriptionPrice(id);
+  return p.isEmpty ? fallback : p;
+}
+
 /// PREMIUM SAYFASI — Life Radar Premium
 class PremiumScreen extends StatelessWidget {
   const PremiumScreen({super.key});
@@ -148,20 +154,44 @@ class PremiumScreen extends StatelessWidget {
           const PlanComparison(),
 
           const SizedBox(height: 24),
-          ElevatedButton(
-            onPressed: active
-                ? null
-                : () {
-                    context.read<AppState>().setTier(SubscriptionTier.premium);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Premium etkinleştirildi (deneme)')),
-                    );
-                  },
-            style: ElevatedButton.styleFrom(
-              minimumSize: const Size.fromHeight(52),
+          if (active)
+            ElevatedButton(
+              onPressed: null,
+              style: ElevatedButton.styleFrom(
+                  minimumSize: const Size.fromHeight(52)),
+              child: const Text('Premium Aktif'),
+            )
+          else ...[
+            // Aylık abonelik
+            ElevatedButton(
+              onPressed: () =>
+                  context.read<AppState>().buySubscription(AppState.premiumMonthlyId),
+              style: ElevatedButton.styleFrom(
+                  minimumSize: const Size.fromHeight(52)),
+              child: Text(
+                'Aylık  ${_priceText(state, AppState.premiumMonthlyId, "₺49,99/ay")}',
+              ),
             ),
-            child: Text(active ? 'Premium Aktif' : '7 Gün Ücretsiz Dene'),
-          ),
+            const SizedBox(height: 10),
+            // Yıllık abonelik (indirimli)
+            OutlinedButton(
+              onPressed: () =>
+                  context.read<AppState>().buySubscription(AppState.premiumYearlyId),
+              style: OutlinedButton.styleFrom(
+                minimumSize: const Size.fromHeight(52),
+                side: const BorderSide(color: LifeRadarColors.turquoise),
+              ),
+              child: Text(
+                'Yıllık  ${_priceText(state, AppState.premiumYearlyId, "₺499,99/yıl")}  ·  2 ay bedava',
+                style: const TextStyle(color: LifeRadarColors.turquoise),
+              ),
+            ),
+            const SizedBox(height: 6),
+            TextButton(
+              onPressed: () => context.read<AppState>().restorePurchases(),
+              child: const Text('Satın almaları geri yükle'),
+            ),
+          ],
           const SizedBox(height: 10),
           OutlinedButton.icon(
             onPressed: () {

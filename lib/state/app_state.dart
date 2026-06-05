@@ -22,6 +22,7 @@ import '../services/feed/earthquake_source.dart';
 import '../services/feed/feed_service.dart';
 import '../services/feed/translation_service.dart';
 import '../services/location_service.dart';
+import '../services/purchase_service.dart';
 
 /// Tek merkezi uygulama durumu (Provider / ChangeNotifier).
 ///
@@ -38,6 +39,8 @@ class AppState extends ChangeNotifier {
     _loadSaved();
     _loadFollows();
     _loadOnboard();
+    _loadTier();
+    _initPurchases();
     // Açılışta gerçek haber/afet verisini çek (başlangıçta mock gösterilir).
     loadFeeds();
     // Konumu tespit et (IP tabanlı) — afet riski buna göre güncellenir.
@@ -954,8 +957,56 @@ class AppState extends ChangeNotifier {
 
   void setTier(SubscriptionTier tier) {
     _tier = tier;
+    lsSet('lr_tier', tier.name);
     notifyListeners();
   }
+
+  void _loadTier() {
+    final t = lsGet('lr_tier');
+    if (t == 'vip') {
+      _tier = SubscriptionTier.vip;
+    } else if (t == 'premium') {
+      _tier = SubscriptionTier.premium;
+    }
+  }
+
+  // ---- Abonelik satın alma (App Store / Google Play) ----
+  final PurchaseService _purchases = PurchaseService();
+  String? _purchaseMessage;
+  String? get purchaseMessage => _purchaseMessage;
+  void clearPurchaseMessage() => _purchaseMessage = null;
+
+  void _initPurchases() {
+    _purchases.init(
+      onTier: (t) {
+        // Satın alınan tier mevcut olandan düşükse yükseltme (VIP > Premium).
+        if (t == SubscriptionTier.vip ||
+            (_tier == SubscriptionTier.free)) {
+          setTier(t);
+        } else if (t == SubscriptionTier.premium && _tier != SubscriptionTier.vip) {
+          setTier(t);
+        }
+      },
+      onMsg: (m) {
+        _purchaseMessage = m;
+        notifyListeners();
+      },
+    );
+  }
+
+  /// Satın alınabilir ürün kimlikleri (UI için).
+  static const String premiumMonthlyId = PurchaseService.premiumMonthly;
+  static const String premiumYearlyId = PurchaseService.premiumYearly;
+  static const String vipMonthlyId = PurchaseService.vipMonthly;
+  static const String vipYearlyId = PurchaseService.vipYearly;
+
+  /// Ürünün store fiyatı (ör. "₺49,99"); store'dan gelmezse boş.
+  String subscriptionPrice(String productId) => _purchases.priceOf(productId);
+
+  Future<void> buySubscription(String productId) =>
+      _purchases.buy(productId);
+
+  Future<void> restorePurchases() => _purchases.restore();
 
   // Ücretsiz katmanda günlük AI soru limiti (5).
   static const int freeAiQuestionLimit = 5;
