@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:http/http.dart' as http;
 
 import '../../core/api_config.dart';
@@ -10,7 +9,8 @@ class TranslationService {
   /// [texts] listesini [to] diline ('tr' veya 'en') çevirir.
   /// Hata olursa orijinal metinleri döndürür (uygulama hep dolu kalır).
   Future<List<String>> translate(List<String> texts, String to) async {
-    if (texts.isEmpty || !kIsWeb) return texts;
+    // Çeviri worker proxy'sinde (/api/translate) yapılır; her platformda çalışır.
+    if (texts.isEmpty) return texts;
     try {
       final uri = Uri.parse('${ApiConfig.base}/api/translate');
       final res = await http
