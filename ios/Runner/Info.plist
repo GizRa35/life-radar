@@ -59,7 +59,7 @@
 	     - CFBundleURLSchemes: ters çevrilmiş hali
 	       "com.googleusercontent.apps.<CLIENT_ID>" -->
 	<key>GIDClientID</key>
-	<string>YOUR_IOS_CLIENT_ID.apps.googleusercontent.com</string>
+	<string>16315127325-49mq0837a3094bnacbclk575oqfsqkdn.apps.googleusercontent.com</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -67,7 +67,7 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.YOUR_IOS_CLIENT_ID</string>
+				<string>com.googleusercontent.apps.16315127325-49mq0837a3094bnacbclk575oqfsqkdn</string>
 			</array>
 		</dict>
 	</array>
