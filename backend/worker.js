@@ -103,26 +103,43 @@ async function rss(url) {
 async function article(url) {
   const aUrl = url.searchParams.get('url');
   if (!aUrl || aUrl.includes('news.google.')) return json({ text: '', images: [] });
-  const res = await fetch(aUrl, { headers: { 'User-Agent': UA } });
-  let html = await res.text();
+  const res = await fetch(aUrl, {
+    headers: { 'User-Agent': UA, 'Accept-Language': 'tr,en;q=0.8' },
+  });
+  const html = await res.text();
+
+  // 1) Görseller — ÖNEMLİ: <figure> silinmeden ÖNCE, ham HTML'den topla.
   const images = [];
   const og = (html.match(/<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i) || [])[1];
   if (og) images.push(og);
-  html = html
+  const tw = (html.match(/<meta[^>]+name=["']twitter:image["'][^>]+content=["']([^"']+)["']/i) || [])[1];
+  if (tw && !images.includes(tw)) images.push(tw);
+  const junkImg = /(logo|icon|sprite|avatar|pixel|1x1|blank|placeholder|spacer|emoji|favicon|ad[-_]|gravatar)/i;
+  for (const m of html.matchAll(/<img[^>]+(?:src|data-src)=["']([^"']+)["']/gi)) {
+    const src = m[1];
+    if (/^https?:\/\//.test(src) && !junkImg.test(src) && !images.includes(src)) {
+      images.push(src);
+    }
+    if (images.length >= 6) break;
+  }
+
+  // 2) Metin — gürültüyü temizle, en uzun <article> (>400) yoksa tüm gövde.
+  let clean = html
     .replace(/<script[\s\S]*?<\/script>/gi, ' ')
     .replace(/<style[\s\S]*?<\/style>/gi, ' ')
     .replace(/<(nav|header|footer|aside|form|figure|figcaption|noscript|svg)[\s\S]*?<\/\1>/gi, ' ');
-  const articleBlocks = [...html.matchAll(/<article[^>]*>([\s\S]*?)<\/article>/gi)].map((m) => m[1]);
-  const scope = articleBlocks.sort((a, b) => b.length - a.length)[0] || html;
-  for (const m of scope.matchAll(/<img[^>]+src=["']([^"']+)["']/gi)) {
-    if (m[1].startsWith('http') && !images.includes(m[1])) images.push(m[1]);
-    if (images.length >= 5) break;
+  let content = clean;
+  const arts = [...clean.matchAll(/<article[^>]*>([\s\S]*?)<\/article>/gi)].map((m) => m[1]);
+  if (arts.length) {
+    const best = arts.sort((a, b) => b.length - a.length)[0];
+    if (best.length > 400) content = best;
   }
-  const junk = /(çerez|cookie|abone|reklam|tüm hakları|telif|giriş yap|kayıt ol|yorum yap|paylaş)/i;
-  const paras = [...scope.matchAll(/<p[^>]*>([\s\S]*?)<\/p>/gi)]
+  const bl = /(çerez|cookie|abone|reklam|tüm hakları|telif|©|paylaş|ilgili haber|whatsapp|giriş yap|üye ol|bülten|advertisement|subscribe|newsletter|son dakika|canlı izle|copyright|kaynak:|fotoğraf:)/i;
+  const paras = [...content.matchAll(/<p[^>]*>([\s\S]*?)<\/p>/gi)]
     .map((m) => stripTags(m[1]))
-    .filter((t) => t.length >= 40 && !junk.test(t));
-  const text = paras.join('\n\n');
+    .filter((t) => t.length >= 35 && !bl.test(t));
+  let text = paras.join('\n\n');
+  if (text.length > 8000) text = text.slice(0, 8000);
   return json({ text, images });
 }
 

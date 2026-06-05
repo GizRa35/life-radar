@@ -154,15 +154,15 @@ String _avUnisex(String seed) => '$_avBase$seed';
 
 final Map<String, List<String>> _avatarGroups = {
   'Kadın': [
-    for (final s in ['Zoe', 'Mia', 'Aria', 'Luna', 'Nora', 'Ela', 'Defne', 'Ada'])
+    for (final s in ['Zoe', 'Mia', 'Aria', 'Luna', 'Defne'])
       _avWoman(s),
   ],
   'Erkek': [
-    for (final s in ['Can', 'Emir', 'Ali', 'Mert', 'Kerem', 'Baran', 'Efe', 'Aras'])
+    for (final s in ['Can', 'Emir', 'Ali', 'Mert', 'Efe'])
       _avMan(s),
   ],
   'Unisex': [
-    for (final s in ['Sky', 'River', 'Robin', 'Alex', 'Jules', 'Toni', 'Rio', 'Sam'])
+    for (final s in ['Sky', 'River', 'Robin', 'Alex', 'Sam'])
       _avUnisex(s),
   ],
 };
