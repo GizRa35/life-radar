@@ -47,5 +47,7 @@
 	<true/>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Bulunduğun bölgeye göre afet ve risk analizini gösterebilmemiz için konumun kullanılır.</string>
 </dict>
 </plist>

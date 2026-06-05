@@ -17,14 +17,12 @@ class LocationService {
   static const String _ipDirect = 'https://ipapi.co/json/';
 
   Future<UserLocation?> detect() async {
-    // 1) Tarayıcı GPS (en doğru)
-    if (kIsWeb) {
-      final coords = await getBrowserCoords();
-      if (coords != null) {
-        final precise = await _reverseGeocode(coords[0], coords[1]);
-        if (precise != null) return precise;
-        return UserLocation(city: 'Konumunuz', lat: coords[0], lng: coords[1]);
-      }
+    // 1) Cihaz GPS'i — web'de tarayıcı, mobilde geolocator (en doğru).
+    final coords = await getBrowserCoords();
+    if (coords != null) {
+      final precise = await _reverseGeocode(coords[0], coords[1]);
+      if (precise != null) return precise;
+      return UserLocation(city: 'Konumunuz', lat: coords[0], lng: coords[1]);
     }
     // 2) IP tabanlı (yedek)
     return _ipGeo();
