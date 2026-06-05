@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:http/http.dart' as http;
 
 import '../core/api_config.dart';
@@ -16,9 +15,7 @@ class ArticleContent {
 /// Haberin tam metnini ve görsellerini kaynaktan çeker (sunucu proxy üzerinden).
 class ArticleService {
   Future<ArticleContent?> fetch(String url) async {
-    // Çıkarma sunucu tarafında yapılır (CORS + HTML ayrıştırma). Web'de proxy
-    // aynı kökende; mobilde şimdilik desteklenmiyor (null döner).
-    if (!kIsWeb) return null;
+    // Çıkarma sunucu tarafında (worker) yapılır — hem web hem mobil çalışır.
     // Google Haberler yönlendirme linkleri gerçek haberi vermez (Google sayfası
     // döner) — çıkarmayı atla, özet + "tamamını oku" kullanılır.
     if (url.contains('news.google.')) return null;

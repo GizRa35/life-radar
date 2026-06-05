@@ -1,5 +1,3 @@
-import 'package:flutter/foundation.dart' show kIsWeb;
-
 import 'api_config.dart';
 import '../services/web/open_url_stub.dart'
     if (dart.library.html) '../services/web/open_url_web.dart';
@@ -8,12 +6,11 @@ import '../services/web/open_url_stub.dart'
 class Media {
   Media._();
 
-  /// Web'de haber görselini CORS olmadan göstermek için yerel proxy'den geçirir.
+  /// Haber görselini her platformda worker proxy'sinden geçirir.
+  /// (Web'de CORS'u, mobilde "hotlink" engelini aşar + önbellekler.)
   static String proxiedImage(String url) {
-    if (kIsWeb) {
-      return '${ApiConfig.base}/api/img?url=${Uri.encodeComponent(url)}';
-    }
-    return url;
+    if (url.isEmpty) return url;
+    return '${ApiConfig.base}/api/img?url=${Uri.encodeComponent(url)}';
   }
 
   /// Linki harici olarak açar (web'de yeni sekme).
