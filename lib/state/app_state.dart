@@ -15,6 +15,7 @@ import '../models/user_context.dart';
 import '../models/user_location.dart';
 import '../services/auth_service.dart';
 import '../services/google_signin.dart';
+import '../services/apple_signin.dart';
 import '../services/local_store.dart';
 import '../services/notify.dart';
 import '../services/ai/groq_service.dart';
@@ -494,6 +495,20 @@ class AppState extends ChangeNotifier {
       return null;
     }
     return r.error ?? 'Google girişi başarısız.';
+  }
+
+  /// Apple ile giriş (iOS). Başarılıysa null, hata varsa Türkçe mesaj.
+  Future<String?> loginWithApple() async {
+    final cred = await appleSignIn();
+    if (cred == null) {
+      return 'Apple girişi iptal edildi veya başarısız.';
+    }
+    final r = await _auth.signInWithApple(cred.idToken, cred.rawNonce);
+    if (r.success && r.idToken != null) {
+      _setSession(r.idToken!, r.email ?? 'Apple kullanıcısı', r.displayName);
+      return null;
+    }
+    return r.error ?? 'Apple girişi başarısız.';
   }
 
   void continueAsGuest() {

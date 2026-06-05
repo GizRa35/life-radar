@@ -1,4 +1,5 @@
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart'
+    show kIsWeb, defaultTargetPlatform, TargetPlatform;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -93,6 +94,10 @@ class _AuthScreenState extends State<AuthScreen> {
         .join(' ');
   }
 
+  /// iOS'ta gerçek Apple ile giriş; web'de henüz desteklenmiyor.
+  bool get _appleAvailable =>
+      !kIsWeb && defaultTargetPlatform == TargetPlatform.iOS;
+
   Future<void> _googleSignIn() async {
     setState(() {
       _loading = true;
@@ -106,29 +111,17 @@ class _AuthScreenState extends State<AuthScreen> {
     });
   }
 
-  void _socialInfo(String provider) {
-    final isApple = provider == 'Apple';
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: Text('$provider ile Giriş'),
-        content: Text(
-          isApple
-              ? 'Apple ile giriş için ücretli Apple Developer hesabı ve Apple '
-                  'cihaz/Safari gerekir. Bu özellik yakında eklenecek. Şimdilik '
-                  'e-posta ile kayıt olabilirsiniz.'
-              : 'Google ile giriş için Firebase\'de Google sağlayıcısının '
-                  'etkinleştirilmesi gerekir. Kurulum tamamlanınca aktif olacak. '
-                  'Şimdilik e-posta ile kayıt olabilirsiniz.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Tamam'),
-          ),
-        ],
-      ),
-    );
+  Future<void> _appleSignIn() async {
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
+    final err = await context.read<AppState>().loginWithApple();
+    if (!mounted) return;
+    setState(() {
+      _loading = false;
+      _error = err;
+    });
   }
 
   Future<void> _submit() async {
@@ -188,8 +181,7 @@ class _AuthScreenState extends State<AuthScreen> {
                   ),
                   const SizedBox(height: 28),
 
-                  // Sosyal giriş yalnızca web'de (mobilde native kurulum gerekir)
-                  if (kIsWeb) ...[
+                  // Sosyal giriş: Google her platformda; Apple yalnızca iOS'ta.
                   // Google ile devam et
                   _SocialButton(
                     label: 'Google ile devam et',
@@ -203,15 +195,18 @@ class _AuthScreenState extends State<AuthScreen> {
                         )),
                     onTap: _loading ? () {} : _googleSignIn,
                   ),
-                  const SizedBox(height: 10),
-                  // Apple ile devam et
-                  _SocialButton(
-                    label: 'Apple ile devam et',
-                    background: Colors.black,
-                    foreground: Colors.white,
-                    icon: const Icon(Icons.apple, color: Colors.white, size: 22),
-                    onTap: () => _socialInfo('Apple'),
-                  ),
+                  // Apple ile devam et (iOS)
+                  if (_appleAvailable) ...[
+                    const SizedBox(height: 10),
+                    _SocialButton(
+                      label: 'Apple ile devam et',
+                      background: Colors.black,
+                      foreground: Colors.white,
+                      icon: const Icon(Icons.apple,
+                          color: Colors.white, size: 22),
+                      onTap: _loading ? () {} : _appleSignIn,
+                    ),
+                  ],
                   const SizedBox(height: 16),
                   Row(
                     children: [
@@ -228,7 +223,6 @@ class _AuthScreenState extends State<AuthScreen> {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  ],
 
                   Container(
                     padding: const EdgeInsets.all(20),

@@ -214,6 +214,44 @@ class AuthService {
     }
   }
 
+  /// Apple identityToken + rawNonce ile Firebase'e giriş (signInWithIdp).
+  Future<AuthResult> signInWithApple(String idToken, String rawNonce) async {
+    if (!configured) {
+      return const AuthResult(
+          success: false, error: 'Firebase API anahtarı ayarlanmamış.');
+    }
+    final uri = Uri.parse('$_base:signInWithIdp?key=$firebaseApiKey');
+    try {
+      final res = await http
+          .post(
+            uri,
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({
+              'postBody':
+                  'id_token=$idToken&providerId=apple.com&nonce=$rawNonce',
+              'requestUri': 'http://localhost:5151',
+              'returnIdpCredential': true,
+              'returnSecureToken': true,
+            }),
+          )
+          .timeout(const Duration(seconds: 30));
+      final data = jsonDecode(res.body) as Map<String, dynamic>;
+      if (res.statusCode == 200) {
+        return AuthResult(
+          success: true,
+          idToken: data['idToken']?.toString(),
+          email: data['email']?.toString(),
+          localId: data['localId']?.toString(),
+          displayName: data['displayName']?.toString(),
+        );
+      }
+      return AuthResult(
+          success: false, error: _msg(data['error']?['message']?.toString()));
+    } catch (_) {
+      return const AuthResult(success: false, error: 'Bağlantı hatası.');
+    }
+  }
+
   Future<AuthResult> _call(String action, String email, String password) async {
     if (!configured) {
       return const AuthResult(

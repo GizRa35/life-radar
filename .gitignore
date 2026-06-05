@@ -1,3 +1,7 @@
+# Anahtar yedeği ve derleme çıktıları (repoya GİRMEZ - gizli!)
+LifeRadar-ANAHTAR-YEDEK/
+*.aab
+
 # Miscellaneous
 *.class
 *.log
@@ -54,3 +58,8 @@ ios_signing_key.pem
 # gecici Apple API araclari
 asc_list.js
 asc_revoke.js
+
+# Android yayin imza anahtari (repoya GIRMEZ - yedekle!)
+android/key.properties
+android/upload-keystore.jks
+*.jks
