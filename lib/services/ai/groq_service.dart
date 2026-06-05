@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:http/http.dart' as http;
 
 import '../../core/api_config.dart';
@@ -18,7 +17,6 @@ class GroqService {
 
   final String model;
 
-  static const String _direct = 'https://api.groq.com/openai/v1/chat/completions';
   static final String _proxy = '${ApiConfig.base}/api/groq';
 
   Future<String> ask({
@@ -88,7 +86,8 @@ Kaynaklar:''';
     required String system,
     required String user,
   }) async {
-    final uri = Uri.parse(kIsWeb ? _proxy : _direct);
+    // Her platformda worker proxy'sinden geç — anahtar backend'de güvende.
+    final uri = Uri.parse(_proxy);
     final body = jsonEncode({
       'model': model,
       'messages': [
