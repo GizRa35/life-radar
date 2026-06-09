@@ -39,15 +39,17 @@ class _AgendaScreenState extends State<AgendaScreen>
   Widget build(BuildContext context) {
     final state = context.watch<AppState>();
     final categories = state.activeTopics;
-    _ensureController(categories.length);
+    // İlk sekme "Senin İçin" (kişisel akış), ardından kategoriler.
+    _ensureController(categories.length + 1);
 
     // Ana Sayfa'dan "Devamını Görüntüle" ile gelinen kategoriye geç.
     final pending = state.agendaCategory;
     if (pending != null) {
-      final idx = categories.indexOf(pending);
+      // +1: "Senin İçin" sekmesi başa eklendiği için kategori indeksi kayar.
+      final idx = categories.indexOf(pending) + 1;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
-        if (idx >= 0 && _controller != null && _controller!.index != idx) {
+        if (idx >= 1 && _controller != null && _controller!.index != idx) {
           _controller!.animateTo(idx);
         }
         context.read<AppState>().clearAgendaCategory();
@@ -68,6 +70,15 @@ class _AgendaScreenState extends State<AgendaScreen>
             indicatorWeight: 3,
             labelStyle: const TextStyle(fontWeight: FontWeight.w700),
             tabs: [
+              const Tab(
+                child: Row(
+                  children: [
+                    Icon(Icons.auto_awesome, size: 16),
+                    SizedBox(width: 6),
+                    Text('Senin İçin'),
+                  ],
+                ),
+              ),
               for (final c in categories)
                 Tab(
                   child: Row(
@@ -85,11 +96,67 @@ class _AgendaScreenState extends State<AgendaScreen>
           child: TabBarView(
             controller: _controller,
             children: [
+              const _ForYouFeed(),
               for (final c in categories) _CategoryFeed(category: c),
             ],
           ),
         ),
       ],
+    );
+  }
+}
+
+/// "Senin İçin" akışı — takip edilen konular + önem sırasına göre kişisel akış.
+class _ForYouFeed extends StatelessWidget {
+  const _ForYouFeed();
+
+  @override
+  Widget build(BuildContext context) {
+    final state = context.watch<AppState>();
+    final events = state.forYouEvents;
+    final followed = state.followedTopics.isNotEmpty;
+
+    if (events.isEmpty) {
+      if (state.loadingFeeds) {
+        return const Center(
+          child: CircularProgressIndicator(color: LifeRadarColors.turquoise),
+        );
+      }
+      return EmptyState(
+        icon: Icons.auto_awesome,
+        color: LifeRadarColors.turquoise,
+        title: 'Senin için akış hazırlanıyor',
+        subtitle: 'Profil > Takip Edilen Konular\'dan ilgi alanı seçersen '
+            'akışın kişiselleşir.',
+        action: TextButton.icon(
+          onPressed: () => context.read<AppState>().loadFeeds(),
+          icon: const Icon(Icons.refresh),
+          label: const Text('Yenile'),
+        ),
+      );
+    }
+
+    return RefreshIndicator(
+      color: LifeRadarColors.turquoise,
+      onRefresh: () => context.read<AppState>().loadFeeds(),
+      child: ListView(
+        padding: const EdgeInsets.fromLTRB(0, 12, 0, 90),
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+            child: Text(
+              followed
+                  ? 'Takip ettiğin konulara göre seçildi'
+                  : 'Bugünün en önemli gelişmeleri',
+              style: const TextStyle(
+                color: LifeRadarColors.textSecondary,
+                fontSize: 13,
+              ),
+            ),
+          ),
+          ...events.map((e) => EventCard(event: e)),
+        ],
+      ),
     );
   }
 }

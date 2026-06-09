@@ -3,9 +3,11 @@ import 'package:provider/provider.dart';
 
 import '../core/theme.dart';
 import '../models/event_category.dart';
+import '../models/radar_event.dart';
 import '../services/tts.dart';
 import '../state/app_state.dart';
 import '../widgets/event_card.dart';
+import 'event_detail_screen.dart';
 
 /// SAYFA 1 — ANA SAYFA
 /// Amaç: kullanıcı 30 saniyede gündemi anlasın.
@@ -116,6 +118,21 @@ class HomeScreen extends StatelessWidget {
           ),
         ),
 
+        // Bugün seni ilgilendiren en önemli 3 gelişme
+        if (state.topToday.isNotEmpty) ...[
+          _SectionTitle('Bugün Öne Çıkanlar', icon: Icons.priority_high),
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 6),
+              child: Column(
+                children: [
+                  for (final e in state.topToday) _TopTodayRow(event: e),
+                ],
+              ),
+            ),
+          ),
+        ],
+
         // Risk Endeksleri
         const SizedBox(height: 8),
         Row(
@@ -190,6 +207,53 @@ class HomeScreen extends StatelessWidget {
         if (followed.isEmpty) const _FollowHint() else ...topicSections,
         const SizedBox(height: 24),
       ],
+      ),
+    );
+  }
+}
+
+/// "Bugün Öne Çıkanlar" kompakt satırı — risk rengi + başlık, dokununca detay.
+class _TopTodayRow extends StatelessWidget {
+  final RadarEvent event;
+  const _TopTodayRow({required this.event});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () => Navigator.of(context).push(
+        MaterialPageRoute(
+            builder: (_) => EventDetailScreen(eventId: event.id)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        child: Row(
+          children: [
+            Container(
+              width: 10,
+              height: 10,
+              decoration: BoxDecoration(
+                color: event.risk.color,
+                shape: BoxShape.circle,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                event.title,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontWeight: FontWeight.w600,
+                  height: 1.3,
+                  color: LifeRadarColors.textPrimary,
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            const Icon(Icons.chevron_right,
+                color: LifeRadarColors.textSecondary, size: 20),
+          ],
+        ),
       ),
     );
   }

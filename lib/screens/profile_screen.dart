@@ -12,6 +12,7 @@ import 'notification_settings_screen.dart';
 import 'personal_info_screen.dart';
 import 'privacy_screen.dart';
 import 'premium_screen.dart';
+import 'source_settings_screen.dart';
 import 'vip_screen.dart';
 
 /// SAYFA 11 — PROFİL
@@ -41,7 +42,28 @@ class ProfileScreen extends StatelessWidget {
           const _EmptyHint('Henüz kaydedilmiş haber yok. Haberlerdeki kaydet '
               'simgesine dokunarak buraya ekleyebilirsiniz.')
         else
-          ...state.savedEvents.map((e) => EventCard(event: e, showActions: false)),
+          // Konuya göre klasörlenmiş kayıtlar.
+          ...state.savedByCategory.entries.expand((entry) => [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+                  child: Row(
+                    children: [
+                      Icon(entry.key.icon, size: 16, color: entry.key.color),
+                      const SizedBox(width: 6),
+                      Text(
+                        '${entry.key.label} (${entry.value.length})',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          color: entry.key.color,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                ...entry.value
+                    .map((e) => EventCard(event: e, showActions: false)),
+              ]),
 
         _SectionTitle('Takip Edilen Konular', icon: Icons.topic_outlined),
         Padding(
@@ -87,6 +109,13 @@ class ProfileScreen extends StatelessWidget {
           trailing: state.userContext.language == 'en' ? 'English' : 'Türkçe',
           onTap: () => Navigator.of(context).push(
             MaterialPageRoute(builder: (_) => const PersonalInfoScreen()),
+          ),
+        ),
+        _SettingTile(
+          icon: Icons.rss_feed,
+          title: 'Kaynak Seçimi',
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute(builder: (_) => const SourceSettingsScreen()),
           ),
         ),
         _SettingTile(

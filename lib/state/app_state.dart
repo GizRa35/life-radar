@@ -45,6 +45,7 @@ class AppState extends ChangeNotifier {
     _loadEmergency();
     _loadFamilyPlan();
     _loadChat();
+    _loadSources();
     _loadOnboard();
     _loadTier();
     _initPurchases();
@@ -163,7 +164,7 @@ class AppState extends ChangeNotifier {
     'lr_loc_on', 'lr_ai_share',
     'lr_saved', 'lr_follows', 'lr_onboard', 'lr_tier',
     'lr_opens', 'lr_reviewed', 'lr_kit', 'lr_em_name', 'lr_em_phone',
-    'lr_plan_home', 'lr_plan_area', 'lr_plan_note', 'lr_chat',
+    'lr_plan_home', 'lr_plan_area', 'lr_plan_note', 'lr_chat', 'lr_src_off',
   ];
 
   int get savedCount => _savedEventIds.length;
@@ -1096,8 +1097,70 @@ class AppState extends ChangeNotifier {
   // ---- Olaylar ----
   List<RadarEvent> get events => _events;
 
-  List<RadarEvent> eventsByCategory(EventCategory category) =>
-      _events.where((e) => e.category == category).toList();
+  List<RadarEvent> eventsByCategory(EventCategory category) => _events
+      .where((e) => e.category == category && isSourceOn(e.source))
+      .toList();
+
+  // ---- Kaynak seçimi (hangi kaynaklardan haber gelsin) ----
+  final Set<String> _blockedSources = {};
+  bool isSourceOn(String source) => !_blockedSources.contains(source);
+
+  /// Mevcut haberlerdeki benzersiz kaynaklar (alfabetik).
+  List<String> get knownSources {
+    final set = <String>{for (final e in _events) e.source};
+    final list = set.where((s) => s.isNotEmpty).toList()..sort();
+    return list;
+  }
+
+  void toggleSource(String source) {
+    if (!_blockedSources.remove(source)) _blockedSources.add(source);
+    lsSet('lr_src_off', _blockedSources.join('|'));
+    notifyListeners();
+  }
+
+  void _loadSources() {
+    final raw = lsGet('lr_src_off');
+    if (raw != null && raw.isNotEmpty) {
+      _blockedSources
+        ..clear()
+        ..addAll(raw.split('|').where((s) => s.isNotEmpty));
+    }
+  }
+
+  /// Önem sırası: kritik > yüksek > orta > düşük, sonra güncellik.
+  int _byImportance(RadarEvent a, RadarEvent b) {
+    final r = b.risk.index.compareTo(a.risk.index);
+    if (r != 0) return r;
+    return b.publishedAt.compareTo(a.publishedAt);
+  }
+
+  /// "Senin İçin": takip edilen konulardan (yoksa genelden), önem sıralı.
+  List<RadarEvent> get forYouEvents {
+    final visible = _events.where((e) => isSourceOn(e.source)).toList();
+    var list = visible;
+    if (_followedTopics.isNotEmpty) {
+      final f = visible.where((e) => _followedTopics.contains(e.category)).toList();
+      if (f.isNotEmpty) list = f;
+    }
+    list = [...list]..sort(_byImportance);
+    return list.take(30).toList();
+  }
+
+  /// Günün özeti: en önemli 3 gelişme.
+  List<RadarEvent> get topToday {
+    final list = _events.where((e) => isSourceOn(e.source)).toList()
+      ..sort(_byImportance);
+    return list.take(3).toList();
+  }
+
+  /// Kaydedilen haberleri kategoriye göre gruplar (klasör görünümü).
+  Map<EventCategory, List<RadarEvent>> get savedByCategory {
+    final map = <EventCategory, List<RadarEvent>>{};
+    for (final e in savedEvents) {
+      map.putIfAbsent(e.category, () => []).add(e);
+    }
+    return map;
+  }
 
   /// Başlık + özet + kaynakta arama (Türkçe karakter duyarsız).
   List<RadarEvent> searchEvents(String query) {
