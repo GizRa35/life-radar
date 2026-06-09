@@ -20,6 +20,7 @@ import '../services/apple_signin.dart';
 import '../services/review_service.dart';
 import '../services/market_service.dart';
 import '../services/weather_service.dart';
+import '../services/ads_service.dart';
 import '../services/local_store.dart';
 import '../services/notify.dart';
 import '../services/ai/groq_service.dart';
@@ -54,6 +55,7 @@ class AppState extends ChangeNotifier {
     _loadTier();
     _initPurchases();
     _bumpAppOpens();
+    AdsService.instance.init(); // AdMob (kademeli reklam)
     loadRates();
     // Açılışta gerçek haber/afet verisini çek (başlangıçta mock gösterilir).
     loadFeeds();

@@ -12,6 +12,7 @@ import '../models/event_category.dart';
 import '../models/impact_analysis.dart';
 import '../models/radar_event.dart';
 import '../services/article_service.dart';
+import '../services/ads_service.dart';
 import '../services/feed/translation_service.dart';
 import '../state/app_state.dart';
 import '../widgets/cached_image.dart';
@@ -63,6 +64,10 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
     if (_started) return;
     _started = true;
     final state = context.read<AppState>();
+    // Kademeli tam ekran reklam (ücretsiz sık, premium seyrek, VIP hiç).
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      AdsService.instance.maybeShowInterstitial(state.tier);
+    });
     final event = state.eventById(widget.eventId);
     final url = event?.url;
     // USGS deprem sayfaları JavaScript ile yüklenir; kazıma anlamsız "tarayıcı

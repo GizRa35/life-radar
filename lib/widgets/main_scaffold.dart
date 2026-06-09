@@ -12,6 +12,7 @@ import '../screens/profile_screen.dart';
 import '../screens/radar_screen.dart';
 import '../screens/search_screen.dart';
 import '../state/app_state.dart';
+import 'ad_banner.dart';
 
 /// Uygulamanın ana kabuğu: 5 sekmeli alt navigasyon, üst barda bildirim zili,
 /// her ekranda erişilebilen AI Asistanı yüzen butonu.
@@ -135,7 +136,12 @@ class _MainScaffoldState extends State<MainScaffold>
           const SizedBox(width: 4),
         ],
       ),
-      body: IndexedStack(index: index, children: _screens),
+      body: Column(
+        children: [
+          Expanded(child: IndexedStack(index: index, children: _screens)),
+          const AdBanner(), // alt banner (yalnızca ücretsiz kullanıcıda görünür)
+        ],
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: _openAssistant,
         backgroundColor: LifeRadarColors.turquoise,

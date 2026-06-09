@@ -59,6 +59,8 @@
 	<string>Sesli sorularını metne çevirebilmemiz için konuşma tanıma kullanılır.</string>
 	<key>NSContactsUsageDescription</key>
 	<string>Acil durum kişini hızlıca eklemen için rehberinden kişi seçmene izin verilir.</string>
+	<key>GADApplicationIdentifier</key>
+	<string>ca-app-pub-3940256099942544~1458002511</string>
 	<!-- Google ile giriş (iOS). Aşağıdaki iki değeri Google Cloud / Firebase
 	     iOS OAuth istemcinizden alıp doldurun:
 	     - GIDClientID: "<CLIENT_ID>.apps.googleusercontent.com"
