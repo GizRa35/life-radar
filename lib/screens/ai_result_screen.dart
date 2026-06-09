@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../core/api_config.dart';
 import '../core/theme.dart';
 import '../state/app_state.dart';
+import '../widgets/action_plan_view.dart';
 import '../widgets/ai_rich_text.dart';
 
 /// AI sonucunu görsel başlık + kart + zengin biçimle gösteren genel ekran.
@@ -14,6 +15,7 @@ class AiResultScreen extends StatefulWidget {
   final Color accent;
   final String subtitle;
   final String? imageQuery; // Pexels görsel arama kelimesi (web)
+  final bool sectionCards; // true → başlıklı kartlar + bütçe kutusu
 
   const AiResultScreen({
     super.key,
@@ -23,6 +25,7 @@ class AiResultScreen extends StatefulWidget {
     this.accent = const Color(0xFFC9A227),
     this.subtitle = 'Life Radar Asistan tarafından sana özel hazırlandı',
     this.imageQuery,
+    this.sectionCards = false,
   });
 
   @override
@@ -157,13 +160,16 @@ class _AiResultScreenState extends State<AiResultScreen> {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Card(
-                    color: Colors.white,
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: AiRichText(text: text, accent: accent),
+                  if (widget.sectionCards)
+                    ActionPlanView(text: text, accent: accent)
+                  else
+                    Card(
+                      color: Colors.white,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: AiRichText(text: text, accent: accent),
+                      ),
                     ),
-                  ),
                   const SizedBox(height: 12),
                   Row(
                     children: [

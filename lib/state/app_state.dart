@@ -865,8 +865,16 @@ class AppState extends ChangeNotifier {
       'afet/ekonomi) o konuya uygun somut hazırlık öner (örn. enerji: powerbank, '
       'yakıt; iklim/sıcak: su miktarı, klima bakımı; sağlık: maske/ilaç stoğu). '
       'KESİN TAHMİN/KEHANET YOK, panik YOK; "olası senaryo" dilini kullan ve '
-      'gerçekçi, abartısız ol. Hane halkı: $_householdDesc kişi. Bağlam: $_ctxLine '
-      'Yanıtı kısa başlıklar + madde madde ver.',
+      'gerçekçi, abartısız ol. Hane halkı: $_householdDesc kişi. Bağlam: $_ctxLine\n\n'
+      'ÇIKTI BİÇİMİ (kesinlikle buna uy):\n'
+      '- 2-4 bölüm kullan; her bölüm başlığını çift yıldız içine al '
+      '(örn. **Su ve Gıda**, **Enerji**, **Sağlık**, **Finans**).\n'
+      '- Her bölümde 2-4 madde; her madde "- " ile başlasın, miktar net olsun, '
+      've mümkünse sonunda yaklaşık fiyatı parantezde ₺ ile belirt '
+      '(örn. "- 48 L şişe su (~₺350)").\n'
+      '- EN SONDA tek satır tahmini toplam bütçe ver, tam olarak şu biçimde:\n'
+      '**Tahmini Bütçe:** ₺X – ₺Y\n'
+      'Fiyatlar Türkiye için kaba/yaklaşık tahmindir.',
       'Haber başlığı: ${event.title}\nÖzet: ${event.summary}\nKategori: ${event.category.label}',
     );
   }

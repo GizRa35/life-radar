@@ -245,6 +245,7 @@ class _ActionPlanButton extends StatelessWidget {
                 accent: LifeRadarColors.turquoise,
                 subtitle: 'Hanene ve duruma özel hazırlık önerileri',
                 imageQuery: _categoryQuery(event.category),
+                sectionCards: true,
                 run: (s) => s.vipActionPlan(event),
               ),
             ),
