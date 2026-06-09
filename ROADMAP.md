@@ -20,6 +20,16 @@ Bu dosya, unutmamak için tutulur. Tamamlananları ve kalanları gösterir.
 - [ ] Submit for Review
 - Ekran görüntüleri ✅ · Açıklama/anahtar kelime ✅ (hazır)
 
+### 1.5) Reklam — gerçek AdMob kimlikleri (yayından önce)
+- [ ] AdMob hesabı aç (admob.google.com) → 2 uygulama ekle (iOS + Android)
+- [ ] App ID'leri al → ios/Info.plist GADApplicationIdentifier +
+      Android meta-data APPLICATION_ID güncelle
+- [ ] Banner + Interstitial reklam birimleri oluştur (iOS+Android) →
+      lib/core/ads_config.dart içindeki TEST kimliklerini gerçekleriyle değiştir
+- [ ] iOS: Info.plist'e SKAdNetworkItems + NSUserTrackingUsageDescription (ATT)
+- NOT: Şu an TEST reklamları çalışıyor; gerçek gelir için yukarıdakiler gerekir.
+      Gerçek kimlik gelmeden gerçek reklamlara TIKLAMA (hesap kapanır).
+
 ### 2) Android — Google Play (sonra)
 - [ ] Android Google girişi için: Firebase'e google-services.json + SHA-1 ekle
 - [ ] Mağaza listesi + feature graphic (1024x500)
