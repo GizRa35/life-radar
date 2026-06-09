@@ -71,9 +71,10 @@ Bu dosya, unutmamak için tutulur. Tamamlananları ve kalanları gösterir.
 - [ ] Hava durumu + hava kalitesi (konuma göre)
 
 ### Parti 6 — Büyük işler
-- [ ] Harita görünümü (yakındaki depremler)
-- [ ] Sesli soru sorma (mikrofon, speech-to-text)
-- [ ] Ana ekran widget'ı (native WidgetKit/Android)
+- [x] Harita görünümü (yakındaki depremler — flutter_map/OSM)
+- [x] Sesli soru sorma (mikrofon, speech_to_text)
+- [ ] Ana ekran widget'ı — ERTELENDİ: iOS'ta ayrı "Widget Extension" hedefi
+      gerektirir (Xcode'da native kurulum). Mac/Xcode ortamında yapılacak.
 
 ## 🔜 Diğer (opsiyonel, sonra)
 - Google Play tam yayını (mağaza listesi + 14 günlük kapalı test + production)

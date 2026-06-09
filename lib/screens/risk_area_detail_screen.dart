@@ -8,6 +8,7 @@ import '../models/risk_area.dart';
 import '../state/app_state.dart';
 import '../widgets/event_card.dart';
 import '../widgets/risk_gauge.dart';
+import 'earthquake_map_screen.dart';
 
 /// Radar drill-down — tek bir risk alanı (Afet, Seyahat vb.) için detay.
 /// Risk göstergesi + ilgili güncel haberler + "Ne yapmalıyım?" önerileri.
@@ -128,6 +129,23 @@ class RiskAreaDetailScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 12),
+            // Afet için: yakındaki depremleri haritada gör.
+            if (type == RiskAreaType.disaster)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    onPressed: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (_) => const EarthquakeMapScreen()),
+                    ),
+                    icon: const Icon(Icons.map_outlined, size: 18),
+                    label: const Text('Yakındaki Depremleri Haritada Gör'),
+                  ),
+                ),
+              ),
+            if (type == RiskAreaType.disaster) const SizedBox(height: 12),
             _SourceBanner(_sourceText),
 
             // Ne yapmalıyım?

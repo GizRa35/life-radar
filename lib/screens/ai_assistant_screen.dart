@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 import '../core/theme.dart';
 import '../services/ai/groq_service.dart';
@@ -26,6 +27,45 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
   final _controller = TextEditingController();
   final _ai = GroqService();
   bool _loading = false;
+
+  // Sesli soru (speech-to-text)
+  final stt.SpeechToText _speech = stt.SpeechToText();
+  bool _speechReady = false;
+  bool _listening = false;
+
+  Future<void> _toggleListen() async {
+    if (_listening) {
+      await _speech.stop();
+      if (mounted) setState(() => _listening = false);
+      return;
+    }
+    if (!_speechReady) {
+      _speechReady = await _speech.initialize(
+        onStatus: (s) {
+          if ((s == 'done' || s == 'notListening') && mounted) {
+            setState(() => _listening = false);
+          }
+        },
+        onError: (_) {
+          if (mounted) setState(() => _listening = false);
+        },
+      );
+    }
+    if (!_speechReady) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text('Mikrofon kullanılamıyor veya izin verilmedi.')),
+        );
+      }
+      return;
+    }
+    setState(() => _listening = true);
+    await _speech.listen(
+      localeId: 'tr_TR',
+      onResult: (r) => setState(() => _controller.text = r.recognizedWords),
+    );
+  }
 
   // Habere göre önerilen takip soruları.
   static const _followUps = [
@@ -250,7 +290,12 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
                 ],
               ),
             ),
-          _Composer(controller: _controller, onSend: () => _send(_controller.text)),
+          _Composer(
+            controller: _controller,
+            onSend: () => _send(_controller.text),
+            onMic: _toggleListen,
+            listening: _listening,
+          ),
         ],
       ),
     );
@@ -374,7 +419,14 @@ class _TypingIndicator extends StatelessWidget {
 class _Composer extends StatelessWidget {
   final TextEditingController controller;
   final VoidCallback onSend;
-  const _Composer({required this.controller, required this.onSend});
+  final VoidCallback onMic;
+  final bool listening;
+  const _Composer({
+    required this.controller,
+    required this.onSend,
+    required this.onMic,
+    required this.listening,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -389,7 +441,7 @@ class _Composer extends StatelessWidget {
                 textInputAction: TextInputAction.send,
                 onSubmitted: (_) => onSend(),
                 decoration: InputDecoration(
-                  hintText: 'Bir soru sor...',
+                  hintText: listening ? 'Dinleniyor...' : 'Bir soru sor...',
                   filled: true,
                   fillColor: LifeRadarColors.cardBackground,
                   contentPadding:
@@ -397,6 +449,16 @@ class _Composer extends StatelessWidget {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(24),
                     borderSide: BorderSide.none,
+                  ),
+                  suffixIcon: IconButton(
+                    tooltip: 'Sesli sor',
+                    onPressed: onMic,
+                    icon: Icon(
+                      listening ? Icons.mic : Icons.mic_none,
+                      color: listening
+                          ? LifeRadarColors.riskHigh
+                          : LifeRadarColors.textSecondary,
+                    ),
                   ),
                 ),
               ),

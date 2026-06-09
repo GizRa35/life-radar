@@ -148,6 +148,48 @@ class EarthquakeSource {
     return RiskLevel.low;
   }
 
+  /// Harita için: verilen konum çevresindeki (radius km, son 30 gün) depremleri
+  /// koordinatlarıyla döndürür. Her öğe: {lat, lng, mag, place, time}.
+  Future<List<Map<String, dynamic>>> nearbyQuakes(
+    double lat,
+    double lng, {
+    double radiusKm = 500,
+    double minMag = 2.5,
+  }) async {
+    final start = DateTime.now()
+        .subtract(const Duration(days: 30))
+        .toIso8601String()
+        .split('T')
+        .first;
+    final uri = Uri.parse(
+      'https://earthquake.usgs.gov/fdsnws/event/1/query'
+      '?format=geojson&latitude=$lat&longitude=$lng&maxradiuskm=$radiusKm'
+      '&minmagnitude=$minMag&starttime=$start&orderby=time&limit=200',
+    );
+    try {
+      final res = await http.get(uri).timeout(const Duration(seconds: 20));
+      if (res.statusCode != 200) return [];
+      final data = jsonDecode(res.body) as Map<String, dynamic>;
+      final features = (data['features'] as List?) ?? [];
+      final out = <Map<String, dynamic>>[];
+      for (final f in features) {
+        final props = (f as Map)['properties'] as Map?;
+        final coords = (f['geometry'] as Map?)?['coordinates'] as List?;
+        if (props == null || coords == null || coords.length < 2) continue;
+        out.add({
+          'lat': (coords[1] as num).toDouble(),
+          'lng': (coords[0] as num).toDouble(),
+          'mag': (props['mag'] as num?)?.toDouble() ?? 0,
+          'place': props['place']?.toString() ?? '',
+          'time': props['time'] as int?,
+        });
+      }
+      return out;
+    } catch (_) {
+      return [];
+    }
+  }
+
   /// Kullanıcının çevresindeki (300 km, son 30 gün) gerçek depremlerden
   /// 0-100 afet risk skoru üretir. Şehir değiştikçe skor değişir.
   Future<int> nearbyRiskScore(double lat, double lng) async {

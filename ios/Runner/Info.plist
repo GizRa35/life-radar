@@ -53,6 +53,10 @@
 	<string>Bulunduğun bölgeye göre afet ve risk analizini gösterebilmemiz için konumun kullanılır.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>Bulunduğun bölgeye göre afet ve risk analizini gösterebilmemiz için konumun kullanılır.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Life Radar Asistan'a sesli soru sorabilmen için mikrofon kullanılır.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Sesli sorularını metne çevirebilmemiz için konuşma tanıma kullanılır.</string>
 	<!-- Google ile giriş (iOS). Aşağıdaki iki değeri Google Cloud / Firebase
 	     iOS OAuth istemcinizden alıp doldurun:
 	     - GIDClientID: "<CLIENT_ID>.apps.googleusercontent.com"
