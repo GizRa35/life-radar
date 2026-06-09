@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 
+import '../core/text_utils.dart';
 import '../core/theme.dart';
 import '../data/mock_data.dart';
 import '../models/app_notification.dart';
@@ -476,8 +477,9 @@ class AppState extends ChangeNotifier {
     _idToken = token;
     _authEmail = email;
     if (name != null && name.trim().isNotEmpty) {
-      _authName = name.trim();
-      lsSet('lr_name', name.trim());
+      final formatted = titleCaseTr(name);
+      _authName = formatted;
+      lsSet('lr_name', formatted);
     }
     _guest = false;
     lsSet('lr_token', token);

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../core/text_utils.dart';
 import '../core/theme.dart';
 import '../models/user_context.dart';
 import '../state/app_state.dart';
@@ -55,7 +56,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
 
   void _save() {
     final ctx = UserContext(
-      name: _name.text.trim(),
+      name: titleCaseTr(_name.text),
       age: _age.text.trim(),
       gender: _gender,
       profession: _profession.text.trim(),
