@@ -1047,15 +1047,17 @@ class AppState extends ChangeNotifier {
 
   /// Profilde gösterilecek ad: kişisel bilgi adı > hesap adı > e-posta > "Kullanıcı".
   String get displayName {
-    if (_userContext.name.trim().isNotEmpty) return _userContext.name.trim();
+    if (_userContext.name.trim().isNotEmpty) {
+      return titleCaseTr(_userContext.name);
+    }
     if (_authName != null && _authName!.trim().isNotEmpty) {
-      return _authName!.trim();
+      return titleCaseTr(_authName!);
     }
     final e = _authEmail;
     if (e != null && e.contains('@')) {
       final u = e.split('@').first;
       if (u.isEmpty) return 'Kullanıcı';
-      return u[0].toUpperCase() + u.substring(1);
+      return titleCaseTr(u);
     }
     return 'Kullanıcı';
   }

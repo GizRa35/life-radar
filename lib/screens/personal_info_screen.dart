@@ -31,7 +31,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
   void initState() {
     super.initState();
     final c = context.read<AppState>().userContext;
-    _name = TextEditingController(text: c.name);
+    _name = TextEditingController(text: titleCaseTr(c.name));
     _age = TextEditingController(text: c.age);
     _profession = TextEditingController(text: c.profession);
     _location = TextEditingController(text: c.location);
