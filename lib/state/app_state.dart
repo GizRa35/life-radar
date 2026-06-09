@@ -16,6 +16,7 @@ import '../models/user_location.dart';
 import '../services/auth_service.dart';
 import '../services/google_signin.dart';
 import '../services/apple_signin.dart';
+import '../services/review_service.dart';
 import '../services/local_store.dart';
 import '../services/notify.dart';
 import '../services/ai/groq_service.dart';
@@ -42,6 +43,7 @@ class AppState extends ChangeNotifier {
     _loadOnboard();
     _loadTier();
     _initPurchases();
+    _bumpAppOpens();
     // Açılışta gerçek haber/afet verisini çek (başlangıçta mock gösterilir).
     loadFeeds();
     // Konumu tespit et (IP tabanlı) — afet riski buna göre güncellenir.
@@ -104,6 +106,25 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
+  // ---- Uygulama içi puan isteği ----
+  int _appOpens = 0;
+  bool _reviewAsked = false;
+
+  void _bumpAppOpens() {
+    _appOpens = (int.tryParse(lsGet('lr_opens') ?? '0') ?? 0) + 1;
+    lsSet('lr_opens', '$_appOpens');
+    _reviewAsked = lsGet('lr_reviewed') == '1';
+  }
+
+  /// Birkaç açılıştan sonra (ve yalnızca bir kez) mağaza puan diyaloğunu göster.
+  /// Kullanıcıyı rahatsız etmemek için 3. açılışta tetiklenir.
+  Future<void> maybeRequestReview() async {
+    if (_reviewAsked || _appOpens < 3) return;
+    _reviewAsked = true;
+    lsSet('lr_reviewed', '1');
+    await requestStoreReview();
+  }
+
   void setLocationEnabled(bool v) {
     _locationEnabled = v;
     lsSet('lr_loc_on', v ? '1' : '0');
@@ -136,6 +157,7 @@ class AppState extends ChangeNotifier {
     'lr_riskhist', 'lr_daily_last', 'lr_follow_last',
     'lr_loc_on', 'lr_ai_share',
     'lr_saved', 'lr_follows', 'lr_onboard', 'lr_tier',
+    'lr_opens', 'lr_reviewed',
   ];
 
   int get savedCount => _savedEventIds.length;

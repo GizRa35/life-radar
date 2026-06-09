@@ -14,6 +14,7 @@ import '../models/radar_event.dart';
 import '../services/article_service.dart';
 import '../services/feed/translation_service.dart';
 import '../state/app_state.dart';
+import '../widgets/cached_image.dart';
 import '../widgets/risk_badge.dart';
 
 /// Kategoriye göre Pexels görsel arama kelimesi.
@@ -172,26 +173,12 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
           // kategoriye uygun bir görseli (Pexels) gösteririz.
           ClipRRect(
             borderRadius: BorderRadius.circular(16),
-            child: Image.network(
-              event.imageUrl != null
+            child: CachedImage(
+              url: event.imageUrl != null
                   ? Media.proxiedImage(event.imageUrl!)
                   : '${ApiConfig.base}/api/pexels?q=${Uri.encodeComponent(_categoryQuery(event.category))}',
               width: double.infinity,
               height: 210,
-              fit: BoxFit.cover,
-              errorBuilder: (_, __, ___) => const SizedBox.shrink(),
-              loadingBuilder: (ctx, child, progress) => progress == null
-                  ? child
-                  : Container(
-                      height: 210,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: LifeRadarColors.cardBackground,
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: const CircularProgressIndicator(
-                          color: LifeRadarColors.turquoise),
-                    ),
             ),
           ),
           const SizedBox(height: 14),
@@ -432,11 +419,9 @@ class _ArticleSection extends StatelessWidget {
                       padding: const EdgeInsets.only(bottom: 12),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(12),
-                        child: Image.network(
-                          Media.proxiedImage(img),
+                        child: CachedImage(
+                          url: Media.proxiedImage(img),
                           width: double.infinity,
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => const SizedBox.shrink(),
                         ),
                       ),
                     ),

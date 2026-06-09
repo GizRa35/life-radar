@@ -8,6 +8,7 @@ import '../models/event_category.dart';
 import '../models/radar_event.dart';
 import '../screens/event_detail_screen.dart';
 import '../state/app_state.dart';
+import 'cached_image.dart';
 import 'risk_badge.dart';
 
 /// Standart olay/haber kartı: Başlık · Özet · Kaynak · Saat · Risk · Detay/Paylaş/Kaydet.
@@ -90,19 +91,10 @@ class EventCard extends StatelessWidget {
                     const SizedBox(width: 12),
                     ClipRRect(
                       borderRadius: BorderRadius.circular(12),
-                      child: Image.network(
-                        Media.proxiedImage(event.imageUrl!),
+                      child: CachedImage(
+                        url: Media.proxiedImage(event.imageUrl!),
                         width: 86,
                         height: 86,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => const SizedBox.shrink(),
-                        loadingBuilder: (c, child, p) => p == null
-                            ? child
-                            : Container(
-                                width: 86,
-                                height: 86,
-                                color: LifeRadarColors.background,
-                              ),
                       ),
                     ),
                   ],

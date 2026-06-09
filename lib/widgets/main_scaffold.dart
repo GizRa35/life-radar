@@ -24,6 +24,15 @@ class MainScaffold extends StatefulWidget {
 class _MainScaffoldState extends State<MainScaffold> {
   static const _titles = ['Ana Sayfa', 'Gündem', 'Radar', 'Rehber', 'Profil'];
 
+  @override
+  void initState() {
+    super.initState();
+    // Uygulama birkaç kez açıldıysa (ve daha önce sorulmadıysa) puan iste.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<AppState>().maybeRequestReview();
+    });
+  }
+
   final _screens = const [
     HomeScreen(),
     AgendaScreen(),
