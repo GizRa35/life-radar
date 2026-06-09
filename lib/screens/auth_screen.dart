@@ -66,6 +66,11 @@ class _AuthScreenState extends State<AuthScreen> {
   final _lastName = TextEditingController();
   String _gender = '';
   String _language = 'tr'; // haber dili tercihi
+  // Kısa tanışma anketi (isteğe bağlı) — AI analizini kişiselleştirir.
+  String _ageRange = '';
+  String _household = '';
+  String _health = '';
+  String _finance = '';
   bool _isRegister = false;
   bool _obscure = true;
   bool _loading = false;
@@ -138,8 +143,15 @@ class _AuthScreenState extends State<AuthScreen> {
     if (_isRegister && err == null) {
       final name = _titleCase('${_firstName.text} ${_lastName.text}');
       state.updateUserContext(
-        state.userContext
-            .copyWith(name: name, gender: _gender, language: _language),
+        state.userContext.copyWith(
+          name: name,
+          gender: _gender,
+          language: _language,
+          age: _ageRange,
+          familyInfo: _household,
+          healthNotes: _health,
+          financialSensitivity: _finance,
+        ),
       );
     }
     setState(() {
@@ -300,6 +312,121 @@ class _AuthScreenState extends State<AuthScreen> {
                             ],
                             onChanged: (v) =>
                                 setState(() => _language = v ?? 'tr'),
+                          ),
+                          const SizedBox(height: 16),
+                          // ---- Kısa tanışma anketi (isteğe bağlı) ----
+                          const Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              'Seni daha iyi tanıyalım (isteğe bağlı)',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w700,
+                                color: LifeRadarColors.navy,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          const Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              'Bu bilgiler analizleri sana göre kişiselleştirir; '
+                              'istemezsen boş bırakabilirsin.',
+                              style: TextStyle(
+                                color: LifeRadarColors.textSecondary,
+                                fontSize: 11,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          DropdownButtonFormField<String>(
+                            value: _ageRange.isEmpty ? null : _ageRange,
+                            isExpanded: true,
+                            decoration: const InputDecoration(
+                              labelText: 'Yaş aralığı',
+                              prefixIcon: Icon(Icons.cake_outlined),
+                              border: OutlineInputBorder(),
+                            ),
+                            items: const [
+                              '18-24',
+                              '25-34',
+                              '35-44',
+                              '45-54',
+                              '55-64',
+                              '65+',
+                            ]
+                                .map((g) => DropdownMenuItem(
+                                    value: g, child: Text(g)))
+                                .toList(),
+                            onChanged: (v) =>
+                                setState(() => _ageRange = v ?? ''),
+                          ),
+                          const SizedBox(height: 12),
+                          DropdownButtonFormField<String>(
+                            value: _household.isEmpty ? null : _household,
+                            isExpanded: true,
+                            decoration: const InputDecoration(
+                              labelText: 'Yaşam durumu',
+                              prefixIcon: Icon(Icons.home_outlined),
+                              border: OutlineInputBorder(),
+                            ),
+                            items: const [
+                              'Yalnız yaşıyorum',
+                              'Eşimle',
+                              'Çocuklu aile',
+                              'Ebeveynlerimle',
+                              'Ev arkadaşıyla',
+                            ]
+                                .map((g) => DropdownMenuItem(
+                                    value: g, child: Text(g)))
+                                .toList(),
+                            onChanged: (v) =>
+                                setState(() => _household = v ?? ''),
+                          ),
+                          const SizedBox(height: 12),
+                          DropdownButtonFormField<String>(
+                            value: _health.isEmpty ? null : _health,
+                            isExpanded: true,
+                            decoration: const InputDecoration(
+                              labelText: 'Sağlık durumu',
+                              prefixIcon:
+                                  Icon(Icons.health_and_safety_outlined),
+                              border: OutlineInputBorder(),
+                            ),
+                            items: const [
+                              'Belirgin bir sağlık sorunum yok',
+                              'Kronik hastalığım var',
+                              'Bağışıklığım düşük',
+                              'Hamile / yeni doğum',
+                              '65 yaş üstü bakım',
+                            ]
+                                .map((g) => DropdownMenuItem(
+                                    value: g, child: Text(g)))
+                                .toList(),
+                            onChanged: (v) =>
+                                setState(() => _health = v ?? ''),
+                          ),
+                          const SizedBox(height: 12),
+                          DropdownButtonFormField<String>(
+                            value: _finance.isEmpty ? null : _finance,
+                            isExpanded: true,
+                            decoration: const InputDecoration(
+                              labelText: 'Finansal hassasiyet',
+                              prefixIcon: Icon(Icons.savings_outlined),
+                              border: OutlineInputBorder(),
+                            ),
+                            items: const [
+                              'Döviz/altın takip ederim',
+                              'Kira öderim',
+                              'Kredi/borç ödemem var',
+                              'Sabit gelirli/emekli',
+                              'Yatırımcıyım',
+                            ]
+                                .map((g) => DropdownMenuItem(
+                                    value: g, child: Text(g)))
+                                .toList(),
+                            onChanged: (v) =>
+                                setState(() => _finance = v ?? ''),
                           ),
                           const SizedBox(height: 12),
                         ],
