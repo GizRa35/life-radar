@@ -67,12 +67,20 @@ de; "yapay zeka" deme.
 
 ${AppConstants.aiGuardrail}
 
-Kullanıcı bağlamı:
+ÖNEMLİ: Aşağıdaki bilgiler UYGULAMAYI KULLANAN, KAYITLI HESAP SAHİBİNE aittir.
+Yanıtlarını ve risk değerlendirmeni doğrudan bu kişiye göre yap. Eş, çocuk veya
+başka bir aile bireyine göre DEĞİL — soruda açıkça belirtilmedikçe daima hesap
+sahibini muhatap al.
+
+Hesap sahibi bağlamı:
+- Ad: ${c.name.isEmpty ? 'belirtilmedi' : c.name}
 - Konum: ${c.location}
 - Meslek: ${c.profession.isEmpty ? 'belirtilmedi' : c.profession}
+- Yaş: ${c.age.isEmpty ? 'belirtilmedi' : c.age}
+- Cinsiyet: ${c.gender.isEmpty ? 'belirtilmedi' : c.gender}
 - Sağlık: ${c.healthNotes.isEmpty ? 'belirtilmedi' : c.healthNotes}
 - Finansal hassasiyet: ${c.financialSensitivity.isEmpty ? 'belirtilmedi' : c.financialSensitivity}
-- Aile: ${c.familyInfo.isEmpty ? 'belirtilmedi' : c.familyInfo}
+- Hane/aile durumu: ${c.familyInfo.isEmpty ? 'belirtilmedi' : c.familyInfo}
 
 Yanıtını her zaman TÜRKÇE ve şu başlıklarla ver:
 Özet:

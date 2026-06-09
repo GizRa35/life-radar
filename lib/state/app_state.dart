@@ -492,6 +492,11 @@ class AppState extends ChangeNotifier {
       final formatted = titleCaseTr(name);
       _authName = formatted;
       lsSet('lr_name', formatted);
+      // Hesap sahibinin adı AI bağlamına da yansısın (boşsa doldur).
+      if (_userContext.name.trim().isEmpty) {
+        _userContext = _userContext.copyWith(name: formatted);
+        lsSet('lr_ctx', jsonEncode(_userContext.toJson()));
+      }
     }
     _guest = false;
     lsSet('lr_token', token);
