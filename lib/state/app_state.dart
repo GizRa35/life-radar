@@ -823,6 +823,12 @@ class AppState extends ChangeNotifier {
   Future<String> _vip(String system, String user) =>
       _ai.custom(apiKey: _apiKey, system: system, user: user);
 
+  // Haber detayında yüklenen tam metin (aksiyon planını habere özel kılmak için).
+  final Map<String, String> _articleTextCache = {};
+  void cacheArticleText(String eventId, String text) {
+    if (text.trim().isNotEmpty) _articleTextCache[eventId] = text.trim();
+  }
+
   /// 2 — Kişisel AI Analisti: günün en önemli 3 gelişmesi.
   Future<String> vipDailyAnalyst() => _vip(
         'Sen Life Radar Asistan\'sın, kişisel bir analistsin. Kullanıcı bağlamı: $_ctxLine '
@@ -856,26 +862,33 @@ class AppState extends ChangeNotifier {
   /// Akıllı Aksiyon Danışmanı — belirli bir habere göre MİKTARLI, haneye özel
   /// somut hazırlık/aksiyon önerileri.
   Future<String> vipActionPlan(RadarEvent event) {
+    final article = _articleTextCache[event.id] ?? '';
+    final articleExcerpt =
+        article.isEmpty ? '' : article.substring(0, article.length.clamp(0, 1800));
     return _vip(
-      'Sen kişisel hazırlık ve aksiyon danışmanısın. Verilen habere göre, '
-      'kullanıcının HANE HALKI SAYISINA ve durumuna ölçeklenmiş SOMUT, MİKTARLI '
-      've BÜTÇEYE UYGUN öneriler ver. '
-      'Örnek tarz: "4 kişilik hane için ~1 aylık: 20 kg pirinç, 10 kg mercimek, '
-      '5 L sıvı yağ" gibi net miktarlar. Konu gıda değilse (iklim/enerji/sağlık/'
-      'afet/ekonomi) o konuya uygun somut hazırlık öner (örn. enerji: powerbank, '
-      'yakıt; iklim/sıcak: su miktarı, klima bakımı; sağlık: maske/ilaç stoğu). '
-      'KESİN TAHMİN/KEHANET YOK, panik YOK; "olası senaryo" dilini kullan ve '
-      'gerçekçi, abartısız ol. Hane halkı: $_householdDesc kişi. Bağlam: $_ctxLine\n\n'
+      'Sen kişisel hazırlık ve aksiyon danışmanısın. Sana VERİLEN HABERE ÖZEL, '
+      'kullanıcının durumuna göre kişiselleştirilmiş bir plan hazırla. '
+      'Öneriler MUTLAKA bu habere bağlı olsun; genel/klişe liste verme. '
+      'Hane halkı sayısına ölçekle, SOMUT ve MİKTARLI ol.\n\n'
+      'KESİN TAHMİN/KEHANET YOK, panik YOK; "olası senaryo" dilini kullan, '
+      'gerçekçi ve abartısız ol. Hane halkı: $_householdDesc kişi. Bağlam: $_ctxLine\n\n'
       'ÇIKTI BİÇİMİ (kesinlikle buna uy):\n'
-      '- 2-4 bölüm kullan; her bölüm başlığını çift yıldız içine al '
-      '(örn. **Su ve Gıda**, **Enerji**, **Sağlık**, **Finans**).\n'
+      '- İLK bölüm başlığı **Bu Gelişme ve Sen** olsun: bu haberin TAM OLARAK '
+      'kullanıcıyı (konumu/durumu) nasıl etkileyebileceğini ve habere özel '
+      '2-3 önceliği madde madde yaz.\n'
+      '- Sonra habere uygun 2-3 bölüm daha ekle; başlıkları çift yıldız içinde '
+      've KONUYLA İLGİLİ olsun (örn. deprem haberinde **Deprem Çantası**, '
+      '**Evi Güvenceye Al**; ekonomi haberinde **Bütçe & Tasarruf**, **Döviz/Altın**; '
+      'salgın haberinde **Hijyen & Sağlık Stoğu**).\n'
       '- Her bölümde 2-4 madde; her madde "- " ile başlasın, miktar net olsun, '
       've mümkünse sonunda yaklaşık fiyatı parantezde ₺ ile belirt '
       '(örn. "- 48 L şişe su (~₺350)").\n'
       '- EN SONDA tek satır tahmini toplam bütçe ver, tam olarak şu biçimde:\n'
       '**Tahmini Bütçe:** ₺X – ₺Y\n'
       'Fiyatlar Türkiye için kaba/yaklaşık tahmindir.',
-      'Haber başlığı: ${event.title}\nÖzet: ${event.summary}\nKategori: ${event.category.label}',
+      'HABER\nBaşlık: ${event.title}\nKategori: ${event.category.label}\n'
+      'Risk: ${event.risk.label}\nÖzet: ${event.summary}'
+      '${articleExcerpt.isEmpty ? '' : '\n\nHaber metni (özet için):\n$articleExcerpt'}',
     );
   }
 

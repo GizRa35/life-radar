@@ -83,6 +83,13 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
       } else {
         _articleFuture = base;
       }
+      // Yüklenen tam metni önbelleğe al → "Bana Özel Aksiyon Planı" habere özel olur.
+      _articleFuture = _articleFuture?.then((c) {
+        if (c != null && c.text.isNotEmpty) {
+          state.cacheArticleText(widget.eventId, c.text);
+        }
+        return c;
+      });
     }
   }
 
