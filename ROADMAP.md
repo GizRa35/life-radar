@@ -2,6 +2,31 @@
 
 Bu dosya, unutmamak için tutulur. Tamamlananları ve kalanları gösterir.
 
+## 🚀 YAYIN İÇİN KALANLAR (önce bunlar)
+
+### 0) TEST (göndermeden önce şart)
+- [ ] Codemagic'te yeni build al → TestFlight'a düşür
+- [ ] Telefonda 10 dk test: açılış (çökme yok), e-posta/Google/Apple giriş,
+      haberler+görsel+çeviri, asistan (yazılı+sesli), harita, rehber seçici,
+      acil çanta/arama, premium/vip konfeti, kur/hava kartları
+
+### 1) iOS — App Store (yayını engelleyenler)
+- [ ] Build'i sürüme bağla
+- [ ] Abonelik fiyatları (4 ürün): Premium ₺49,99/₺499,99 · VIP ₺99,99/₺999,99
+- [ ] App Privacy formu (e-posta+konum+anket; izleme YOK)
+- [ ] Yaş derecelendirme anketi
+- [ ] Copyright: 2026 Life Radar + App Review iletişim bilgisi
+- [ ] Support URL: .../support · Privacy URL: .../privacy (App Privacy bölümü)
+- [ ] Submit for Review
+- Ekran görüntüleri ✅ · Açıklama/anahtar kelime ✅ (hazır)
+
+### 2) Android — Google Play (sonra)
+- [ ] Android Google girişi için: Firebase'e google-services.json + SHA-1 ekle
+- [ ] Mağaza listesi + feature graphic (1024x500)
+- [ ] İçerik derecelendirme + Veri güvenliği formları
+- [ ] Abonelik fiyatları (4 ürün, ₺)
+- [ ] 14 günlük kapalı test (12 test kullanıcısı) → production
+
 ## ✅ Tamamlandı (1.0)
 
 - Gerçek haberler (TR + yabancı kaynaklar), tam metin, görseller, çeviri
@@ -45,30 +70,30 @@ Bu dosya, unutmamak için tutulur. Tamamlananları ve kalanları gösterir.
 11. Worker'a FCM HTTP v1 ile gönderim (Firebase **service account** JSON → OAuth)
 12. Cron tetikleyici: feed'i tara, kritik gelişmede ilgili token'lara push gönder
 
-## 🔜 Uygulama içi yeni özellikler (partiler halinde)
+## ✅ Eklenen uygulama içi özellikler (Parti 1-6)
 
 ### Parti 1 — Acil Durum/Hazırlık
-- [ ] İnteraktif acil çanta listesi (işaretle, % hazırlık)
-- [ ] Hızlı acil arama (AFAD/112 + kişisel acil kişiler)
+- [x] İnteraktif acil çanta listesi (işaretle, % hazırlık)
+- [x] Hızlı acil arama (tek numara 112 + 2 kişisel kişi, rehberden seç)
 
 ### Parti 2 — Acil + Asistan
-- [ ] Aile acil planı (buluşma noktası, iletişim)
-- [ ] Asistan: önerilen sorular
-- [ ] Asistan: sohbet geçmişi (kalıcı)
+- [x] Aile acil planı (buluşma noktası, iletişim)
+- [x] Asistan: önerilen sorular
+- [x] Asistan: sohbet geçmişi (kalıcı)
 
 ### Parti 3 — Haber/İçerik
-- [ ] "Senin İçin" akışı (takip + profil)
-- [ ] Günün özeti kartı ("Bugün seni ilgilendiren 3 gelişme")
-- [ ] Kayıt klasörleri (konuya göre grupla)
-- [ ] Kaynak seçimi (AA/NTV/Guardian...)
+- [x] "Senin İçin" akışı (takip + profil)
+- [x] Günün özeti kartı ("Bugün Öne Çıkanlar")
+- [x] Kayıt klasörleri (konuya göre grupla)
+- [x] Kaynak seçimi (AA/NTV/Guardian...)
 
 ### Parti 4 — Risk Radarı
-- [ ] Risk geçmişi grafiğini ekrana koy
-- [ ] Çoklu şehir takibi (kendi + memleket/aile şehri)
+- [x] Risk geçmişi grafiği (Radar ekranında)
+- [x] Çoklu şehir takibi (kendi + memleket/aile şehri)
 
 ### Parti 5 — Dış veri (worker endpoint'leri)
-- [ ] Döviz/altın widget'ı (USD/EUR/gram altın)
-- [ ] Hava durumu + hava kalitesi (konuma göre)
+- [x] Döviz/altın kartı (USD/EUR/gram altın)
+- [x] Hava durumu + hava kalitesi (konuma göre)
 
 ### Parti 6 — Büyük işler
 - [x] Harita görünümü (yakındaki depremler — flutter_map/OSM)
