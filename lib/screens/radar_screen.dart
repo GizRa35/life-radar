@@ -7,6 +7,7 @@ import '../state/app_state.dart';
 import '../widgets/risk_gauge.dart';
 import 'crisis_radar_screen.dart';
 import 'health_radar_screen.dart';
+import 'risk_area_detail_screen.dart';
 
 /// SAYFA 3 — RADAR (uygulamanın en önemli ekranı)
 /// Üstte kişisel risk puanı (0–100), altında 6 risk alanı.
@@ -28,10 +29,14 @@ class RadarScreen extends StatelessWidget {
           MaterialPageRoute(builder: (_) => const CrisisRadarScreen()),
         );
         break;
-      default:
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('${type.label} detayı yakında')),
+      case RiskAreaType.disaster:
+      case RiskAreaType.travel:
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => RiskAreaDetailScreen(type: type),
+          ),
         );
+        break;
     }
   }
 
