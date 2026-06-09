@@ -46,6 +46,7 @@ class AppState extends ChangeNotifier {
     _loadFamilyPlan();
     _loadChat();
     _loadSources();
+    _loadCities();
     _loadOnboard();
     _loadTier();
     _initPurchases();
@@ -165,6 +166,7 @@ class AppState extends ChangeNotifier {
     'lr_saved', 'lr_follows', 'lr_onboard', 'lr_tier',
     'lr_opens', 'lr_reviewed', 'lr_kit', 'lr_em_name', 'lr_em_phone',
     'lr_plan_home', 'lr_plan_area', 'lr_plan_note', 'lr_chat', 'lr_src_off',
+    'lr_cities',
   ];
 
   int get savedCount => _savedEventIds.length;
@@ -1279,6 +1281,55 @@ class AppState extends ChangeNotifier {
     _planHome = lsGet('lr_plan_home') ?? '';
     _planArea = lsGet('lr_plan_area') ?? '';
     _planNote = lsGet('lr_plan_note') ?? '';
+  }
+
+  // ---- Çoklu şehir takibi (kendi + memleket/aile şehri) ----
+  // Her şehir: {name, lat, lng, score} — afet (deprem) risk skoru.
+  final List<Map<String, dynamic>> _cities = [];
+  List<Map<String, dynamic>> get trackedCities => List.unmodifiable(_cities);
+
+  Future<void> addTrackedCity(String name, double lat, double lng) async {
+    if (_cities.any((c) => c['name'] == name)) return;
+    _cities.add({'name': name, 'lat': lat, 'lng': lng, 'score': null});
+    _saveCities();
+    notifyListeners();
+    // Deprem risk skorunu arka planda hesapla.
+    final score = await _eqSource.nearbyRiskScore(lat, lng);
+    final c = _cities.firstWhere((c) => c['name'] == name, orElse: () => {});
+    if (c.isNotEmpty) {
+      c['score'] = score;
+      _saveCities();
+      notifyListeners();
+    }
+  }
+
+  void removeTrackedCity(String name) {
+    _cities.removeWhere((c) => c['name'] == name);
+    _saveCities();
+    notifyListeners();
+  }
+
+  Future<void> refreshCityScores() async {
+    for (final c in _cities) {
+      c['score'] = await _eqSource.nearbyRiskScore(
+          (c['lat'] as num).toDouble(), (c['lng'] as num).toDouble());
+    }
+    _saveCities();
+    notifyListeners();
+  }
+
+  void _saveCities() => lsSet('lr_cities', jsonEncode(_cities));
+
+  void _loadCities() {
+    final raw = lsGet('lr_cities');
+    if (raw != null && raw.isNotEmpty) {
+      try {
+        _cities
+          ..clear()
+          ..addAll((jsonDecode(raw) as List)
+              .map((e) => Map<String, dynamic>.from(e as Map)));
+      } catch (_) {}
+    }
   }
 
   // ---- Life Radar Asistan sohbet geçmişi (kalıcı) ----

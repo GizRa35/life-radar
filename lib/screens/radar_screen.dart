@@ -5,6 +5,8 @@ import '../core/theme.dart';
 import '../models/risk_area.dart';
 import '../state/app_state.dart';
 import '../widgets/risk_gauge.dart';
+import '../widgets/risk_history_chart.dart';
+import 'cities_screen.dart';
 import 'crisis_radar_screen.dart';
 import 'health_radar_screen.dart';
 import 'risk_area_detail_screen.dart';
@@ -128,6 +130,83 @@ class RadarScreen extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 16),
+
+        // Risk geçmişi grafiği (yeterli veri varsa)
+        if (state.riskHistory.length >= 2) ...[
+          const Padding(
+            padding: EdgeInsets.fromLTRB(16, 0, 16, 4),
+            child: Text(
+              'Risk Geçmişin',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w800,
+                color: LifeRadarColors.navy,
+              ),
+            ),
+          ),
+          Card(
+            margin: const EdgeInsets.symmetric(horizontal: 16),
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: RiskHistoryChart(data: state.riskHistory),
+            ),
+          ),
+          const SizedBox(height: 16),
+        ],
+
+        // Takip edilen şehirler girişi
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(14),
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const CitiesScreen()),
+            ),
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: LifeRadarColors.turquoise.withOpacity(0.08),
+                borderRadius: BorderRadius.circular(14),
+                border:
+                    Border.all(color: LifeRadarColors.turquoise.withOpacity(0.4)),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.location_city,
+                      color: LifeRadarColors.turquoise),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Takip Edilen Şehirler',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w800,
+                            color: LifeRadarColors.navy,
+                            fontSize: 15,
+                          ),
+                        ),
+                        Text(
+                          state.trackedCities.isEmpty
+                              ? 'Memleketin/ailenin şehrini ekle'
+                              : '${state.trackedCities.length} şehir takip ediliyor',
+                          style: const TextStyle(
+                              fontSize: 12,
+                              color: LifeRadarColors.textSecondary),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Icon(Icons.chevron_right,
+                      color: LifeRadarColors.textSecondary),
+                ],
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 16),
+
         for (final area in state.riskAreas)
           _RiskAreaCard(
             area: area,
