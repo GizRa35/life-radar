@@ -34,7 +34,12 @@ workflows:
           xcode-project use-profiles
       - name: iOS IPA derle (bulut backend'e bağlı)
         script: |
+          # Benzersiz, her zaman artan build numarası (Unix zaman damgası) →
+          # "build number already used" hatasını kalıcı olarak önler.
+          BUILD_NUM=$(date +%s)
+          echo "Build number: $BUILD_NUM"
           flutter build ipa --release \
+            --build-number=$BUILD_NUM \
             --dart-define=API_BASE=https://life-radar.liferadar-kaya.workers.dev \
             --export-options-plist=/Users/builder/export_options.plist
     artifacts:
