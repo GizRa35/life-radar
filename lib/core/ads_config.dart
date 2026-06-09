@@ -1,24 +1,20 @@
 import 'package:flutter/foundation.dart';
 
-/// AdMob reklam kimlikleri.
-///
-/// Şu an Google'ın RESMİ TEST kimlikleri kullanılıyor — gerçek reklam değil,
-/// test reklamı gösterir (güvenli, hesap gerektirmez). Yayından önce kendi
-/// AdMob hesabından alacağın gerçek kimliklerle değiştireceğiz.
+/// AdMob reklam kimlikleri (GERÇEK — pub-5548072655592841 / Gizem Kiraz Kaya).
 class AdsConfig {
   AdsConfig._();
 
-  // Uygulama kimliği (Info.plist / AndroidManifest'e de yazılır).
-  static const String androidAppId = 'ca-app-pub-3940256099942544~3347511713';
-  static const String iosAppId = 'ca-app-pub-3940256099942544~1458002511';
+  // Uygulama kimlikleri (Info.plist / AndroidManifest ile aynı olmalı).
+  static const String androidAppId = 'ca-app-pub-5548072655592841~8455003848';
+  static const String iosAppId = 'ca-app-pub-5548072655592841~2806552347';
 
   static String get bannerUnitId =>
       defaultTargetPlatform == TargetPlatform.iOS
-          ? 'ca-app-pub-3940256099942544/2934735716'
-          : 'ca-app-pub-3940256099942544/6300978111';
+          ? 'ca-app-pub-5548072655592841/8797245628'
+          : 'ca-app-pub-5548072655592841/4515758838';
 
   static String get interstitialUnitId =>
       defaultTargetPlatform == TargetPlatform.iOS
-          ? 'ca-app-pub-3940256099942544/4411468910'
-          : 'ca-app-pub-3940256099942544/1033173712';
+          ? 'ca-app-pub-5548072655592841/3161775564'
+          : 'ca-app-pub-5548072655592841/4623570046';
 }

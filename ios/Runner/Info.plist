@@ -60,7 +60,7 @@
 	<key>NSContactsUsageDescription</key>
 	<string>Acil durum kişini hızlıca eklemen için rehberinden kişi seçmene izin verilir.</string>
 	<key>GADApplicationIdentifier</key>
-	<string>ca-app-pub-3940256099942544~1458002511</string>
+	<string>ca-app-pub-5548072655592841~2806552347</string>
 	<!-- Google ile giriş (iOS). Aşağıdaki iki değeri Google Cloud / Firebase
 	     iOS OAuth istemcinizden alıp doldurun:
 	     - GIDClientID: "<CLIENT_ID>.apps.googleusercontent.com"
