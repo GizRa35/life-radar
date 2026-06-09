@@ -5,6 +5,7 @@ import '../core/api_config.dart';
 import '../core/theme.dart';
 import '../models/subscription.dart';
 import '../state/app_state.dart';
+import '../widgets/celebration_overlay.dart';
 import '../widgets/plan_comparison.dart';
 import 'vip_screen.dart';
 
@@ -23,7 +24,8 @@ class PremiumScreen extends StatelessWidget {
     final state = context.watch<AppState>();
     final active = state.isPremium;
 
-    return Scaffold(
+    return CelebrationOverlay(
+      child: Scaffold(
       appBar: AppBar(title: const Text('Life Radar Premium')),
       body: ListView(
         padding: const EdgeInsets.all(16),
@@ -211,6 +213,7 @@ class PremiumScreen extends StatelessWidget {
           ),
           const SizedBox(height: 24),
         ],
+      ),
       ),
     );
   }

@@ -1019,15 +1019,25 @@ class AppState extends ChangeNotifier {
   String? get purchaseMessage => _purchaseMessage;
   void clearPurchaseMessage() => _purchaseMessage = null;
 
+  // Yeni satın alımda kutlama (konfeti) için tek seferlik bayrak.
+  bool _celebrateUpgrade = false;
+  bool get celebrateUpgrade => _celebrateUpgrade;
+  void clearCelebration() => _celebrateUpgrade = false;
+
   void _initPurchases() {
     _purchases.init(
-      onTier: (t) {
+      onTier: (t, isNew) {
         // Satın alınan tier mevcut olandan düşükse yükseltme (VIP > Premium).
         if (t == SubscriptionTier.vip ||
             (_tier == SubscriptionTier.free)) {
           setTier(t);
         } else if (t == SubscriptionTier.premium && _tier != SubscriptionTier.vip) {
           setTier(t);
+        }
+        // Yalnızca YENİ satın almada kutla (geri yüklemede değil).
+        if (isNew) {
+          _celebrateUpgrade = true;
+          notifyListeners();
         }
       },
       onMsg: (m) {

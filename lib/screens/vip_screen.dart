@@ -5,6 +5,7 @@ import '../core/api_config.dart';
 import '../core/theme.dart';
 import '../models/subscription.dart';
 import '../state/app_state.dart';
+import '../widgets/celebration_overlay.dart';
 import '../widgets/plan_comparison.dart';
 import 'vip_hub_screen.dart';
 
@@ -26,7 +27,8 @@ class VipScreen extends StatelessWidget {
     final state = context.watch<AppState>();
     final active = state.isVip;
 
-    return Scaffold(
+    return CelebrationOverlay(
+      child: Scaffold(
       appBar: AppBar(title: const Text('Life Radar VIP')),
       body: ListView(
         padding: const EdgeInsets.all(16),
@@ -226,6 +228,7 @@ class VipScreen extends StatelessWidget {
           ],
           const SizedBox(height: 24),
         ],
+      ),
       ),
     );
   }

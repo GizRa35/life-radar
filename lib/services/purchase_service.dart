@@ -30,13 +30,14 @@ class PurchaseService {
   bool available = false;
 
   /// Satın alma başarılı olunca çağrılır (tier'ı açmak için).
-  void Function(SubscriptionTier tier)? onTierUnlocked;
+  /// [isNew] true ise yeni satın alma, false ise geri yükleme.
+  void Function(SubscriptionTier tier, bool isNew)? onTierUnlocked;
 
   /// Bilgi/hata mesajı (UI'da göstermek için).
   void Function(String message)? onMessage;
 
   Future<void> init({
-    required void Function(SubscriptionTier) onTier,
+    required void Function(SubscriptionTier, bool) onTier,
     void Function(String)? onMsg,
   }) async {
     onTierUnlocked = onTier;
@@ -111,8 +112,9 @@ class PurchaseService {
           final tier = (pd.productID == vipMonthly || pd.productID == vipYearly)
               ? SubscriptionTier.vip
               : SubscriptionTier.premium;
-          onTierUnlocked?.call(tier);
-          if (pd.status == PurchaseStatus.purchased) {
+          final isNew = pd.status == PurchaseStatus.purchased;
+          onTierUnlocked?.call(tier, isNew);
+          if (isNew) {
             onMessage?.call('Aboneliğin etkinleştirildi. Teşekkürler!');
           }
           break;
