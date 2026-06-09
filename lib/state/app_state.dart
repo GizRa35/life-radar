@@ -18,6 +18,8 @@ import '../services/auth_service.dart';
 import '../services/google_signin.dart';
 import '../services/apple_signin.dart';
 import '../services/review_service.dart';
+import '../services/market_service.dart';
+import '../services/weather_service.dart';
 import '../services/local_store.dart';
 import '../services/notify.dart';
 import '../services/ai/groq_service.dart';
@@ -51,6 +53,7 @@ class AppState extends ChangeNotifier {
     _loadTier();
     _initPurchases();
     _bumpAppOpens();
+    loadRates();
     // Açılışta gerçek haber/afet verisini çek (başlangıçta mock gösterilir).
     loadFeeds();
     // Konumu tespit et (IP tabanlı) — afet riski buna göre güncellenir.
@@ -639,6 +642,7 @@ class AppState extends ChangeNotifier {
         if (loc.lat != null && loc.lng != null) {
           _localDisasterScore =
               await _eqSource.nearbyRiskScore(loc.lat!, loc.lng!);
+          loadWeather(); // konuma göre hava durumu (arka planda)
         }
       }
     } catch (_) {
@@ -647,6 +651,32 @@ class AppState extends ChangeNotifier {
       _locating = false;
       notifyListeners();
       _checkAndAlert();
+    }
+  }
+
+  // ---- Döviz/altın + hava durumu (Parti 5) ----
+  final MarketService _market = MarketService();
+  final WeatherService _weatherSvc = WeatherService();
+  Map<String, double?>? _rates;
+  Map<String, double?>? _weather;
+  Map<String, double?>? get rates => _rates;
+  Map<String, double?>? get weather => _weather;
+
+  Future<void> loadRates() async {
+    final r = await _market.fetch();
+    if (r != null) {
+      _rates = r;
+      notifyListeners();
+    }
+  }
+
+  Future<void> loadWeather() async {
+    final loc = _location;
+    if (loc?.lat == null || loc?.lng == null) return;
+    final w = await _weatherSvc.fetch(loc!.lat!, loc.lng!);
+    if (w != null) {
+      _weather = w;
+      notifyListeners();
     }
   }
 

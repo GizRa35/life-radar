@@ -59,6 +59,8 @@ export default {
       if (p === '/api/geo') return await geo();
       if (p === '/api/revgeo') return await revgeo(url);
       if (p === '/api/gdelt') return await gdelt(url);
+      if (p === '/api/rates') return await rates();
+      if (p === '/api/weather') return await weather(url);
       if (p === '/api/health') return json({ ok: true, service: 'Life Radar API' });
       // /api dışındaki her şey → Flutter web uygulaması (statik dosyalar + SPA fallback)
       if (env.ASSETS) return env.ASSETS.fetch(request);
@@ -234,4 +236,69 @@ async function gdelt(url) {
   return new Response(await r.text(), {
     status: r.status, headers: { 'Content-Type': 'application/json; charset=utf-8', ...CORS },
   });
+}
+
+// ---- /api/rates ---- (TRY cinsinden USD, EUR ve gram altın)
+async function rates() {
+  let usd = null, eur = null, gold = null;
+  // USD/EUR — güvenilir, anahtarsız (base USD).
+  try {
+    const r = await fetch('https://open.er-api.com/v6/latest/USD');
+    if (r.ok) {
+      const j = await r.json();
+      const tryRate = j?.rates?.TRY;
+      const eurRate = j?.rates?.EUR;
+      if (tryRate) usd = tryRate;
+      if (tryRate && eurRate) eur = tryRate / eurRate; // 1 EUR kaç TRY
+    }
+  } catch (_) {}
+  // Gram altın — best-effort (XAU/USD * USD/TRY / 31.1035).
+  try {
+    const r = await fetch('https://api.gold-api.com/price/XAU');
+    if (r.ok) {
+      const j = await r.json();
+      const xauUsd = j?.price; // 1 ons altın USD
+      if (xauUsd && usd) gold = (xauUsd * usd) / 31.1034768;
+    }
+  } catch (_) {}
+  const round2 = (n) => (n == null ? null : Math.round(n * 100) / 100);
+  return json({
+    usd: round2(usd),
+    eur: round2(eur),
+    gold: round2(gold),
+    currency: 'TRY',
+  });
+}
+
+// ---- /api/weather ---- (Open-Meteo: anlık hava + hava kalitesi)
+async function weather(url) {
+  const lat = url.searchParams.get('lat');
+  const lon = url.searchParams.get('lon');
+  if (!lat || !lon) return json({ error: 'lat/lon gerekli' }, 400);
+  const out = {};
+  try {
+    const wr = await fetch(
+      `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}` +
+      `&current=temperature_2m,weather_code,wind_speed_10m,relative_humidity_2m&timezone=auto`);
+    if (wr.ok) {
+      const j = await wr.json();
+      const c = j?.current || {};
+      out.temp = c.temperature_2m ?? null;
+      out.code = c.weather_code ?? null;
+      out.wind = c.wind_speed_10m ?? null;
+      out.humidity = c.relative_humidity_2m ?? null;
+    }
+  } catch (_) {}
+  try {
+    const ar = await fetch(
+      `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}` +
+      `&current=european_aqi,pm2_5&timezone=auto`);
+    if (ar.ok) {
+      const j = await ar.json();
+      const c = j?.current || {};
+      out.aqi = c.european_aqi ?? null;
+      out.pm25 = c.pm2_5 ?? null;
+    }
+  } catch (_) {}
+  return json(out);
 }

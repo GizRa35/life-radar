@@ -5,6 +5,7 @@ import '../core/theme.dart';
 import '../models/event_category.dart';
 import '../models/radar_event.dart';
 import '../services/tts.dart';
+import '../services/weather_service.dart';
 import '../state/app_state.dart';
 import '../widgets/event_card.dart';
 import 'event_detail_screen.dart';
@@ -106,6 +107,24 @@ class HomeScreen extends StatelessWidget {
             color: LifeRadarColors.turquoise,
             backgroundColor: LifeRadarColors.cardBackground,
           ),
+
+        // Hava durumu + Piyasa (döviz/altın)
+        if (state.weather != null || state.rates != null)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                if (state.weather != null)
+                  Expanded(child: _WeatherCard(data: state.weather!)),
+                if (state.weather != null && state.rates != null)
+                  const SizedBox(width: 12),
+                if (state.rates != null)
+                  Expanded(child: _MarketCard(data: state.rates!)),
+              ],
+            ),
+          ),
+
         // Günün Özeti
         _SectionTitle('Günün Özeti', icon: Icons.today_outlined),
         Card(
@@ -207,6 +226,118 @@ class HomeScreen extends StatelessWidget {
         if (followed.isEmpty) const _FollowHint() else ...topicSections,
         const SizedBox(height: 24),
       ],
+      ),
+    );
+  }
+}
+
+/// Anlık hava durumu + hava kalitesi kartı.
+class _WeatherCard extends StatelessWidget {
+  final Map<String, double?> data;
+  const _WeatherCard({required this.data});
+
+  @override
+  Widget build(BuildContext context) {
+    final temp = data['temp'];
+    final code = data['code']?.toInt() ?? 0;
+    final aqi = data['aqi']?.toInt();
+    final desc = weatherDesc(code);
+
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: LifeRadarColors.cardBackground,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Text(desc.emoji, style: const TextStyle(fontSize: 22)),
+              const SizedBox(width: 8),
+              Text(
+                temp == null ? '--' : '${temp.round()}°',
+                style: const TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w900,
+                  color: LifeRadarColors.navy,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Text(desc.label,
+              style: const TextStyle(
+                  fontSize: 13, color: LifeRadarColors.textSecondary)),
+          if (aqi != null) ...[
+            const SizedBox(height: 6),
+            Text('Hava kalitesi: ${aqiLabel(aqi)}',
+                style: const TextStyle(
+                    fontSize: 12, color: LifeRadarColors.textSecondary)),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+/// Döviz/altın (TRY) kartı.
+class _MarketCard extends StatelessWidget {
+  final Map<String, double?> data;
+  const _MarketCard({required this.data});
+
+  String _fmt(double? v) {
+    if (v == null) return '--';
+    return '₺${v.toStringAsFixed(2)}';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: LifeRadarColors.cardBackground,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Row(
+            children: [
+              Icon(Icons.trending_up, size: 18, color: LifeRadarColors.turquoise),
+              SizedBox(width: 6),
+              Text('Piyasa',
+                  style: TextStyle(
+                      fontWeight: FontWeight.w800,
+                      color: LifeRadarColors.navy,
+                      fontSize: 13)),
+            ],
+          ),
+          const SizedBox(height: 8),
+          _row('Dolar', _fmt(data['usd'])),
+          _row('Euro', _fmt(data['eur'])),
+          _row('Gram Altın', _fmt(data['gold'])),
+        ],
+      ),
+    );
+  }
+
+  Widget _row(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 3),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label,
+              style: const TextStyle(
+                  fontSize: 12, color: LifeRadarColors.textSecondary)),
+          Text(value,
+              style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                  color: LifeRadarColors.navy)),
+        ],
       ),
     );
   }
