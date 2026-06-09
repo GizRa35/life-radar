@@ -24,9 +24,16 @@ class _Message {
 
 class _AiAssistantScreenState extends State<AiAssistantScreen> {
   final _controller = TextEditingController();
-  final _messages = <_Message>[];
   final _ai = GroqService();
   bool _loading = false;
+
+  // Habere göre önerilen takip soruları.
+  static const _followUps = [
+    'Bu beni nasıl etkiler?',
+    'Ne yapmalıyım?',
+    'Kaynak güvenilir mi?',
+    'Önümüzdeki günlerde ne beklenir?',
+  ];
 
   static const _examples = [
     'Bu savaş Türkiye\'yi etkiler mi?',
@@ -45,15 +52,12 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
       return;
     }
     state.registerAiQuestion();
+    state.addAiMessage(q, true);
+    _controller.clear();
 
-    setState(() {
-      _messages.add(_Message(q, true));
-      _controller.clear();
-    });
-
-    // Anahtar yoksa örnek yanıt; varsa gerçek Gemini çağrısı.
+    // Anahtar yoksa örnek yanıt; varsa gerçek Life Radar Asistan çağrısı.
     if (!state.hasApiKey) {
-      setState(() => _messages.add(_Message(_mockAnswer(q), false)));
+      state.addAiMessage(_mockAnswer(q), false);
       return;
     }
 
@@ -64,10 +68,8 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
       context: state.userContext,
     );
     if (!mounted) return;
-    setState(() {
-      _loading = false;
-      _messages.add(_Message(answer, false));
-    });
+    setState(() => _loading = false);
+    if (mounted) context.read<AppState>().addAiMessage(answer, false);
   }
 
   void _showLimitDialog() {
@@ -120,6 +122,7 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
     final state = context.watch<AppState>();
     final hasKey = state.hasApiKey;
     final remaining = state.remainingAiQuestions;
+    final messages = state.aiMessages;
 
     return Scaffold(
       appBar: AppBar(
@@ -130,6 +133,36 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
             Text('Life Radar Asistan'),
           ],
         ),
+        actions: [
+          if (messages.isNotEmpty)
+            IconButton(
+              tooltip: 'Sohbeti temizle',
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (ctx) => AlertDialog(
+                    title: const Text('Sohbeti temizle'),
+                    content: const Text(
+                        'Tüm sohbet geçmişi silinsin mi? Bu işlem geri alınamaz.'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(ctx),
+                        child: const Text('İptal'),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          context.read<AppState>().clearAiChat();
+                          Navigator.pop(ctx);
+                        },
+                        child: const Text('Temizle'),
+                      ),
+                    ],
+                  ),
+                );
+              },
+              icon: const Icon(Icons.delete_outline),
+            ),
+        ],
       ),
       body: Column(
         children: [
@@ -171,19 +204,52 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
               ),
             ),
           Expanded(
-            child: _messages.isEmpty
+            child: messages.isEmpty
                 ? _EmptyState(examples: _examples, onPick: _send)
                 : ListView.builder(
                     padding: const EdgeInsets.all(16),
-                    itemCount: _messages.length + (_loading ? 1 : 0),
+                    itemCount: messages.length + (_loading ? 1 : 0),
                     itemBuilder: (_, i) {
-                      if (_loading && i == _messages.length) {
+                      if (_loading && i == messages.length) {
                         return const _TypingIndicator();
                       }
-                      return _Bubble(message: _messages[i]);
+                      final m = messages[i];
+                      return _Bubble(
+                        message: _Message(
+                            (m['t'] ?? '').toString(), m['u'] == true),
+                      );
                     },
                   ),
           ),
+          // Önerilen takip soruları (sohbet başladıysa ve yanıt bekleniyor değilse)
+          if (messages.isNotEmpty && !_loading)
+            SizedBox(
+              height: 44,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                children: [
+                  for (final s in _followUps)
+                    Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: ActionChip(
+                        label: Text(s),
+                        onPressed: () => _send(s),
+                        backgroundColor:
+                            LifeRadarColors.turquoise.withOpacity(0.1),
+                        labelStyle: const TextStyle(
+                            color: LifeRadarColors.navy, fontSize: 13),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                          side: BorderSide(
+                              color:
+                                  LifeRadarColors.turquoise.withOpacity(0.4)),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
           _Composer(controller: _controller, onSend: () => _send(_controller.text)),
         ],
       ),

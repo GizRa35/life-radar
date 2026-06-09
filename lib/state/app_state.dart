@@ -43,6 +43,8 @@ class AppState extends ChangeNotifier {
     _loadFollows();
     _loadKit();
     _loadEmergency();
+    _loadFamilyPlan();
+    _loadChat();
     _loadOnboard();
     _loadTier();
     _initPurchases();
@@ -161,6 +163,7 @@ class AppState extends ChangeNotifier {
     'lr_loc_on', 'lr_ai_share',
     'lr_saved', 'lr_follows', 'lr_onboard', 'lr_tier',
     'lr_opens', 'lr_reviewed', 'lr_kit', 'lr_em_name', 'lr_em_phone',
+    'lr_plan_home', 'lr_plan_area', 'lr_plan_note', 'lr_chat',
   ];
 
   int get savedCount => _savedEventIds.length;
@@ -1187,6 +1190,64 @@ class AppState extends ChangeNotifier {
   void _loadEmergency() {
     _emergencyName = lsGet('lr_em_name') ?? '';
     _emergencyPhone = lsGet('lr_em_phone') ?? '';
+  }
+
+  // ---- Aile acil durum planı ----
+  String _planHome = '';
+  String _planArea = '';
+  String _planNote = '';
+  String get planHome => _planHome;
+  String get planArea => _planArea;
+  String get planNote => _planNote;
+  bool get hasFamilyPlan =>
+      _planHome.isNotEmpty || _planArea.isNotEmpty || _planNote.isNotEmpty;
+
+  void setFamilyPlan(String home, String area, String note) {
+    _planHome = home.trim();
+    _planArea = area.trim();
+    _planNote = note.trim();
+    lsSet('lr_plan_home', _planHome);
+    lsSet('lr_plan_area', _planArea);
+    lsSet('lr_plan_note', _planNote);
+    notifyListeners();
+  }
+
+  void _loadFamilyPlan() {
+    _planHome = lsGet('lr_plan_home') ?? '';
+    _planArea = lsGet('lr_plan_area') ?? '';
+    _planNote = lsGet('lr_plan_note') ?? '';
+  }
+
+  // ---- Life Radar Asistan sohbet geçmişi (kalıcı) ----
+  final List<Map<String, dynamic>> _aiMessages = [];
+  List<Map<String, dynamic>> get aiMessages => List.unmodifiable(_aiMessages);
+
+  void addAiMessage(String text, bool isUser) {
+    _aiMessages.add({'t': text, 'u': isUser});
+    // Son 100 mesajı tut (geçmiş şişmesin).
+    if (_aiMessages.length > 100) {
+      _aiMessages.removeRange(0, _aiMessages.length - 100);
+    }
+    lsSet('lr_chat', jsonEncode(_aiMessages));
+    notifyListeners();
+  }
+
+  void clearAiChat() {
+    _aiMessages.clear();
+    lsRemove('lr_chat');
+    notifyListeners();
+  }
+
+  void _loadChat() {
+    final raw = lsGet('lr_chat');
+    if (raw != null && raw.isNotEmpty) {
+      try {
+        _aiMessages
+          ..clear()
+          ..addAll((jsonDecode(raw) as List)
+              .map((e) => Map<String, dynamic>.from(e as Map)));
+      } catch (_) {}
+    }
   }
 
   // ---- Takip edilen konular (Profil) — varsayılan boş; localStorage'da kalıcı ----

@@ -6,6 +6,7 @@ import '../data/mock_data.dart';
 import '../models/emergency_guide.dart';
 import 'emergency_call_screen.dart';
 import 'emergency_kit_screen.dart';
+import 'family_plan_screen.dart';
 
 /// SAYFA 8 — ACİL DURUM REHBERİ
 /// Kategori kartları → detayda görsel başlık + renk kodlu listeler.
@@ -60,6 +61,39 @@ class GuideScreen extends StatelessWidget {
               ),
             ),
           ],
+        ),
+        const SizedBox(height: 12),
+        // Aile acil planı (tam genişlik)
+        InkWell(
+          borderRadius: BorderRadius.circular(16),
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute(builder: (_) => const FamilyPlanScreen()),
+          ),
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: LifeRadarColors.navy.withOpacity(0.06),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: LifeRadarColors.navy.withOpacity(0.25)),
+            ),
+            child: const Row(
+              children: [
+                Icon(Icons.family_restroom, color: LifeRadarColors.navy),
+                SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    'Aile Acil Planı',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w800,
+                      color: LifeRadarColors.navy,
+                      fontSize: 15,
+                    ),
+                  ),
+                ),
+                Icon(Icons.chevron_right, color: LifeRadarColors.textSecondary),
+              ],
+            ),
+          ),
         ),
         const SizedBox(height: 16),
         GridView.count(
