@@ -27,6 +27,37 @@ Bu dosya, unutmamak için tutulur. Tamamlananları ve kalanları gösterir.
 - [ ] Abonelik fiyatları (4 ürün, ₺)
 - [ ] 14 günlük kapalı test (12 test kullanıcısı) → production
 
+## ⭐ YARIN YAPILACAK — Sunucu tarafı abonelik doğrulama
+
+Amaç: (1) hangi HESABIN abone olduğunu görebilmek, (2) sahte/yerel tier'ı
+engellemek (gerçek satın alma kanıtı). ~Yarım gün, backend ağırlıklı.
+
+### Hazırlık (paneller)
+- [ ] App Store Connect → App-Specific **Shared Secret** al (veya App Store
+      Server API anahtarı) — Apple makbuz doğrulama için
+- [ ] Google Play → **service account** + Play Developer API erişimi
+      (purchases.subscriptions.get için)
+- [ ] Cloudflare → token/abone kaydı için **KV namespace** oluştur
+
+### Worker (backend)
+- [ ] `/api/verify-purchase` endpoint: {platform, productId, receipt/token,
+      firebaseIdToken} alır
+- [ ] Apple: verifyReceipt / App Store Server API ile makbuzu doğrula
+- [ ] Google: purchases.subscriptions.get ile token'ı doğrula
+- [ ] Geçerliyse: Firebase kullanıcısını (localId) KV'ye "premium/vip" olarak yaz
+      (+ ürün, bitiş tarihi)
+- [ ] (Ops.) Apple/Google sunucu bildirimleri (yenileme/iptal) için webhook
+
+### Uygulama (client)
+- [ ] Satın alma sonrası makbuzu + Firebase idToken'ı `/api/verify-purchase`'a
+      gönder; tier'ı SUNUCU onayından sonra aç
+- [ ] Açılışta tier'ı sunucudan da teyit et (yerel + sunucu)
+
+### Sahibi için (sen)
+- [ ] Basit korumalı admin endpoint / liste: hangi hesaplar abone (KV'den)
+
+---
+
 ## ✅ Tamamlandı (1.0)
 
 - Gerçek haberler (TR + yabancı kaynaklar), tam metin, görseller, çeviri
