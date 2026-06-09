@@ -108,16 +108,21 @@ class HomeScreen extends StatelessWidget {
         if (state.weather != null || state.rates != null)
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                if (state.weather != null)
-                  Expanded(child: _WeatherCard(data: state.weather!)),
-                if (state.weather != null && state.rates != null)
-                  const SizedBox(width: 12),
-                if (state.rates != null)
-                  Expanded(child: _MarketCard(data: state.rates!)),
-              ],
+            // IntrinsicHeight: iki kartı eşit boyda tutar VE ListView içinde
+            // "sonsuz yükseklik" hatasını önler (aksi halde altındaki içerik
+            // ekran dışına itiliyordu).
+            child: IntrinsicHeight(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  if (state.weather != null)
+                    Expanded(child: _WeatherCard(data: state.weather!)),
+                  if (state.weather != null && state.rates != null)
+                    const SizedBox(width: 12),
+                  if (state.rates != null)
+                    Expanded(child: _MarketCard(data: state.rates!)),
+                ],
+              ),
             ),
           ),
 
