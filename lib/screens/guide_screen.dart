@@ -4,6 +4,8 @@ import '../core/api_config.dart';
 import '../core/theme.dart';
 import '../data/mock_data.dart';
 import '../models/emergency_guide.dart';
+import 'emergency_call_screen.dart';
+import 'emergency_kit_screen.dart';
 
 /// SAYFA 8 — ACİL DURUM REHBERİ
 /// Kategori kartları → detayda görsel başlık + renk kodlu listeler.
@@ -31,6 +33,35 @@ class GuideScreen extends StatelessWidget {
           style: TextStyle(color: LifeRadarColors.textSecondary),
         ),
         const SizedBox(height: 16),
+        // Hızlı erişim: acil çanta + hızlı arama
+        Row(
+          children: [
+            Expanded(
+              child: _QuickCard(
+                icon: Icons.backpack,
+                label: 'Acil Çantam',
+                color: LifeRadarColors.turquoise,
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(
+                      builder: (_) => const EmergencyKitScreen()),
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _QuickCard(
+                icon: Icons.call,
+                label: 'Hızlı Arama',
+                color: const Color(0xFFFF453A),
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(
+                      builder: (_) => const EmergencyCallScreen()),
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
         GridView.count(
           crossAxisCount: 2,
           shrinkWrap: true,
@@ -42,6 +73,50 @@ class GuideScreen extends StatelessWidget {
               guides.map((g) => _GuideCategoryCard(guide: g)).toList(),
         ),
       ],
+    );
+  }
+}
+
+/// Rehber üstündeki hızlı erişim kartı (Acil Çanta / Hızlı Arama).
+class _QuickCard extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final Color color;
+  final VoidCallback onTap;
+  const _QuickCard({
+    required this.icon,
+    required this.label,
+    required this.color,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(16),
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 18),
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: color.withOpacity(0.4)),
+        ),
+        child: Column(
+          children: [
+            Icon(icon, color: color, size: 30),
+            const SizedBox(height: 8),
+            Text(
+              label,
+              style: TextStyle(
+                fontWeight: FontWeight.w800,
+                color: color,
+                fontSize: 14,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

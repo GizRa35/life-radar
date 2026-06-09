@@ -41,6 +41,8 @@ class AppState extends ChangeNotifier {
     _loadRiskHistory();
     _loadSaved();
     _loadFollows();
+    _loadKit();
+    _loadEmergency();
     _loadOnboard();
     _loadTier();
     _initPurchases();
@@ -158,7 +160,7 @@ class AppState extends ChangeNotifier {
     'lr_riskhist', 'lr_daily_last', 'lr_follow_last',
     'lr_loc_on', 'lr_ai_share',
     'lr_saved', 'lr_follows', 'lr_onboard', 'lr_tier',
-    'lr_opens', 'lr_reviewed',
+    'lr_opens', 'lr_reviewed', 'lr_kit', 'lr_em_name', 'lr_em_phone',
   ];
 
   int get savedCount => _savedEventIds.length;
@@ -1144,6 +1146,47 @@ class AppState extends ChangeNotifier {
           ..addAll((jsonDecode(raw) as List).map((e) => e.toString()));
       } catch (_) {}
     }
+  }
+
+  // ---- Acil çanta listesi (Rehber) — işaretlenenler kalıcı ----
+  final Set<String> _kitChecked = {};
+  bool isKitChecked(String item) => _kitChecked.contains(item);
+  int get kitCheckedCount => _kitChecked.length;
+  void toggleKit(String item) {
+    if (!_kitChecked.remove(item)) _kitChecked.add(item);
+    lsSet('lr_kit', jsonEncode(_kitChecked.toList()));
+    notifyListeners();
+  }
+
+  void _loadKit() {
+    final raw = lsGet('lr_kit');
+    if (raw != null && raw.isNotEmpty) {
+      try {
+        _kitChecked
+          ..clear()
+          ..addAll((jsonDecode(raw) as List).map((e) => e.toString()));
+      } catch (_) {}
+    }
+  }
+
+  // ---- Kişisel acil durum kişisi (Hızlı Arama) ----
+  String _emergencyName = '';
+  String _emergencyPhone = '';
+  String get emergencyName => _emergencyName;
+  String get emergencyPhone => _emergencyPhone;
+  bool get hasEmergencyContact => _emergencyPhone.isNotEmpty;
+
+  void setEmergencyContact(String name, String phone) {
+    _emergencyName = name.trim();
+    _emergencyPhone = phone.trim();
+    lsSet('lr_em_name', _emergencyName);
+    lsSet('lr_em_phone', _emergencyPhone);
+    notifyListeners();
+  }
+
+  void _loadEmergency() {
+    _emergencyName = lsGet('lr_em_name') ?? '';
+    _emergencyPhone = lsGet('lr_em_phone') ?? '';
   }
 
   // ---- Takip edilen konular (Profil) — varsayılan boş; localStorage'da kalıcı ----

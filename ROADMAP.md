@@ -45,6 +45,36 @@ Bu dosya, unutmamak için tutulur. Tamamlananları ve kalanları gösterir.
 11. Worker'a FCM HTTP v1 ile gönderim (Firebase **service account** JSON → OAuth)
 12. Cron tetikleyici: feed'i tara, kritik gelişmede ilgili token'lara push gönder
 
+## 🔜 Uygulama içi yeni özellikler (partiler halinde)
+
+### Parti 1 — Acil Durum/Hazırlık
+- [ ] İnteraktif acil çanta listesi (işaretle, % hazırlık)
+- [ ] Hızlı acil arama (AFAD/112 + kişisel acil kişiler)
+
+### Parti 2 — Acil + Asistan
+- [ ] Aile acil planı (buluşma noktası, iletişim)
+- [ ] Asistan: önerilen sorular
+- [ ] Asistan: sohbet geçmişi (kalıcı)
+
+### Parti 3 — Haber/İçerik
+- [ ] "Senin İçin" akışı (takip + profil)
+- [ ] Günün özeti kartı ("Bugün seni ilgilendiren 3 gelişme")
+- [ ] Kayıt klasörleri (konuya göre grupla)
+- [ ] Kaynak seçimi (AA/NTV/Guardian...)
+
+### Parti 4 — Risk Radarı
+- [ ] Risk geçmişi grafiğini ekrana koy
+- [ ] Çoklu şehir takibi (kendi + memleket/aile şehri)
+
+### Parti 5 — Dış veri (worker endpoint'leri)
+- [ ] Döviz/altın widget'ı (USD/EUR/gram altın)
+- [ ] Hava durumu + hava kalitesi (konuma göre)
+
+### Parti 6 — Büyük işler
+- [ ] Harita görünümü (yakındaki depremler)
+- [ ] Sesli soru sorma (mikrofon, speech-to-text)
+- [ ] Ana ekran widget'ı (native WidgetKit/Android)
+
 ## 🔜 Diğer (opsiyonel, sonra)
 - Google Play tam yayını (mağaza listesi + 14 günlük kapalı test + production)
 - Karanlık mod
