@@ -10,14 +10,8 @@ import '../state/app_state.dart';
 class EmergencyCallScreen extends StatelessWidget {
   const EmergencyCallScreen({super.key});
 
-  static const List<({String name, String number, IconData icon, Color color})>
-      _official = [
-    (name: 'Acil Çağrı', number: '112', icon: Icons.emergency, color: Color(0xFFFF453A)),
-    (name: 'İtfaiye', number: '110', icon: Icons.local_fire_department, color: Color(0xFFE67E22)),
-    (name: 'Polis İmdat', number: '155', icon: Icons.local_police, color: Color(0xFF2980B9)),
-    (name: 'Jandarma', number: '156', icon: Icons.shield, color: Color(0xFF16A085)),
-    (name: 'AFAD', number: '122', icon: Icons.support_agent, color: Color(0xFFC0392B)),
-  ];
+  // Türkiye'de tüm acil hizmetler (sağlık, itfaiye, polis, jandarma, afet)
+  // 2021'den beri TEK numarada birleşti: 112 Acil Çağrı Merkezi.
 
   Future<void> _call(BuildContext context, String number) async {
     HapticFeedback.mediumImpact();
@@ -49,7 +43,7 @@ class EmergencyCallScreen extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 40),
         children: [
           const Text(
-            'Resmi Acil Hatlar',
+            'Acil Çağrı Merkezi',
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w800,
@@ -57,30 +51,83 @@ class EmergencyCallScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 10),
-          for (final e in _official)
-            Card(
-              margin: const EdgeInsets.only(bottom: 10),
-              child: ListTile(
-                leading: Container(
-                  width: 44,
-                  height: 44,
-                  decoration: BoxDecoration(
-                    color: e.color.withOpacity(0.15),
-                    borderRadius: BorderRadius.circular(12),
+          // Tek acil numara: 112
+          InkWell(
+            borderRadius: BorderRadius.circular(18),
+            onTap: () => _call(context, '112'),
+            child: Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xFFFF453A), Color(0xFFC0392B)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(18),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFFFF453A).withOpacity(0.4),
+                    blurRadius: 14,
+                    offset: const Offset(0, 6),
                   ),
-                  child: Icon(e.icon, color: e.color),
-                ),
-                title: Text(e.name,
-                    style: const TextStyle(fontWeight: FontWeight.w700)),
-                subtitle: Text(e.number),
-                trailing: FilledButton.icon(
-                  onPressed: () => _call(context, e.number),
-                  icon: const Icon(Icons.call, size: 18),
-                  label: const Text('Ara'),
-                  style: FilledButton.styleFrom(backgroundColor: e.color),
-                ),
+                ],
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.emergency, color: Colors.white, size: 40),
+                  const SizedBox(width: 16),
+                  const Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('112',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 32,
+                                fontWeight: FontWeight.w900,
+                                height: 1.0)),
+                        SizedBox(height: 2),
+                        Text('Acil Çağrı — dokun ve ara',
+                            style: TextStyle(color: Colors.white70, fontSize: 13)),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: const BoxDecoration(
+                      color: Colors.white24,
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(Icons.call, color: Colors.white),
+                  ),
+                ],
               ),
             ),
+          ),
+          const SizedBox(height: 10),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: LifeRadarColors.cardBackground,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Row(
+              children: [
+                Icon(Icons.info_outline,
+                    size: 18, color: LifeRadarColors.turquoise),
+                SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'Türkiye\'de sağlık, itfaiye, polis, jandarma ve afet '
+                    'çağrıları tek numarada birleşti: 112. (110, 155, 156, 122 '
+                    'aramaları da 112\'ye yönlendirilir.)',
+                    style: TextStyle(
+                        fontSize: 12, color: LifeRadarColors.textSecondary),
+                  ),
+                ),
+              ],
+            ),
+          ),
           const SizedBox(height: 16),
           const Text(
             'Acil Durum Kişim',
