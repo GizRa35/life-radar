@@ -35,6 +35,7 @@ class _MainScaffoldState extends State<MainScaffold>
       final s = context.read<AppState>();
       // Uygulamaya girince kur + hava durumunu hemen tazele.
       s.refreshLiveData();
+      s.startRatesAutoRefresh(); // kurları 60 sn'de bir canlı güncelle
       // Uygulama birkaç kez açıldıysa (ve daha önce sorulmadıysa) puan iste.
       s.maybeRequestReview();
     });
@@ -42,15 +43,21 @@ class _MainScaffoldState extends State<MainScaffold>
 
   @override
   void dispose() {
+    context.read<AppState>().stopRatesAutoRefresh();
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    // Arka plandan öne gelince kur + hava durumunu güncelle.
+    final s = context.read<AppState>();
     if (state == AppLifecycleState.resumed) {
-      context.read<AppState>().refreshLiveData();
+      // Öne gelince güncelle + canlı yenilemeyi başlat.
+      s.refreshLiveData();
+      s.startRatesAutoRefresh();
+    } else if (state == AppLifecycleState.paused) {
+      // Arka plana geçince periyodik yenilemeyi durdur (pil/veri tasarrufu).
+      s.stopRatesAutoRefresh();
     }
   }
 

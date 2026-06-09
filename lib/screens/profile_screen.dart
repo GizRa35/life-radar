@@ -12,6 +12,7 @@ import 'notification_settings_screen.dart';
 import 'personal_info_screen.dart';
 import 'privacy_screen.dart';
 import 'premium_screen.dart';
+import 'language_screen.dart';
 import 'source_settings_screen.dart';
 import 'vip_screen.dart';
 
@@ -108,7 +109,7 @@ class ProfileScreen extends StatelessWidget {
           title: 'Dil Seçimi',
           trailing: state.userContext.language == 'en' ? 'English' : 'Türkçe',
           onTap: () => Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) => const PersonalInfoScreen()),
+            MaterialPageRoute(builder: (_) => const LanguageScreen()),
           ),
         ),
         _SettingTile(

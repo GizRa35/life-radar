@@ -63,7 +63,17 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
     setState(() => _listening = true);
     await _speech.listen(
       localeId: 'tr_TR',
-      onResult: (r) => setState(() => _controller.text = r.recognizedWords),
+      // Sessizlikte otomatik kapan; en fazla 20 sn dinle.
+      listenFor: const Duration(seconds: 20),
+      pauseFor: const Duration(seconds: 3),
+      onResult: (r) {
+        setState(() => _controller.text = r.recognizedWords);
+        // Konuşma bitince (final sonuç) mikrofonu kapat.
+        if (r.finalResult) {
+          _speech.stop();
+          if (mounted) setState(() => _listening = false);
+        }
+      },
     );
   }
 

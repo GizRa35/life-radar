@@ -10,10 +10,14 @@ import '../widgets/celebration_overlay.dart';
 import '../widgets/plan_comparison.dart';
 import 'vip_screen.dart';
 
-/// Store'dan gelen fiyatı döndürür; gelmezse yedek metni gösterir.
+/// Fiyatı TL olarak gösterir. Mağaza TL fiyatı döndürürse onu, aksi halde
+/// (örn. test hesabı USD veriyorsa) TL yedeğini gösterir.
 String _priceText(AppState state, String id, String fallback) {
   final p = state.subscriptionPrice(id);
-  return p.isEmpty ? fallback : p;
+  if (p.isEmpty) return fallback;
+  final up = p.toUpperCase();
+  final isTl = p.contains('₺') || up.contains('TRY') || up.contains('TL');
+  return isTl ? p : fallback;
 }
 
 /// PREMIUM SAYFASI — Life Radar Premium

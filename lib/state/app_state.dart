@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 
@@ -667,16 +668,42 @@ class AppState extends ChangeNotifier {
   final MarketService _market = MarketService();
   final WeatherService _weatherSvc = WeatherService();
   Map<String, double?>? _rates;
+  Map<String, double?>? _prevRates;
   Map<String, double?>? _weather;
   Map<String, double?>? get rates => _rates;
   Map<String, double?>? get weather => _weather;
+  Timer? _ratesTimer;
+
+  /// Bir kurun önceki değere göre yönü: 1 yükseldi, -1 düştü, 0 aynı/yok.
+  int rateDir(String key) {
+    final cur = _rates?[key];
+    final prev = _prevRates?[key];
+    if (cur == null || prev == null) return 0;
+    if (cur > prev) return 1;
+    if (cur < prev) return -1;
+    return 0;
+  }
 
   Future<void> loadRates() async {
     final r = await _market.fetch();
     if (r != null) {
+      _prevRates = _rates; // yön karşılaştırması için önceki değerleri sakla
       _rates = r;
       notifyListeners();
     }
+  }
+
+  /// Kurları periyodik olarak (60 sn) tazeler — "canlı" görünüm.
+  void startRatesAutoRefresh() {
+    if (kIsWeb) return;
+    _ratesTimer?.cancel();
+    _ratesTimer =
+        Timer.periodic(const Duration(seconds: 60), (_) => loadRates());
+  }
+
+  void stopRatesAutoRefresh() {
+    _ratesTimer?.cancel();
+    _ratesTimer = null;
   }
 
   Future<void> loadWeather() async {

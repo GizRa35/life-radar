@@ -10,10 +10,13 @@ import '../widgets/celebration_overlay.dart';
 import '../widgets/plan_comparison.dart';
 import 'vip_hub_screen.dart';
 
-/// Store fiyatını döndürür; gelmezse yedek metni gösterir.
+/// Fiyatı TL olarak gösterir. Mağaza TL döndürmezse (örn. test USD) TL yedeği.
 String _vipPrice(AppState state, String id, String fallback) {
   final p = state.subscriptionPrice(id);
-  return p.isEmpty ? fallback : p;
+  if (p.isEmpty) return fallback;
+  final up = p.toUpperCase();
+  final isTl = p.contains('₺') || up.contains('TRY') || up.contains('TL');
+  return isTl ? p : fallback;
 }
 
 const Color _gold = Color(0xFFC9A227);

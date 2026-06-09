@@ -351,7 +351,7 @@ class _WeatherCard extends StatelessWidget {
   }
 }
 
-/// Döviz/altın (TRY) kartı.
+/// Döviz/altın (TRY) kartı — canlı, yön oklu.
 class _MarketCard extends StatelessWidget {
   final Map<String, double?> data;
   const _MarketCard({required this.data});
@@ -363,6 +363,7 @@ class _MarketCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final state = context.watch<AppState>();
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -384,15 +385,20 @@ class _MarketCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 8),
-          _row('Dolar', _fmt(data['usd'])),
-          _row('Euro', _fmt(data['eur'])),
-          _row('Gram Altın', _fmt(data['gold'])),
+          _row('Dolar', _fmt(data['usd']), state.rateDir('usd')),
+          _row('Euro', _fmt(data['eur']), state.rateDir('eur')),
+          _row('Gram Altın', _fmt(data['gold']), state.rateDir('gold')),
         ],
       ),
     );
   }
 
-  Widget _row(String label, String value) {
+  Widget _row(String label, String value, int dir) {
+    final (icon, color) = dir > 0
+        ? (Icons.arrow_drop_up, LifeRadarColors.riskLow)
+        : dir < 0
+            ? (Icons.arrow_drop_down, LifeRadarColors.riskHigh)
+            : (Icons.remove, LifeRadarColors.textSecondary);
     return Padding(
       padding: const EdgeInsets.only(bottom: 3),
       child: Row(
@@ -401,11 +407,17 @@ class _MarketCard extends StatelessWidget {
           Text(label,
               style: const TextStyle(
                   fontSize: 12, color: LifeRadarColors.textSecondary)),
-          Text(value,
-              style: const TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w700,
-                  color: LifeRadarColors.navy)),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, size: 16, color: color),
+              Text(value,
+                  style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      color: LifeRadarColors.navy)),
+            ],
+          ),
         ],
       ),
     );
