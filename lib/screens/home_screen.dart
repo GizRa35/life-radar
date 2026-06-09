@@ -23,8 +23,13 @@ class HomeScreen extends StatelessWidget {
 
     // Tekrarı önle: bir haber yalnızca tek bölümde görünsün.
     final shown = <String>{};
-    final breaking =
+    var breaking =
         state.events.where((e) => active.contains(e.category)).take(3).toList();
+    // Güvenlik ağı: filtre boş kalırsa (örn. takip edilen konuda haber yoksa)
+    // yine de en güncel haberleri göster — ana sayfa asla boş kalmasın.
+    if (breaking.isEmpty) {
+      breaking = state.events.take(3).toList();
+    }
     shown.addAll(breaking.map((e) => e.id));
 
     // Takip edilen her konu için "Öne Çıkan ..." bölümü: TEK haber + "Devamını
