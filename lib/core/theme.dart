@@ -77,6 +77,14 @@ class LifeRadarTheme {
     );
 
     return base.copyWith(
+      // Akıcı, premium sayfa geçişleri (tüm platformlarda iOS tarzı kaydırma).
+      pageTransitionsTheme: const PageTransitionsTheme(
+        builders: {
+          TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+          TargetPlatform.android: CupertinoPageTransitionsBuilder(),
+          TargetPlatform.macOS: CupertinoPageTransitionsBuilder(),
+        },
+      ),
       appBarTheme: const AppBarTheme(
         backgroundColor: LifeRadarColors.background,
         foregroundColor: LifeRadarColors.navy,

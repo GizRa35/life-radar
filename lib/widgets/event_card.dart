@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -154,7 +155,10 @@ class EventCard extends StatelessWidget {
                     ),
                     IconButton(
                       tooltip: saved ? 'Kayıttan çıkar' : 'Kaydet',
-                      onPressed: () => context.read<AppState>().toggleSaved(event.id),
+                      onPressed: () {
+                        HapticFeedback.selectionClick();
+                        context.read<AppState>().toggleSaved(event.id);
+                      },
                       icon: Icon(
                         saved ? Icons.bookmark : Icons.bookmark_border,
                         color: saved

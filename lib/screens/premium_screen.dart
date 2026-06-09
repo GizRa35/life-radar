@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../core/api_config.dart';
@@ -168,8 +169,10 @@ class PremiumScreen extends StatelessWidget {
           else ...[
             // Aylık abonelik
             ElevatedButton(
-              onPressed: () =>
-                  context.read<AppState>().buySubscription(AppState.premiumMonthlyId),
+              onPressed: () {
+                HapticFeedback.mediumImpact();
+                context.read<AppState>().buySubscription(AppState.premiumMonthlyId);
+              },
               style: ElevatedButton.styleFrom(
                   minimumSize: const Size.fromHeight(52)),
               child: Text(
@@ -179,8 +182,10 @@ class PremiumScreen extends StatelessWidget {
             const SizedBox(height: 10),
             // Yıllık abonelik (indirimli)
             OutlinedButton(
-              onPressed: () =>
-                  context.read<AppState>().buySubscription(AppState.premiumYearlyId),
+              onPressed: () {
+                HapticFeedback.mediumImpact();
+                context.read<AppState>().buySubscription(AppState.premiumYearlyId);
+              },
               style: OutlinedButton.styleFrom(
                 minimumSize: const Size.fromHeight(52),
                 side: const BorderSide(color: LifeRadarColors.turquoise),

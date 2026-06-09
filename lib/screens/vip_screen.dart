@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../core/api_config.dart';
@@ -210,15 +211,19 @@ class VipScreen extends StatelessWidget {
           else ...[
             _GoldButton(
               label: 'VIP Aylık  ${_vipPrice(state, AppState.vipMonthlyId, SubscriptionData.vipMonthly)}',
-              onPressed: () =>
-                  context.read<AppState>().buySubscription(AppState.vipMonthlyId),
+              onPressed: () {
+                HapticFeedback.mediumImpact();
+                context.read<AppState>().buySubscription(AppState.vipMonthlyId);
+              },
             ),
             const SizedBox(height: 10),
             _GoldButton(
               label:
                   'VIP Yıllık  ${_vipPrice(state, AppState.vipYearlyId, SubscriptionData.vipYearly)}  ·  2 ay bedava',
-              onPressed: () =>
-                  context.read<AppState>().buySubscription(AppState.vipYearlyId),
+              onPressed: () {
+                HapticFeedback.mediumImpact();
+                context.read<AppState>().buySubscription(AppState.vipYearlyId);
+              },
             ),
             const SizedBox(height: 6),
             TextButton(
