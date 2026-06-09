@@ -14,7 +14,7 @@ class LanguageScreen extends StatelessWidget {
     final current = state.userContext.language == 'en' ? 'en' : 'tr';
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Dil Seçimi')),
+      appBar: AppBar(title: const Text('Haber Dili')),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [

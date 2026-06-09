@@ -146,3 +146,7 @@ engellemek (gerçek satın alma kanıtı). ~Yarım gün, backend ağırlıklı.
 - Google Play tam yayını (mağaza listesi + 14 günlük kapalı test + production)
 - Karanlık mod
 - Daha fazla haber kaynağı / kategori
+- TAM İNGİLİZCE ARAYÜZ (i18n): tüm ekranlardaki metinleri .arb ile çevir —
+  büyük iş; şu an "Haber Dili" sadece haberleri çevirir, arayüz Türkçe
+- BULUT TTS (yüksek kaliteli ses): worker → Google/Azure TTS → MP3 → just_audio
+  ile oynat. Cihaz sesinden çok daha doğal; ücretli/anahtar gerekir

@@ -311,6 +311,7 @@ class _WeatherCard extends StatelessWidget {
     final code = data['code']?.toInt() ?? 0;
     final aqi = data['aqi']?.toInt();
     final desc = weatherDesc(code);
+    final city = context.watch<AppState>().location?.city ?? '';
 
     return Container(
       padding: const EdgeInsets.all(14),
@@ -321,6 +322,22 @@ class _WeatherCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          if (city.isNotEmpty)
+            Row(
+              children: [
+                const Icon(Icons.location_on,
+                    size: 12, color: LifeRadarColors.textSecondary),
+                const SizedBox(width: 2),
+                Expanded(
+                  child: Text(city,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                          fontSize: 11,
+                          color: LifeRadarColors.textSecondary)),
+                ),
+              ],
+            ),
           Row(
             children: [
               Text(desc.emoji, style: const TextStyle(fontSize: 22)),

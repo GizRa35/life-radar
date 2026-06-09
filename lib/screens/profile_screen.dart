@@ -106,7 +106,7 @@ class ProfileScreen extends StatelessWidget {
         ),
         _SettingTile(
           icon: Icons.language,
-          title: 'Dil Seçimi',
+          title: 'Haber Dili',
           trailing: state.userContext.language == 'en' ? 'English' : 'Türkçe',
           onTap: () => Navigator.of(context).push(
             MaterialPageRoute(builder: (_) => const LanguageScreen()),
