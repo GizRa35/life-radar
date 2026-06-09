@@ -71,33 +71,29 @@ class HomeScreen extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Container(
-                  width: 48,
-                  height: 48,
-                  decoration: BoxDecoration(
-                    color: LifeRadarColors.turquoise.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                  child: const Icon(Icons.radar,
-                      color: LifeRadarColors.turquoise, size: 28),
-                ),
-                const SizedBox(width: 14),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Life Radar',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.w900)),
-                      Text('Dünyayı Anla. Riskleri Gör. Hazırlıklı Ol.',
+                      Text(
+                        'Hoş Geldin, ${state.displayName}',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w900),
+                      ),
+                      const SizedBox(height: 2),
+                      Text('Sistemler aktif. Tarama yapılıyor.',
                           style: TextStyle(
                               color: Colors.white.withOpacity(0.8),
                               fontSize: 12)),
                     ],
                   ),
                 ),
+                const SizedBox(width: 14),
+                const _ScanningRadar(size: 48),
               ],
             ),
           ),
@@ -226,6 +222,74 @@ class HomeScreen extends StatelessWidget {
         if (followed.isEmpty) const _FollowHint() else ...topicSections,
         const SizedBox(height: 24),
       ],
+      ),
+    );
+  }
+}
+
+/// Dönen tarama ışıklı radar logosu — "tarama yapılıyor" hissi verir.
+class _ScanningRadar extends StatefulWidget {
+  final double size;
+  const _ScanningRadar({required this.size});
+
+  @override
+  State<_ScanningRadar> createState() => _ScanningRadarState();
+}
+
+class _ScanningRadarState extends State<_ScanningRadar>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _c =
+      AnimationController(vsync: this, duration: const Duration(seconds: 3))
+        ..repeat();
+
+  @override
+  void dispose() {
+    _c.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final s = widget.size;
+    return SizedBox(
+      width: s,
+      height: s,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          // Taban daire
+          Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: LifeRadarColors.turquoise.withOpacity(0.15),
+              border: Border.all(
+                  color: LifeRadarColors.turquoise.withOpacity(0.4)),
+            ),
+          ),
+          // Dönen tarama ışını (sweep gradyan)
+          RotationTransition(
+            turns: _c,
+            child: ClipOval(
+              child: Container(
+                width: s,
+                height: s,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: SweepGradient(
+                    colors: [
+                      Colors.transparent,
+                      Colors.transparent,
+                      LifeRadarColors.turquoise.withOpacity(0.6),
+                    ],
+                    stops: const [0.0, 0.72, 1.0],
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Icon(Icons.radar,
+              color: LifeRadarColors.turquoise, size: s * 0.58),
+        ],
       ),
     );
   }
