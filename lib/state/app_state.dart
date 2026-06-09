@@ -654,7 +654,7 @@ class AppState extends ChangeNotifier {
   /// Çeviri sunucu proxy'sinde (Google Translate, anahtarsız) yapılır; hata
   /// olursa olaylar orijinal haliyle kalır.
   Future<void> _translateEventsIfNeeded() async {
-    if (!kIsWeb) return;
+    // Çeviri worker proxy'sinde yapılır; her platformda çalışır.
     final target = _userContext.language == 'en' ? 'en' : 'tr';
     final indices = <int>[];
     final texts = <String>[];
