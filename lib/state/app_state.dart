@@ -49,6 +49,7 @@ class AppState extends ChangeNotifier {
     _loadChat();
     _loadSources();
     _loadCities();
+    _loadSeenNotif();
     _loadOnboard();
     _loadTier();
     _initPurchases();
@@ -170,7 +171,7 @@ class AppState extends ChangeNotifier {
     'lr_opens', 'lr_reviewed', 'lr_kit', 'lr_em_name', 'lr_em_phone',
     'lr_em_contacts',
     'lr_plan_home', 'lr_plan_area', 'lr_plan_note', 'lr_chat', 'lr_src_off',
-    'lr_cities',
+    'lr_cities', 'lr_seen', 'lr_seen_init',
   ];
 
   int get savedCount => _savedEventIds.length;
@@ -707,6 +708,8 @@ class AppState extends ChangeNotifier {
       // mock veride kal
     } finally {
       _loadingFeeds = false;
+      // İlk açılışta mevcut haberleri görülmüş say (bildirim ekranı boş başlasın).
+      _initSeenIfNeeded();
       notifyListeners();
     }
     // Yabancı kaynaklı haberleri kullanıcının diline çevir (arka planda).
@@ -1641,9 +1644,59 @@ class AppState extends ChangeNotifier {
     }
   }
 
+  // ---- Bildirimler: yalnızca "sen yokken gelen yeni haberler" ----
+  // Kullanıcının daha önce gördüğü haber id'leri (kalıcı). Görülenler bir daha
+  // bildirim olarak çıkmaz; yalnızca yeni gelenler bildirim sayılır.
+  final Set<String> _seenNotif = {};
+
+  void _loadSeenNotif() {
+    final raw = lsGet('lr_seen');
+    if (raw != null && raw.isNotEmpty) {
+      try {
+        _seenNotif
+          ..clear()
+          ..addAll((jsonDecode(raw) as List).map((e) => e.toString()));
+      } catch (_) {}
+    }
+  }
+
+  void _saveSeenNotif() {
+    // Şişmesin: en fazla son 400 id tut.
+    final ids = _seenNotif.toList();
+    final keep = ids.length > 400 ? ids.sublist(ids.length - 400) : ids;
+    lsSet('lr_seen', jsonEncode(keep));
+  }
+
+  /// İlk açılışta mevcut haberleri "görülmüş" say → bildirim ekranı boş başlasın,
+  /// yalnızca BUNDAN SONRA gelen yeni haberler bildirim olsun.
+  void _initSeenIfNeeded() {
+    if (lsGet('lr_seen_init') == '1') return;
+    for (final e in _events) {
+      _seenNotif.add(e.id);
+    }
+    lsSet('lr_seen_init', '1');
+    _saveSeenNotif();
+  }
+
+  /// Yeni (görülmemiş) olaylar — bildirim olarak gösterilecekler.
+  List<RadarEvent> get _unseenEvents =>
+      _events.where((e) => !_seenNotif.contains(e.id)).toList();
+
+  /// Bildirim ekranı açılınca çağrılır: mevcut yenileri görülmüş işaretle.
+  void markNotificationsSeen() {
+    var changed = false;
+    for (final e in _events) {
+      if (_seenNotif.add(e.id)) changed = true;
+    }
+    if (changed) {
+      _saveSeenNotif();
+      notifyListeners();
+    }
+  }
+
   List<AppNotification> get notifications {
-    final list = _events
-        .take(25)
+    final list = _unseenEvents
+        .where((e) => _notifCategories.contains(e.category))
         .map((e) => AppNotification(
               title: e.title,
               summary: e.summary,
@@ -1653,21 +1706,13 @@ class AppState extends ChangeNotifier {
               eventId: e.id,
             ))
         .toList();
-    // Bir sistem bildirimi ekle
-    list.add(AppNotification(
-      title: 'Life Radar güncel',
-      summary: 'Haberler ve risk analizi en son verilerle güncellendi.',
-      time: DateTime.now(),
-      category: NotificationCategory.system,
-      risk: RiskLevel.low,
-    ));
+    list.sort((a, b) => b.time.compareTo(a.time));
     return list;
   }
 
-  /// Zil rozeti: yüksek/kritik riskli güncel olay sayısı.
-  int get unreadNotificationCount => _events
-      .take(25)
-      .where((e) => e.risk == RiskLevel.high || e.risk == RiskLevel.critical)
+  /// Zil rozeti: sen yokken gelen, görülmemiş yeni haber sayısı.
+  int get unreadNotificationCount => _unseenEvents
+      .where((e) => _notifCategories.contains(e.category))
       .length;
 
   // ---- Ana Sayfa metinleri (gerçek verilerden hesaplanır) ----
