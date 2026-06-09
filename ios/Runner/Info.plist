@@ -57,6 +57,8 @@
 	<string>Life Radar Asistan'a sesli soru sorabilmen için mikrofon kullanılır.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>Sesli sorularını metne çevirebilmemiz için konuşma tanıma kullanılır.</string>
+	<key>NSContactsUsageDescription</key>
+	<string>Acil durum kişini hızlıca eklemen için rehberinden kişi seçmene izin verilir.</string>
 	<!-- Google ile giriş (iOS). Aşağıdaki iki değeri Google Cloud / Firebase
 	     iOS OAuth istemcinizden alıp doldurun:
 	     - GIDClientID: "<CLIENT_ID>.apps.googleusercontent.com"

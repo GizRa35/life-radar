@@ -168,6 +168,7 @@ class AppState extends ChangeNotifier {
     'lr_loc_on', 'lr_ai_share',
     'lr_saved', 'lr_follows', 'lr_onboard', 'lr_tier',
     'lr_opens', 'lr_reviewed', 'lr_kit', 'lr_em_name', 'lr_em_phone',
+    'lr_em_contacts',
     'lr_plan_home', 'lr_plan_area', 'lr_plan_note', 'lr_chat', 'lr_src_off',
     'lr_cities',
   ];
@@ -1267,24 +1268,48 @@ class AppState extends ChangeNotifier {
     }
   }
 
-  // ---- Kişisel acil durum kişisi (Hızlı Arama) ----
-  String _emergencyName = '';
-  String _emergencyPhone = '';
-  String get emergencyName => _emergencyName;
-  String get emergencyPhone => _emergencyPhone;
-  bool get hasEmergencyContact => _emergencyPhone.isNotEmpty;
+  // ---- Kişisel acil durum kişileri (Hızlı Arama) — en fazla 2 ----
+  final List<Map<String, String>> _emergencyContacts = [];
+  List<Map<String, String>> get emergencyContacts =>
+      List.unmodifiable(_emergencyContacts);
+  bool get hasEmergencyContact => _emergencyContacts.isNotEmpty;
+  bool get canAddEmergencyContact => _emergencyContacts.length < 2;
 
-  void setEmergencyContact(String name, String phone) {
-    _emergencyName = name.trim();
-    _emergencyPhone = phone.trim();
-    lsSet('lr_em_name', _emergencyName);
-    lsSet('lr_em_phone', _emergencyPhone);
+  void addEmergencyContact(String name, String phone) {
+    if (_emergencyContacts.length >= 2 || phone.trim().isEmpty) return;
+    _emergencyContacts.add({'name': name.trim(), 'phone': phone.trim()});
+    _saveEmergency();
     notifyListeners();
   }
 
+  void removeEmergencyContact(int index) {
+    if (index < 0 || index >= _emergencyContacts.length) return;
+    _emergencyContacts.removeAt(index);
+    _saveEmergency();
+    notifyListeners();
+  }
+
+  void _saveEmergency() =>
+      lsSet('lr_em_contacts', jsonEncode(_emergencyContacts));
+
   void _loadEmergency() {
-    _emergencyName = lsGet('lr_em_name') ?? '';
-    _emergencyPhone = lsGet('lr_em_phone') ?? '';
+    final raw = lsGet('lr_em_contacts');
+    if (raw != null && raw.isNotEmpty) {
+      try {
+        _emergencyContacts
+          ..clear()
+          ..addAll((jsonDecode(raw) as List)
+              .map((e) => Map<String, String>.from(e as Map)));
+        return;
+      } catch (_) {}
+    }
+    // Eski tekil kaydı (lr_em_name/phone) yeni listeye taşı.
+    final n = lsGet('lr_em_name');
+    final p = lsGet('lr_em_phone');
+    if (p != null && p.isNotEmpty) {
+      _emergencyContacts.add({'name': n ?? '', 'phone': p});
+      _saveEmergency();
+    }
   }
 
   // ---- Aile acil durum planı ----

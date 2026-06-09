@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../core/theme.dart';
+import '../services/contacts_service.dart';
 import '../state/app_state.dart';
 
 /// Hızlı acil arama — resmi acil hatlar + kişisel acil durum kişisi.
@@ -129,55 +130,73 @@ class EmergencyCallScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          const Text(
-            'Acil Durum Kişim',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w800,
-              color: LifeRadarColors.navy,
-            ),
+          Row(
+            children: [
+              const Text(
+                'Acil Durum Kişilerim',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w800,
+                  color: LifeRadarColors.navy,
+                ),
+              ),
+              const Spacer(),
+              Text(
+                '${state.emergencyContacts.length}/2',
+                style: const TextStyle(
+                    color: LifeRadarColors.textSecondary, fontSize: 13),
+              ),
+            ],
           ),
           const SizedBox(height: 10),
-          if (state.hasEmergencyContact)
-            Card(
+          // Mevcut kişiler (en fazla 2)
+          ...state.emergencyContacts.asMap().entries.map((e) {
+            final c = e.value;
+            return Card(
               child: ListTile(
                 leading: const CircleAvatar(
                   backgroundColor: LifeRadarColors.turquoise,
                   child: Icon(Icons.person, color: Colors.white),
                 ),
                 title: Text(
-                  state.emergencyName.isEmpty
-                      ? 'Acil kişi'
-                      : state.emergencyName,
+                  (c['name'] ?? '').isEmpty ? 'Acil kişi' : c['name']!,
                   style: const TextStyle(fontWeight: FontWeight.w700),
                 ),
-                subtitle: Text(state.emergencyPhone),
+                subtitle: Text(c['phone'] ?? ''),
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     IconButton(
-                      tooltip: 'Düzenle',
-                      onPressed: () => _editContact(context, state),
-                      icon: const Icon(Icons.edit_outlined),
+                      tooltip: 'Kaldır',
+                      onPressed: () =>
+                          context.read<AppState>().removeEmergencyContact(e.key),
+                      icon: const Icon(Icons.delete_outline),
                     ),
                     FilledButton.icon(
-                      onPressed: () => _call(context, state.emergencyPhone),
+                      onPressed: () => _call(context, c['phone'] ?? ''),
                       icon: const Icon(Icons.call, size: 18),
                       label: const Text('Ara'),
                     ),
                   ],
                 ),
               ),
-            )
-          else
+            );
+          }),
+          if (state.canAddEmergencyContact) ...[
+            const SizedBox(height: 4),
             OutlinedButton.icon(
-              onPressed: () => _editContact(context, state),
-              icon: const Icon(Icons.person_add_alt),
-              label: const Text('Acil durum kişisi ekle'),
+              onPressed: () => _addFromContacts(context),
+              icon: const Icon(Icons.contacts_outlined),
+              label: const Text('Rehberden Kişi Seç'),
               style: OutlinedButton.styleFrom(
                 minimumSize: const Size.fromHeight(50),
               ),
             ),
+            TextButton(
+              onPressed: () => _addManually(context),
+              child: const Text('veya elle ekle'),
+            ),
+          ],
           const SizedBox(height: 16),
           Container(
             padding: const EdgeInsets.all(12),
@@ -206,9 +225,25 @@ class EmergencyCallScreen extends StatelessWidget {
     );
   }
 
-  void _editContact(BuildContext context, AppState state) {
-    final nameC = TextEditingController(text: state.emergencyName);
-    final phoneC = TextEditingController(text: state.emergencyPhone);
+  /// Rehberden kişi seç (sistem seçicisi açılır).
+  Future<void> _addFromContacts(BuildContext context) async {
+    final picked = await pickPhoneContact();
+    if (!context.mounted) return;
+    if (picked == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text(
+                'Kişi seçilmedi veya seçilen kişide telefon numarası yok.')),
+      );
+      return;
+    }
+    context.read<AppState>().addEmergencyContact(picked.name, picked.phone);
+  }
+
+  /// Elle ekleme (rehber kullanılamazsa).
+  void _addManually(BuildContext context) {
+    final nameC = TextEditingController();
+    final phoneC = TextEditingController();
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -245,7 +280,7 @@ class EmergencyCallScreen extends StatelessWidget {
             onPressed: () {
               context
                   .read<AppState>()
-                  .setEmergencyContact(nameC.text, phoneC.text);
+                  .addEmergencyContact(nameC.text, phoneC.text);
               Navigator.pop(ctx);
             },
             child: const Text('Kaydet'),
