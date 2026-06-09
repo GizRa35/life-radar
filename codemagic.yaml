@@ -12,6 +12,11 @@ workflows:
     max_build_duration: 60
     integrations:
       app_store_connect: LifeRadar ASC      # ← Codemagic UI'da bu isimle eklenecek API anahtarı
+    cache:
+      cache_paths:
+        - $HOME/.pub-cache               # Flutter paketleri
+        - $HOME/Library/Caches/CocoaPods # iOS pod arşivi
+        - $CM_BUILD_DIR/ios/Pods         # kurulu pod'lar
     environment:
       groups:
         - appstore
