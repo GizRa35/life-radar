@@ -687,6 +687,16 @@ class AppState extends ChangeNotifier {
     }
   }
 
+  /// Uygulamaya girince / öne gelince çağrılır: kur + hava durumunu tazeler.
+  void refreshLiveData() {
+    loadRates();
+    if (_location?.lat != null && _location?.lng != null) {
+      loadWeather();
+    } else {
+      detectLocation(); // konum gelince loadWeather otomatik tetiklenir
+    }
+  }
+
   // ---- Veri akışı (gerçek kaynaklar) ----
   final FeedService _feedService = FeedService();
   final GroqService _ai = GroqService();

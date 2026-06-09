@@ -22,16 +22,35 @@ class MainScaffold extends StatefulWidget {
   State<MainScaffold> createState() => _MainScaffoldState();
 }
 
-class _MainScaffoldState extends State<MainScaffold> {
+class _MainScaffoldState extends State<MainScaffold>
+    with WidgetsBindingObserver {
   static const _titles = ['Ana Sayfa', 'Gündem', 'Radar', 'Rehber', 'Profil'];
 
   @override
   void initState() {
     super.initState();
-    // Uygulama birkaç kez açıldıysa (ve daha önce sorulmadıysa) puan iste.
+    WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<AppState>().maybeRequestReview();
+      final s = context.read<AppState>();
+      // Uygulamaya girince kur + hava durumunu hemen tazele.
+      s.refreshLiveData();
+      // Uygulama birkaç kez açıldıysa (ve daha önce sorulmadıysa) puan iste.
+      s.maybeRequestReview();
     });
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // Arka plandan öne gelince kur + hava durumunu güncelle.
+    if (state == AppLifecycleState.resumed) {
+      context.read<AppState>().refreshLiveData();
+    }
   }
 
   final _screens = const [
