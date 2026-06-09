@@ -1,6 +1,9 @@
 # Anahtar yedeği ve derleme çıktıları (repoya GİRMEZ - gizli!)
 LifeRadar-ANAHTAR-YEDEK/
 *.aab
+*.p8
+*.p12
+*.mobileprovision
 
 # Miscellaneous
 *.class
