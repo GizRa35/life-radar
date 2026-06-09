@@ -18,18 +18,13 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final state = context.watch<AppState>();
-    final active = state.activeTopics;
     final followed = state.followedTopics.toList();
 
-    // Tekrarı önle: bir haber yalnızca tek bölümde görünsün.
+    // Son Dakika = TÜM konulardan en güncel haberler (takip filtresi uygulanmaz;
+    // kişiselleştirme aşağıdaki "Öne Çıkan ..." bölümlerinde yapılır).
+    // Böylece ana sayfa asla boş kalmaz.
     final shown = <String>{};
-    var breaking =
-        state.events.where((e) => active.contains(e.category)).take(3).toList();
-    // Güvenlik ağı: filtre boş kalırsa (örn. takip edilen konuda haber yoksa)
-    // yine de en güncel haberleri göster — ana sayfa asla boş kalmasın.
-    if (breaking.isEmpty) {
-      breaking = state.events.take(3).toList();
-    }
+    final breaking = state.events.take(3).toList();
     shown.addAll(breaking.map((e) => e.id));
 
     // Takip edilen her konu için "Öne Çıkan ..." bölümü: TEK haber + "Devamını
