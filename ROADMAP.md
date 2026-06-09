@@ -93,10 +93,10 @@ engellemek (gerçek satın alma kanıtı). ~Yarım gün, backend ağırlıklı.
 > aşağıdaki sırayla yapılacak.
 
 ### Aşama 1 — Apple/Firebase panel hazırlığı
-1. Apple Developer → Identifiers → `com.liferadar.lifeRadar` → **Push Notifications** capability'yi aç
-2. Apple Developer → Keys → yeni **APNs Auth Key (.p8)** oluştur (Key ID + Team ID not al)
-3. Firebase Console → Project Settings → Cloud Messaging → iOS app → **APNs key (.p8)** yükle (Key ID + Team ID gir)
-4. Firebase'den **GoogleService-Info.plist** (iOS) ve **google-services.json** (Android) indir
+1. [x] Push Notifications capability açıldı (App ID)
+2. [x] APNs Auth Key hazır — Key ID: TR253424GC, Team ID: 7K8SDL5G3Q
+3. [x] Firebase Cloud Messaging'e .p8 YÜKLENDİ
+4. [ ] Firebase'den GoogleService-Info.plist (iOS) + google-services.json (Android) indir
 
 ### Aşama 2 — Kod (client)
 5. `firebase_core` + `firebase_messaging` paketleri
