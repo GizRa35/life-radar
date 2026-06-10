@@ -7,6 +7,7 @@ import '../core/constants.dart';
 import '../core/i18n.dart';
 import '../core/theme.dart';
 import '../state/app_state.dart';
+import '../widgets/google_logo.dart';
 
 /// Giriş / Kayıt ekranı (Firebase Auth REST).
 class AuthScreen extends StatefulWidget {
@@ -242,12 +243,7 @@ class _AuthScreenState extends State<AuthScreen> {
                     label: t('Google ile devam et'),
                     background: Colors.white,
                     foreground: const Color(0xFF3C4043),
-                    icon: const Text('G',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w900,
-                          fontSize: 18,
-                          color: Color(0xFF4285F4),
-                        )),
+                    icon: const GoogleLogo(size: 20),
                     onTap: _loading ? () {} : _googleSignIn,
                   ),
                   // Apple ile devam et (iOS)
