@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+import '../core/i18n.dart';
 import '../core/media.dart';
 import '../core/theme.dart';
 import '../models/event_category.dart';
@@ -47,7 +48,7 @@ class EventCard extends StatelessWidget {
                   Icon(event.category.icon, size: 18, color: event.category.color),
                   const SizedBox(width: 6),
                   Text(
-                    event.category.label,
+                    t(event.category.label),
                     style: TextStyle(
                       color: event.category.color,
                       fontWeight: FontWeight.w600,
@@ -127,7 +128,7 @@ class EventCard extends StatelessWidget {
                       child: TextButton.icon(
                         onPressed: () => _openDetail(context),
                         icon: const Icon(Icons.insights_outlined, size: 18),
-                        label: const Text('Detay Analizi'),
+                        label: Text(t('Detay Analizi')),
                         style: TextButton.styleFrom(
                           foregroundColor: LifeRadarColors.turquoise,
                         ),

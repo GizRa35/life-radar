@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../core/i18n.dart';
 import '../core/theme.dart';
 import '../models/event_category.dart';
 import '../state/app_state.dart';
@@ -70,12 +71,12 @@ class _AgendaScreenState extends State<AgendaScreen>
             indicatorWeight: 3,
             labelStyle: const TextStyle(fontWeight: FontWeight.w700),
             tabs: [
-              const Tab(
+              Tab(
                 child: Row(
                   children: [
-                    Icon(Icons.auto_awesome, size: 16),
-                    SizedBox(width: 6),
-                    Text('Senin İçin'),
+                    const Icon(Icons.auto_awesome, size: 16),
+                    const SizedBox(width: 6),
+                    Text(t('Senin İçin')),
                   ],
                 ),
               ),
@@ -85,7 +86,7 @@ class _AgendaScreenState extends State<AgendaScreen>
                     children: [
                       Icon(c.icon, size: 16),
                       const SizedBox(width: 6),
-                      Text(c.label),
+                      Text(t(c.label)),
                     ],
                   ),
                 ),

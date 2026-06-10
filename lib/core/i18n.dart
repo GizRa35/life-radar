@@ -74,4 +74,79 @@ const Map<String, String> _en = {
   'Misafir olarak devam et': 'Continue as guest',
   'Hesabın yok mu? Kayıt ol': 'No account? Sign up',
   'Zaten hesabın var mı? Giriş yap': 'Already have an account? Sign in',
+
+  // --- Kategoriler (EventCategory) ---
+  'Dünya': 'World',
+  'Türkiye': 'Türkiye',
+  'Sağlık': 'Health',
+  'Ekonomi': 'Economy',
+  'Teknoloji': 'Technology',
+  'Enerji': 'Energy',
+  'Güvenlik': 'Security',
+  'İklim': 'Climate',
+  'Afetler': 'Disasters',
+
+  // --- Gündem ---
+  'Senin İçin': 'For You',
+  'Güncel haberler yükleniyor...': 'Loading latest news...',
+  'Bugünün en önemli gelişmeleri': "Today's top developments",
+  'Takip ettiğin konulara göre seçildi': 'Based on your followed topics',
+  'Detay Analizi': 'Detailed Analysis',
+  'Haberin tamamını oku': 'Read full story',
+
+  // --- Radar ---
+  'Kişisel Risk Puanı': 'Personal Risk Score',
+  'Konumunuz': 'Your location',
+  'Güncelle': 'Update',
+  'Risk Geçmişin': 'Your Risk History',
+  'Takip Edilen Şehirler': 'Tracked Cities',
+  'Sağlık Riski': 'Health Risk',
+  'Ekonomik Risk': 'Economic Risk',
+  'Afet Riski': 'Disaster Risk',
+  'Enerji Riski': 'Energy Risk',
+  'Siber Risk': 'Cyber Risk',
+  'Seyahat Riski': 'Travel Risk',
+  'Ne Yapmalıyım?': 'What Should I Do?',
+  'İlgili Gelişmeler': 'Related Developments',
+  'Yakındaki Depremleri Haritada Gör': 'See Nearby Earthquakes on Map',
+
+  // --- Profil ---
+  'Kişisel Bilgiler': 'Personal Info',
+  'Kişisel Bilgilerim': 'My Personal Info',
+  'Aboneliğiniz': 'Your Subscription',
+  'Mevcut Plan': 'Current Plan',
+  'Kayıtlı Haberler': 'Saved News',
+  'Takip Edilen Konular': 'Followed Topics',
+  'Ayarlar': 'Settings',
+  'Hesap': 'Account',
+  'Nasıl Kullanılır?': 'How to Use?',
+  'Bildirim Ayarları': 'Notification Settings',
+  'Kaynak Seçimi': 'Source Selection',
+  'Gizlilik': 'Privacy',
+  'Hesap Yönetimi': 'Account Management',
+  'Açık': 'On',
+  'Kapalı': 'Off',
+  'Life Radar Premium': 'Life Radar Premium',
+  'Life Radar VIP': 'Life Radar VIP',
+
+  // --- Rehber ---
+  'Acil Durum Rehberi': 'Emergency Guide',
+  'Acil Çantam': 'My Kit',
+  'Hızlı Arama': 'Quick Call',
+  'Aile Acil Planı': 'Family Emergency Plan',
+  'Acil Durum Çantası': 'Emergency Kit',
+  'Acil Çağrı Merkezi': 'Emergency Call Center',
+  'Acil Durum Kişilerim': 'My Emergency Contacts',
+  'Rehberden Kişi Seç': 'Pick from Contacts',
+
+  // --- Bildirimler ---
+  'Yeni bildirim yok': 'No new notifications',
+
+  // --- Premium / VIP ---
+  'Premium Aktif': 'Premium Active',
+  'VIP Merkezini Aç': 'Open VIP Center',
+  "VIP'i Keşfet": 'Explore VIP',
+  'Satın almaları geri yükle': 'Restore purchases',
+  'Aylık': 'Monthly',
+  'Yıllık': 'Yearly',
 };

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../core/i18n.dart';
 import '../core/media.dart';
 import '../core/theme.dart';
 import '../models/event_category.dart';
@@ -33,13 +34,14 @@ class ProfileScreen extends StatelessWidget {
         // Profil başlığı (abonelik renkli çerçeve, resme tıkla → avatar seç)
         const _ProfileHeader(),
 
-        _SectionTitle('Kişisel Bilgiler', icon: Icons.badge_outlined),
+        _SectionTitle(t('Kişisel Bilgiler'), icon: Icons.badge_outlined),
         const _PersonalInfoTile(),
 
-        _SectionTitle('Aboneliğiniz', icon: Icons.workspace_premium_outlined),
+        _SectionTitle(t('Aboneliğiniz'),
+            icon: Icons.workspace_premium_outlined),
         const _UpgradeCards(),
 
-        _SectionTitle('Kayıtlı Haberler', icon: Icons.bookmark_outline),
+        _SectionTitle(t('Kayıtlı Haberler'), icon: Icons.bookmark_outline),
         if (state.savedEvents.isEmpty)
           const _EmptyHint('Henüz kaydedilmiş haber yok. Haberlerdeki kaydet '
               'simgesine dokunarak buraya ekleyebilirsiniz.')
@@ -67,7 +69,7 @@ class ProfileScreen extends StatelessWidget {
                     .map((e) => EventCard(event: e, showActions: false)),
               ]),
 
-        _SectionTitle('Takip Edilen Konular', icon: Icons.topic_outlined),
+        _SectionTitle(t('Takip Edilen Konular'), icon: Icons.topic_outlined),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Wrap(
@@ -95,18 +97,18 @@ class ProfileScreen extends StatelessWidget {
           ),
         ),
 
-        _SectionTitle('Ayarlar', icon: Icons.settings_outlined),
+        _SectionTitle(t('Ayarlar'), icon: Icons.settings_outlined),
         _SettingTile(
           icon: Icons.help_outline,
-          title: 'Nasıl Kullanılır?',
+          title: t('Nasıl Kullanılır?'),
           onTap: () => Navigator.of(context).push(
             MaterialPageRoute(builder: (_) => const UsageGuideScreen()),
           ),
         ),
         _SettingTile(
           icon: Icons.notifications_outlined,
-          title: 'Bildirim Ayarları',
-          trailing: state.alertsEnabled ? 'Açık' : 'Kapalı',
+          title: t('Bildirim Ayarları'),
+          trailing: state.alertsEnabled ? t('Açık') : t('Kapalı'),
           onTap: () => Navigator.of(context).push(
             MaterialPageRoute(
                 builder: (_) => const NotificationSettingsScreen()),
@@ -114,7 +116,7 @@ class ProfileScreen extends StatelessWidget {
         ),
         _SettingTile(
           icon: Icons.language,
-          title: 'Haber Dili',
+          title: t('Haber Dili'),
           trailing: state.userContext.language == 'en' ? 'English' : 'Türkçe',
           onTap: () => Navigator.of(context).push(
             MaterialPageRoute(builder: (_) => const LanguageScreen()),
@@ -122,28 +124,28 @@ class ProfileScreen extends StatelessWidget {
         ),
         _SettingTile(
           icon: Icons.rss_feed,
-          title: 'Kaynak Seçimi',
+          title: t('Kaynak Seçimi'),
           onTap: () => Navigator.of(context).push(
             MaterialPageRoute(builder: (_) => const SourceSettingsScreen()),
           ),
         ),
         _SettingTile(
           icon: Icons.lock_outline,
-          title: 'Gizlilik',
+          title: t('Gizlilik'),
           onTap: () => Navigator.of(context).push(
             MaterialPageRoute(builder: (_) => const PrivacyScreen()),
           ),
         ),
         _SettingTile(
           icon: Icons.manage_accounts_outlined,
-          title: 'Hesap Yönetimi',
+          title: t('Hesap Yönetimi'),
           onTap: () => Navigator.of(context).push(
             MaterialPageRoute(
                 builder: (_) => const AccountManagementScreen()),
           ),
         ),
 
-        _SectionTitle('Hesap', icon: Icons.account_circle_outlined),
+        _SectionTitle(t('Hesap'), icon: Icons.account_circle_outlined),
         const _AccountTile(),
 
         const SizedBox(height: 24),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../core/i18n.dart';
 import '../core/theme.dart';
 import '../models/risk_area.dart';
 import '../state/app_state.dart';
@@ -67,8 +68,8 @@ class RadarScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Konumunuz',
-                          style: TextStyle(
+                      Text(t('Konumunuz'),
+                          style: const TextStyle(
                               fontSize: 11,
                               color: LifeRadarColors.textSecondary)),
                       Text(
@@ -91,7 +92,7 @@ class RadarScreen extends StatelessWidget {
                   TextButton.icon(
                     onPressed: () => context.read<AppState>().detectLocation(),
                     icon: const Icon(Icons.my_location, size: 16),
-                    label: const Text('Güncelle'),
+                    label: Text(t('Güncelle')),
                     style: TextButton.styleFrom(
                         foregroundColor: LifeRadarColors.turquoise),
                   ),
@@ -103,9 +104,9 @@ class RadarScreen extends StatelessWidget {
         Center(
           child: Column(
             children: [
-              const Text(
-                'Kişisel Risk Puanı',
-                style: TextStyle(
+              Text(
+                t('Kişisel Risk Puanı'),
+                style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: LifeRadarColors.textSecondary,
@@ -133,11 +134,11 @@ class RadarScreen extends StatelessWidget {
 
         // Risk geçmişi grafiği (yeterli veri varsa)
         if (state.riskHistory.length >= 2) ...[
-          const Padding(
-            padding: EdgeInsets.fromLTRB(16, 0, 16, 4),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 4),
             child: Text(
-              'Risk Geçmişin',
-              style: TextStyle(
+              t('Risk Geçmişin'),
+              style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w800,
                 color: LifeRadarColors.navy,
@@ -179,9 +180,9 @@ class RadarScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          'Takip Edilen Şehirler',
-                          style: TextStyle(
+                        Text(
+                          t('Takip Edilen Şehirler'),
+                          style: const TextStyle(
                             fontWeight: FontWeight.w800,
                             color: LifeRadarColors.navy,
                             fontSize: 15,
@@ -252,7 +253,7 @@ class _RiskAreaCard extends StatelessWidget {
                       children: [
                         Expanded(
                           child: Text(
-                            area.type.label,
+                            t(area.type.label),
                             style: const TextStyle(
                               fontWeight: FontWeight.w700,
                               fontSize: 15,
