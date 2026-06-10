@@ -7,6 +7,7 @@ import '../core/theme.dart';
 import '../models/subscription.dart';
 import '../services/auth_service.dart';
 import '../state/app_state.dart';
+import '../widgets/form_widgets.dart';
 
 /// Hesap Yönetimi — hesap bilgileri, şifre, e-posta doğrulama, hesap silme.
 class AccountManagementScreen extends StatefulWidget {
@@ -82,37 +83,27 @@ class _AccountManagementScreenState extends State<AccountManagementScreen> {
           const SizedBox(height: 8),
 
           // 2) E-posta doğrulama
-          _SectionLabel(t('E-posta Doğrulama'), Icons.mark_email_read_outlined),
+          FormSectionHeader(
+              icon: Icons.mark_email_read_outlined,
+              title: t('E-posta Doğrulama')),
           _VerifyCard(info: _info),
           const SizedBox(height: 8),
 
           // 3) Şifre yönetimi (yalnızca e-posta/şifre hesapları)
-          _SectionLabel(t('Şifre'), Icons.password_outlined),
+          FormSectionHeader(
+              icon: Icons.password_outlined, title: t('Şifre')),
           if (_info?.isGoogle == true && _info?.isPassword != true)
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(14),
-                child: Row(
-                  children: [
-                    const Icon(Icons.info_outline,
-                        color: LifeRadarColors.turquoise),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        t('Google ile giriş yaptığın için şifre yönetimi Google hesabından yapılır.'),
-                        style: const TextStyle(fontSize: 13),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+            FormTipCard(
+              icon: Icons.info_outline,
+              text: t('Google ile giriş yaptığın için şifre yönetimi Google hesabından yapılır.'),
             )
           else
             const _PasswordCard(),
           const SizedBox(height: 8),
 
           // 4) Tehlikeli bölge
-          _SectionLabel(t('Tehlikeli Bölge'), Icons.dangerous_outlined),
+          FormSectionHeader(
+              icon: Icons.dangerous_outlined, title: t('Tehlikeli Bölge')),
           Card(
             child: ListTile(
               leading: const Icon(Icons.logout, color: LifeRadarColors.navy),
@@ -505,30 +496,6 @@ class _PasswordCardState extends State<_PasswordCard> {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _SectionLabel extends StatelessWidget {
-  final String text;
-  final IconData icon;
-  const _SectionLabel(this.text, this.icon);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(4, 12, 4, 8),
-      child: Row(
-        children: [
-          Icon(icon, size: 18, color: LifeRadarColors.navy),
-          const SizedBox(width: 8),
-          Text(text,
-              style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w800,
-                  color: LifeRadarColors.navy)),
-        ],
       ),
     );
   }

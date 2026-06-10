@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../core/i18n.dart';
 import '../core/theme.dart';
 import '../state/app_state.dart';
+import '../widgets/form_widgets.dart';
 
 /// İnteraktif acil durum çantası listesi — maddeleri işaretle, hazırlık yüzdeni gör.
 class EmergencyKitScreen extends StatelessWidget {
@@ -66,85 +67,17 @@ class EmergencyKitScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 40),
         children: [
-          // Hazırlık yüzdesi kartı
-          Container(
-            padding: const EdgeInsets.all(18),
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [LifeRadarColors.navy, Color(0xFF123A63)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(18),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    const Icon(Icons.backpack, color: LifeRadarColors.turquoise),
-                    const SizedBox(width: 8),
-                    Text(
-                      '${t('Hazırlık:')} %${(pct * 100).round()}',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                    const Spacer(),
-                    Text('$done / $_total',
-                        style: const TextStyle(color: Colors.white70)),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: LinearProgressIndicator(
-                    value: pct,
-                    minHeight: 10,
-                    backgroundColor: Colors.white24,
-                    valueColor: const AlwaysStoppedAnimation(
-                        LifeRadarColors.turquoise),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  pct >= 1.0
-                      ? t('Tebrikler! Çantan tam hazır. 🎒')
-                      : t('Maddeleri tamamladıkça hazırlık oranın artar.'),
-                  style: const TextStyle(color: Colors.white70, fontSize: 13),
-                ),
-              ],
-            ),
+          // Hazırlık durumu kartı (açık tema + dairesel halka)
+          CircularStatusCard(
+            icon: Icons.backpack,
+            title: t('Çanta Hazırlık Durumu'),
+            subtitle: '%${(pct * 100).round()} ${t('Tamamlandı')}',
+            percent: pct,
           ),
-          const SizedBox(height: 16),
           for (final entry in _sections.entries) ...[
-            Padding(
-              padding: const EdgeInsets.fromLTRB(4, 16, 4, 8),
-              child: Row(
-                children: [
-                  Container(
-                    width: 30,
-                    height: 30,
-                    decoration: BoxDecoration(
-                      color: LifeRadarColors.turquoise.withOpacity(0.12),
-                      borderRadius: BorderRadius.circular(9),
-                    ),
-                    child: Icon(_sectionIcons[entry.key] ?? Icons.check,
-                        size: 18, color: LifeRadarColors.turquoise),
-                  ),
-                  const SizedBox(width: 10),
-                  Text(
-                    t(entry.key),
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w800,
-                      color: LifeRadarColors.navy,
-                    ),
-                  ),
-                ],
-              ),
+            FormSectionHeader(
+              icon: _sectionIcons[entry.key] ?? Icons.check,
+              title: t(entry.key),
             ),
             Card(
               margin: EdgeInsets.zero,
@@ -161,6 +94,12 @@ class EmergencyKitScreen extends StatelessWidget {
               ),
             ),
           ],
+          const SizedBox(height: 18),
+          FormTipCard(
+            title: t('Önemli İpucu'),
+            text: t(
+                'Çantanızdaki gıdaların son kullanma tarihlerini her 6 ayda bir kontrol etmeyi unutmayın.'),
+          ),
         ],
       ),
     );

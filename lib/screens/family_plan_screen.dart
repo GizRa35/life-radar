@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../core/i18n.dart';
-import '../core/theme.dart';
 import '../state/app_state.dart';
+import '../widgets/form_widgets.dart';
 
 /// Aile acil durum planı — buluşma noktaları ve iletişim notu.
 class FamilyPlanScreen extends StatefulWidget {
@@ -52,43 +52,26 @@ class _FamilyPlanScreenState extends State<FamilyPlanScreen> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: LifeRadarColors.cardBackground,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Row(
-              children: [
-                const Icon(Icons.family_restroom,
-                    color: LifeRadarColors.turquoise),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    t('Afet anında ailenizin nerede buluşacağını ve nasıl iletişim kuracağını önceden belirleyin. Bilgiler yalnızca cihazınızda saklanır.'),
-                    style: const TextStyle(
-                        fontSize: 12, color: LifeRadarColors.textSecondary),
-                  ),
-                ),
-              ],
-            ),
+          FormTipCard(
+            icon: Icons.family_restroom,
+            text: t('Afet anında ailenizin nerede buluşacağını ve nasıl iletişim kuracağını önceden belirleyin. Bilgiler yalnızca cihazınızda saklanır.'),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 18),
+          FormFieldLabel(t('Ev yakını buluşma noktası')),
           _field(
             _home,
-            t('Ev yakını buluşma noktası'),
             Icons.home_outlined,
             'Örn: Apartman önü / sokak köşesindeki park',
           ),
+          FormFieldLabel(t('Bölge dışı buluşma noktası')),
           _field(
             _area,
-            t('Bölge dışı buluşma noktası'),
             Icons.location_city_outlined,
             'Örn: Mahalle meydanı / okul bahçesi',
           ),
+          FormFieldLabel(t('İletişim ve toplanma notu')),
           _field(
             _note,
-            t('İletişim ve toplanma notu'),
             Icons.notes_outlined,
             'Örn: Şehir dışındaki ... teyzeyi arayın; herkes oraya haber versin',
             maxLines: 4,
@@ -106,8 +89,7 @@ class _FamilyPlanScreenState extends State<FamilyPlanScreen> {
     );
   }
 
-  Widget _field(TextEditingController c, String label, IconData icon,
-      String hint,
+  Widget _field(TextEditingController c, IconData icon, String hint,
       {int maxLines = 1}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 14),
@@ -116,7 +98,6 @@ class _FamilyPlanScreenState extends State<FamilyPlanScreen> {
         maxLines: maxLines,
         textCapitalization: TextCapitalization.sentences,
         decoration: InputDecoration(
-          labelText: label,
           hintText: hint,
           prefixIcon: Icon(icon),
         ),

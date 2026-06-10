@@ -5,6 +5,7 @@ import '../core/i18n.dart';
 import '../core/theme.dart';
 import '../models/event_category.dart';
 import '../state/app_state.dart';
+import '../widgets/form_widgets.dart';
 
 /// Bildirim Ayarları — izin durumu, türler, kategoriler ve sessiz saatler.
 class NotificationSettingsScreen extends StatelessWidget {
@@ -43,7 +44,8 @@ class NotificationSettingsScreen extends StatelessWidget {
             child: Column(
               children: [
                 const SizedBox(height: 8),
-                _SectionLabel(t('Bildirim Türleri'), Icons.tune),
+                FormSectionHeader(
+                    icon: Icons.tune, title: t('Bildirim Türleri')),
                 _TypeTile(
                   icon: Icons.crisis_alert,
                   color: LifeRadarColors.riskHigh,
@@ -83,11 +85,13 @@ class NotificationSettingsScreen extends StatelessWidget {
                 if (state.notifRiskChange) const _ThresholdCard(),
 
                 const SizedBox(height: 8),
-                _SectionLabel(t('Kategoriler'), Icons.category_outlined),
+                FormSectionHeader(
+                    icon: Icons.category_outlined, title: t('Kategoriler')),
                 const _CategoryCard(),
 
                 const SizedBox(height: 8),
-                _SectionLabel(t('Sessiz Saatler'), Icons.bedtime_outlined),
+                FormSectionHeader(
+                    icon: Icons.bedtime_outlined, title: t('Sessiz Saatler')),
                 const _QuietHoursCard(),
 
                 const SizedBox(height: 16),
@@ -411,29 +415,6 @@ class _TypeTile extends StatelessWidget {
   }
 }
 
-class _SectionLabel extends StatelessWidget {
-  final String text;
-  final IconData icon;
-  const _SectionLabel(this.text, this.icon);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(4, 8, 4, 8),
-      child: Row(
-        children: [
-          Icon(icon, size: 18, color: LifeRadarColors.navy),
-          const SizedBox(width: 8),
-          Text(text,
-              style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w800,
-                  color: LifeRadarColors.navy)),
-        ],
-      ),
-    );
-  }
-}
 
 /// Ana anahtar kapalıyken alt bölümleri soluk ve etkisiz gösterir.
 class _Disabled extends StatelessWidget {

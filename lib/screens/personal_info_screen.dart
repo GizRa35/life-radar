@@ -3,9 +3,9 @@ import 'package:provider/provider.dart';
 
 import '../core/i18n.dart';
 import '../core/text_utils.dart';
-import '../core/theme.dart';
 import '../models/user_context.dart';
 import '../state/app_state.dart';
+import '../widgets/form_widgets.dart';
 
 /// Kişisel Bilgiler — AI analizlerini kişiselleştirmek için kullanılır.
 class PersonalInfoScreen extends StatefulWidget {
@@ -78,33 +78,37 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
     Navigator.of(context).pop();
   }
 
+  /// Profil tamamlama oranı (dolu alan sayısı / toplam).
+  double _completion() {
+    final vals = [
+      _name.text,
+      _age.text,
+      _gender,
+      _profession.text,
+      _location.text,
+      _household.text,
+      _health.text,
+      _financial,
+      _homeType,
+      _family.text,
+    ];
+    final filled = vals.where((v) => v.trim().isNotEmpty).length;
+    return vals.isEmpty ? 0 : filled / vals.length;
+  }
+
   @override
   Widget build(BuildContext context) {
+    final pct = _completion();
     return Scaffold(
       appBar: AppBar(title: Text(t('Kişisel Bilgiler'))),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: LifeRadarColors.cardBackground,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Row(
-              children: [
-                const Icon(Icons.info_outline,
-                    color: LifeRadarColors.turquoise),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    t('Bu bilgiler yalnızca cihazında tutulur ve Life Radar Asistan analizlerini sana özel hale getirmek için kullanılır.'),
-                    style: const TextStyle(
-                        fontSize: 12, color: LifeRadarColors.textSecondary),
-                  ),
-                ),
-              ],
-            ),
+          LinearStatusCard(
+            overline: t('Profil Tamamlama'),
+            title: t('Hazırlık Durumu'),
+            subtitle: '%${(pct * 100).round()} ${t('Tamamlandı')}',
+            percent: pct,
           ),
           const SizedBox(height: 16),
           _field(_name, t('Ad (opsiyonel)'), Icons.person_outline),
@@ -118,6 +122,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
             (v) => setState(() => _gender = v),
           ),
           _field(_profession, t('Meslek'), Icons.work_outline),
+          FormFieldLabel(t('Şehir')),
           _field(_location, t('Şehir'), Icons.location_city_outlined),
           _field(_household, t('Hanede yaşayan kişi sayısı'),
               Icons.groups_outlined, keyboard: TextInputType.number),
@@ -140,13 +145,13 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
           _field(_family, t('Birlikte yaşadıkların (eş, çocuk...)'),
               Icons.family_restroom, maxLines: 2),
           // Haber dili: yabancı kaynaklı haberler bu dile çevrilir.
+          FormFieldLabel(t('Haber Dili')),
           Padding(
             padding: const EdgeInsets.only(bottom: 12),
             child: DropdownButtonFormField<String>(
               value: _language,
-              decoration: InputDecoration(
-                labelText: t('Haber Dili'),
-                prefixIcon: const Icon(Icons.translate_outlined),
+              decoration: const InputDecoration(
+                prefixIcon: Icon(Icons.translate_outlined),
                 helperText: 'Yabancı kaynaklı haberler bu dile çevrilir',
               ),
               items: const [
@@ -156,7 +161,12 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
               onChanged: (v) => setState(() => _language = v ?? 'tr'),
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 8),
+          FormTipCard(
+            text: t('Bu bilgiler yalnızca cihazında tutulur ve Life Radar Asistan analizlerini sana özel hale getirmek için kullanılır.'),
+            icon: Icons.lock_outline,
+          ),
+          const SizedBox(height: 16),
           ElevatedButton.icon(
             onPressed: _save,
             icon: const Icon(Icons.save),

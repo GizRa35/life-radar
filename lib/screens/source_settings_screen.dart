@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../core/i18n.dart';
 import '../core/theme.dart';
 import '../state/app_state.dart';
+import '../widgets/form_widgets.dart';
 
 /// Kaynak seçimi — hangi haber kaynaklarından içerik gelsin.
 class SourceSettingsScreen extends StatelessWidget {
@@ -31,27 +32,9 @@ class SourceSettingsScreen extends StatelessWidget {
           : ListView(
               padding: const EdgeInsets.fromLTRB(16, 12, 16, 40),
               children: [
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: LifeRadarColors.cardBackground,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.tune,
-                          size: 18, color: LifeRadarColors.turquoise),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          t('Kapattığın kaynakların haberleri akışta gösterilmez.'),
-                          style: const TextStyle(
-                              fontSize: 12,
-                              color: LifeRadarColors.textSecondary),
-                        ),
-                      ),
-                    ],
-                  ),
+                FormTipCard(
+                  icon: Icons.tune,
+                  text: t('Kapattığın kaynakların haberleri akışta gösterilmez.'),
                 ),
                 const SizedBox(height: 8),
                 ...sources.map(

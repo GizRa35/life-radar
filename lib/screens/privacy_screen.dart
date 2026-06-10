@@ -9,6 +9,7 @@ import '../core/media.dart';
 import '../core/theme.dart';
 import '../services/report_export.dart';
 import '../state/app_state.dart';
+import '../widgets/form_widgets.dart';
 
 /// Gizlilik — veri özeti, dışa aktarma, gizlilik kontrolleri, veri temizleme
 /// ve gizlilik politikası.
@@ -25,30 +26,15 @@ class PrivacyScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         children: [
           // Bilgilendirme
-          Card(
-            color: LifeRadarColors.turquoise.withOpacity(0.08),
-            child: Padding(
-              padding: const EdgeInsets.all(14),
-              child: Row(
-                children: [
-                  const Icon(Icons.verified_user_outlined,
-                      color: LifeRadarColors.turquoise),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      t('Verilerin yalnızca bu cihazda (tarayıcı belleğinde) tutulur. Hesabımız bunları sunucuda saklamaz.'),
-                      style: const TextStyle(
-                          fontSize: 13, color: LifeRadarColors.navy),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+          FormTipCard(
+            icon: Icons.verified_user_outlined,
+            text: t('Verilerin yalnızca bu cihazda (tarayıcı belleğinde) tutulur. Hesabımız bunları sunucuda saklamaz.'),
           ),
           const SizedBox(height: 8),
 
           // 1) Veri özeti + dışa aktarma
-          _SectionLabel(t('Verilerim'), Icons.folder_outlined),
+          FormSectionHeader(
+              icon: Icons.folder_outlined, title: t('Verilerim')),
           Card(
             child: Padding(
               padding: const EdgeInsets.all(12),
@@ -103,7 +89,8 @@ class PrivacyScreen extends StatelessWidget {
           const SizedBox(height: 8),
 
           // 2) Gizlilik kontrolleri
-          _SectionLabel(t('Gizlilik Kontrolleri'), Icons.tune),
+          FormSectionHeader(
+              icon: Icons.tune, title: t('Gizlilik Kontrolleri')),
           Card(
             child: Column(
               children: [
@@ -138,7 +125,8 @@ class PrivacyScreen extends StatelessWidget {
           const SizedBox(height: 8),
 
           // 3) Veri temizleme
-          _SectionLabel(t('Veri Temizleme'), Icons.delete_outline),
+          FormSectionHeader(
+              icon: Icons.delete_outline, title: t('Veri Temizleme')),
           Card(
             child: Column(
               children: [
@@ -195,7 +183,8 @@ class PrivacyScreen extends StatelessWidget {
           const SizedBox(height: 8),
 
           // 4) Gizlilik politikası
-          _SectionLabel(t('Gizlilik Politikası'), Icons.policy_outlined),
+          FormSectionHeader(
+              icon: Icons.policy_outlined, title: t('Gizlilik Politikası')),
           Card(
             child: Padding(
               padding: const EdgeInsets.all(16),
@@ -302,30 +291,6 @@ class _ClearTile extends StatelessWidget {
           style: TextStyle(fontWeight: FontWeight.w600, color: color)),
       trailing: const Icon(Icons.chevron_right),
       onTap: enabled ? () => _ask(context) : null,
-    );
-  }
-}
-
-class _SectionLabel extends StatelessWidget {
-  final String text;
-  final IconData icon;
-  const _SectionLabel(this.text, this.icon);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(4, 12, 4, 8),
-      child: Row(
-        children: [
-          Icon(icon, size: 18, color: LifeRadarColors.navy),
-          const SizedBox(width: 8),
-          Text(text,
-              style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w800,
-                  color: LifeRadarColors.navy)),
-        ],
-      ),
     );
   }
 }

@@ -7,6 +7,7 @@ import '../core/i18n.dart';
 import '../core/theme.dart';
 import '../services/contacts_service.dart';
 import '../state/app_state.dart';
+import '../widgets/form_widgets.dart';
 
 /// Hızlı acil arama — resmi acil hatlar + kişisel acil durum kişisi.
 class EmergencyCallScreen extends StatelessWidget {
@@ -44,15 +45,11 @@ class EmergencyCallScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 40),
         children: [
-          Text(
-            t('Acil Çağrı Merkezi'),
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w800,
-              color: LifeRadarColors.navy,
-            ),
+          FormSectionHeader(
+            icon: Icons.emergency_outlined,
+            title: t('Acil Çağrı Merkezi'),
+            padding: const EdgeInsets.fromLTRB(4, 0, 4, 10),
           ),
-          const SizedBox(height: 10),
           // Tek acil numara: 112
           InkWell(
             borderRadius: BorderRadius.circular(18),
@@ -107,39 +104,20 @@ class EmergencyCallScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 10),
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: LifeRadarColors.cardBackground,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Row(
-              children: [
-                const Icon(Icons.info_outline,
-                    size: 18, color: LifeRadarColors.turquoise),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    t('Türkiye\'de sağlık, itfaiye, polis, jandarma ve afet çağrıları tek numarada birleşti: 112. (110, 155, 156, 122 aramaları da 112\'ye yönlendirilir.)'),
-                    style: const TextStyle(
-                        fontSize: 12, color: LifeRadarColors.textSecondary),
-                  ),
-                ),
-              ],
-            ),
+          FormTipCard(
+            icon: Icons.info_outline,
+            text: t('Türkiye\'de sağlık, itfaiye, polis, jandarma ve afet çağrıları tek numarada birleşti: 112. (110, 155, 156, 122 aramaları da 112\'ye yönlendirilir.)'),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 8),
           Row(
             children: [
-              Text(
-                t('Acil Durum Kişilerim'),
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w800,
-                  color: LifeRadarColors.navy,
+              Expanded(
+                child: FormSectionHeader(
+                  icon: Icons.contacts_outlined,
+                  title: t('Acil Durum Kişilerim'),
+                  padding: const EdgeInsets.fromLTRB(4, 8, 4, 8),
                 ),
               ),
-              const Spacer(),
               Text(
                 '${state.emergencyContacts.length}/2',
                 style: const TextStyle(
@@ -147,7 +125,7 @@ class EmergencyCallScreen extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 2),
           // Mevcut kişiler (en fazla 2)
           ...state.emergencyContacts.asMap().entries.map((e) {
             final c = e.value;
@@ -197,26 +175,9 @@ class EmergencyCallScreen extends StatelessWidget {
             ),
           ],
           const SizedBox(height: 16),
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: LifeRadarColors.cardBackground,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Row(
-              children: [
-                const Icon(Icons.info_outline,
-                    size: 18, color: LifeRadarColors.textSecondary),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    t('Gerçek acil durumda önce 112\'yi arayın. Acil kişi bilgisi yalnızca cihazınızda saklanır.'),
-                    style: const TextStyle(
-                        fontSize: 12, color: LifeRadarColors.textSecondary),
-                  ),
-                ),
-              ],
-            ),
+          FormTipCard(
+            icon: Icons.info_outline,
+            text: t('Gerçek acil durumda önce 112\'yi arayın. Acil kişi bilgisi yalnızca cihazınızda saklanır.'),
           ),
         ],
       ),

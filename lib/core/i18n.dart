@@ -468,6 +468,15 @@ const Map<String, String> _en = {
   'En avantajlı': 'Best value',
   'Planını seç': 'Choose your plan',
 
+  // --- Form tasarımı (durum/ipucu kartları) ---
+  'Çanta Hazırlık Durumu': 'Kit Readiness',
+  'Tamamlandı': 'Completed',
+  'Önemli İpucu': 'Important Tip',
+  'Çantanızdaki gıdaların son kullanma tarihlerini her 6 ayda bir kontrol etmeyi unutmayın.':
+      'Remember to check the expiry dates of the food in your kit every 6 months.',
+  'Profil Tamamlama': 'Profile Completion',
+  'Hazırlık Durumu': 'Readiness Status',
+
   // --- Aile Acil Planı ---
   'Ev yakını buluşma noktası': 'Meeting point near home',
   'Bölge dışı buluşma noktası': 'Out-of-area meeting point',
