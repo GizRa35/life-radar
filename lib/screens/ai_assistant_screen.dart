@@ -127,15 +127,14 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('Günlük soru limiti doldu'),
-        content: const Text(
-          'Ücretsiz planda günde 5 soru sorabilirsiniz. Sınırsız soru için '
-          'Premium\'a yükseltin.',
+        title: Text(t('Günlük soru limiti doldu')),
+        content: Text(
+          t('Ücretsiz planda günde 5 soru sorabilirsiniz. Sınırsız soru için Premium\'a yükseltin.'),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Kapat'),
+            child: Text(t('Kapat')),
           ),
           ElevatedButton(
             onPressed: () {
@@ -144,7 +143,7 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
                 MaterialPageRoute(builder: (_) => const PremiumScreen()),
               );
             },
-            child: const Text('Premium\'a Bak'),
+            child: Text(t('Premium\'a Bak')),
           ),
         ],
       ),
@@ -192,20 +191,20 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
                 showDialog(
                   context: context,
                   builder: (ctx) => AlertDialog(
-                    title: const Text('Sohbeti temizle'),
-                    content: const Text(
-                        'Tüm sohbet geçmişi silinsin mi? Bu işlem geri alınamaz.'),
+                    title: Text(t('Sohbeti temizle')),
+                    content: Text(
+                        t('Tüm sohbet geçmişi silinsin mi? Bu işlem geri alınamaz.')),
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.pop(ctx),
-                        child: const Text('İptal'),
+                        child: Text(t('İptal')),
                       ),
                       ElevatedButton(
                         onPressed: () {
                           context.read<AppState>().clearAiChat();
                           Navigator.pop(ctx);
                         },
-                        child: const Text('Temizle'),
+                        child: Text(t('Temizle')),
                       ),
                     ],
                   ),
@@ -222,10 +221,9 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
               width: double.infinity,
               color: LifeRadarColors.riskMedium.withOpacity(0.15),
               padding: const EdgeInsets.all(12),
-              child: const Text(
-                'Gerçek Life Radar Asistan analizi için Profil > Groq API anahtarı ekleyin. '
-                'Şimdilik örnek yanıt gösteriliyor.',
-                style: TextStyle(fontSize: 12, color: LifeRadarColors.navy),
+              child: Text(
+                t('Gerçek Life Radar Asistan analizi için Profil > Groq API anahtarı ekleyin. Şimdilik örnek yanıt gösteriliyor.'),
+                style: const TextStyle(fontSize: 12, color: LifeRadarColors.navy),
               ),
             ),
           if (remaining != null)
@@ -240,7 +238,7 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
                   const SizedBox(width: 6),
                   Expanded(
                     child: Text(
-                      'Ücretsiz plan: bugün $remaining soru hakkınız kaldı.',
+                      '${t('Ücretsiz plan:')} $remaining ${t('soru hakkın kaldı (bugün).')}',
                       style: const TextStyle(
                           fontSize: 12, color: LifeRadarColors.textSecondary),
                     ),
@@ -249,7 +247,7 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
                     onPressed: () => Navigator.of(context).push(
                       MaterialPageRoute(builder: (_) => const PremiumScreen()),
                     ),
-                    child: const Text('Yükselt'),
+                    child: Text(t('Yükselt')),
                   ),
                 ],
               ),

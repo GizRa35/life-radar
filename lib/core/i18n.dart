@@ -119,6 +119,12 @@ const Map<String, String> _en = {
   'Takip ettiğin konulara göre seçildi': 'Based on your followed topics',
   'Detay Analizi': 'Detailed Analysis',
   'Haberin tamamını oku': 'Read full story',
+  'Senin için akış hazırlanıyor': 'Preparing your feed',
+  'Profil > Takip Edilen Konular\'dan ilgi alanı seçersen akışın kişiselleşir.':
+      'Pick interests from Profile > Followed Topics to personalize your feed.',
+  'kategorisinde gelişme yok': 'category has no developments',
+  'Aşağı çekerek veya aşağıdaki düğmeyle yenileyebilirsin.':
+      'Pull down or use the button below to refresh.',
 
   // --- Radar ---
   'Kişisel Risk Puanı': 'Personal Risk Score',
@@ -211,6 +217,17 @@ const Map<String, String> _en = {
   'Sohbeti temizle': 'Clear chat',
   'Sesli sor': 'Ask by voice',
   'Bu beni nasıl etkiler?': 'How does this affect me?',
+  'Ücretsiz plan:': 'Free plan:',
+  'soru hakkın kaldı (bugün).': 'questions left (today).',
+  'Günlük soru limiti doldu': 'Daily question limit reached',
+  'Ücretsiz planda günde 5 soru sorabilirsiniz. Sınırsız soru için Premium\'a yükseltin.':
+      'You can ask 5 questions a day on the free plan. Upgrade to Premium for unlimited questions.',
+  'Premium\'a Bak': 'See Premium',
+  'Tüm sohbet geçmişi silinsin mi? Bu işlem geri alınamaz.':
+      'Delete all chat history? This cannot be undone.',
+  'Temizle': 'Clear',
+  'Gerçek Life Radar Asistan analizi için Profil > Groq API anahtarı ekleyin. Şimdilik örnek yanıt gösteriliyor.':
+      'For real Life Radar Assistant analysis, add your Groq API key in Profile. A sample answer is shown for now.',
   'Bu savaş Türkiye\'yi etkiler mi?': 'Will this war affect Türkiye?',
   'Bu hastalık tehlikeli mi?': 'Is this disease dangerous?',
   'Altın neden yükseliyor?': 'Why is gold rising?',

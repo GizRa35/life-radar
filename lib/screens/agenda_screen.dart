@@ -126,13 +126,12 @@ class _ForYouFeed extends StatelessWidget {
       return EmptyState(
         icon: Icons.auto_awesome,
         color: LifeRadarColors.turquoise,
-        title: 'Senin için akış hazırlanıyor',
-        subtitle: 'Profil > Takip Edilen Konular\'dan ilgi alanı seçersen '
-            'akışın kişiselleşir.',
+        title: t('Senin için akış hazırlanıyor'),
+        subtitle: t('Profil > Takip Edilen Konular\'dan ilgi alanı seçersen akışın kişiselleşir.'),
         action: TextButton.icon(
           onPressed: () => context.read<AppState>().loadFeeds(),
           icon: const Icon(Icons.refresh),
-          label: const Text('Yenile'),
+          label: Text(t('Yenile')),
         ),
       );
     }
@@ -147,8 +146,8 @@ class _ForYouFeed extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
             child: Text(
               followed
-                  ? 'Takip ettiğin konulara göre seçildi'
-                  : 'Bugünün en önemli gelişmeleri',
+                  ? t('Takip ettiğin konulara göre seçildi')
+                  : t('Bugünün en önemli gelişmeleri'),
               style: const TextStyle(
                 color: LifeRadarColors.textSecondary,
                 fontSize: 13,
@@ -173,14 +172,15 @@ class _CategoryFeed extends StatelessWidget {
 
     if (events.isEmpty) {
       if (state.loadingFeeds) {
-        return const Center(
+        return Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              CircularProgressIndicator(color: LifeRadarColors.turquoise),
-              SizedBox(height: 12),
-              Text('Güncel haberler yükleniyor...',
-                  style: TextStyle(color: LifeRadarColors.textSecondary)),
+              const CircularProgressIndicator(
+                  color: LifeRadarColors.turquoise),
+              const SizedBox(height: 12),
+              Text(t('Güncel haberler yükleniyor...'),
+                  style: const TextStyle(color: LifeRadarColors.textSecondary)),
             ],
           ),
         );
@@ -188,12 +188,12 @@ class _CategoryFeed extends StatelessWidget {
       return EmptyState(
         icon: category.icon,
         color: category.color,
-        title: '${category.label} kategorisinde gelişme yok',
-        subtitle: 'Aşağı çekerek veya aşağıdaki düğmeyle yenileyebilirsin.',
+        title: '${t(category.label)} ${t('kategorisinde gelişme yok')}',
+        subtitle: t('Aşağı çekerek veya aşağıdaki düğmeyle yenileyebilirsin.'),
         action: TextButton.icon(
           onPressed: () => context.read<AppState>().loadFeeds(),
           icon: const Icon(Icons.refresh),
-          label: const Text('Yenile'),
+          label: Text(t('Yenile')),
         ),
       );
     }
