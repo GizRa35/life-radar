@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 
+import '../core/i18n.dart';
 import '../core/text_utils.dart';
 import '../core/theme.dart';
 import '../data/mock_data.dart';
@@ -1029,6 +1030,7 @@ class AppState extends ChangeNotifier {
     final oldLang = _userContext.language;
     _userContext = ctx;
     lsSet('lr_ctx', jsonEncode(ctx.toJson()));
+    i18nSetLang(ctx.language); // arayüz dilini güncelle
     if (ctx.gender != oldGender) _applyGenderAvatar(ctx.gender);
     notifyListeners();
     // Dil değiştiyse haberleri yeni dile göre yeniden yükle/çevir.
@@ -1043,6 +1045,7 @@ class AppState extends ChangeNotifier {
             UserContext.fromJson(jsonDecode(raw) as Map<String, dynamic>);
       } catch (_) {}
     }
+    i18nSetLang(_userContext.language); // açılışta arayüz dilini ayarla
   }
 
   /// Kişisel bilgi girilmiş mi? (analizlerin kişiselleşmesi için)

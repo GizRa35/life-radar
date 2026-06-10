@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../core/i18n.dart';
 import '../core/theme.dart';
 import '../models/event_category.dart';
 import '../models/radar_event.dart';
@@ -76,7 +77,7 @@ class HomeScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Hoş Geldin, ${state.displayName}',
+                        '${t('Hoş Geldin')}, ${state.displayName}',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
@@ -85,7 +86,7 @@ class HomeScreen extends StatelessWidget {
                             fontWeight: FontWeight.w900),
                       ),
                       const SizedBox(height: 2),
-                      Text('Sistemler aktif. Tarama yapılıyor.',
+                      Text(t('Sistemler aktif. Tarama yapılıyor.'),
                           style: TextStyle(
                               color: Colors.white.withOpacity(0.8),
                               fontSize: 12)),
@@ -127,7 +128,7 @@ class HomeScreen extends StatelessWidget {
           ),
 
         // Günün Özeti
-        _SectionTitle('Günün Özeti', icon: Icons.today_outlined),
+        _SectionTitle(t('Günün Özeti'), icon: Icons.today_outlined),
         Card(
           child: Padding(
             padding: const EdgeInsets.all(16),
@@ -140,7 +141,7 @@ class HomeScreen extends StatelessWidget {
 
         // Bugün seni ilgilendiren en önemli 3 gelişme
         if (state.topToday.isNotEmpty) ...[
-          _SectionTitle('Bugün Öne Çıkanlar', icon: Icons.priority_high),
+          _SectionTitle(t('Bugün Öne Çıkanlar'), icon: Icons.priority_high),
           Card(
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 6),
@@ -159,13 +160,13 @@ class HomeScreen extends StatelessWidget {
           children: [
             Expanded(
               child: _RiskIndexCard(
-                title: 'Dünya Risk Endeksi',
+                title: t('Dünya Risk Endeksi'),
                 score: state.worldRiskIndex,
               ),
             ),
             Expanded(
               child: _RiskIndexCard(
-                title: 'Türkiye Risk Endeksi',
+                title: t('Türkiye Risk Endeksi'),
                 score: state.turkeyRiskIndex,
               ),
             ),
@@ -174,7 +175,7 @@ class HomeScreen extends StatelessWidget {
 
         // AI Günlük Analizi
         const SizedBox(height: 8),
-        _SectionTitle('Life Radar Asistan Günlük Analizi',
+        _SectionTitle(t('Life Radar Asistan Günlük Analizi'),
             icon: Icons.auto_awesome),
         Card(
           color: LifeRadarColors.navy,
@@ -205,12 +206,12 @@ class HomeScreen extends StatelessWidget {
               TextButton.icon(
                 onPressed: () => speakText(state.aiDailyAnalysis),
                 icon: const Icon(Icons.volume_up, size: 18),
-                label: const Text('Sesli Dinle'),
+                label: Text(t('Sesli Dinle')),
               ),
               TextButton.icon(
                 onPressed: stopSpeak,
                 icon: const Icon(Icons.stop, size: 18),
-                label: const Text('Durdur'),
+                label: Text(t('Durdur')),
                 style: TextButton.styleFrom(
                     foregroundColor: LifeRadarColors.textSecondary),
               ),
@@ -220,7 +221,7 @@ class HomeScreen extends StatelessWidget {
 
         // Son Dakika
         const SizedBox(height: 8),
-        _SectionTitle('Son Dakika Gelişmeleri', icon: Icons.bolt),
+        _SectionTitle(t('Son Dakika Gelişmeleri'), icon: Icons.bolt),
         ...breaking.map((e) => EventCard(event: e, showActions: false)),
 
         // Takip edilen konulara göre öne çıkanlar (yoksa yönlendirme)
@@ -358,7 +359,7 @@ class _WeatherCard extends StatelessWidget {
                   fontSize: 13, color: LifeRadarColors.textSecondary)),
           if (aqi != null) ...[
             const SizedBox(height: 6),
-            Text('Hava kalitesi: ${aqiLabel(aqi)}',
+            Text('${t('Hava kalitesi:')} ${aqiLabel(aqi)}',
                 style: const TextStyle(
                     fontSize: 12, color: LifeRadarColors.textSecondary)),
           ],
@@ -390,21 +391,22 @@ class _MarketCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Row(
+          Row(
             children: [
-              Icon(Icons.trending_up, size: 18, color: LifeRadarColors.turquoise),
-              SizedBox(width: 6),
-              Text('Piyasa',
-                  style: TextStyle(
+              const Icon(Icons.trending_up,
+                  size: 18, color: LifeRadarColors.turquoise),
+              const SizedBox(width: 6),
+              Text(t('Piyasa'),
+                  style: const TextStyle(
                       fontWeight: FontWeight.w800,
                       color: LifeRadarColors.navy,
                       fontSize: 13)),
             ],
           ),
           const SizedBox(height: 8),
-          _row('Dolar', _fmt(data['usd']), state.rateDir('usd')),
-          _row('Euro', _fmt(data['eur']), state.rateDir('eur')),
-          _row('Gram Altın', _fmt(data['gold']), state.rateDir('gold')),
+          _row(t('Dolar'), _fmt(data['usd']), state.rateDir('usd')),
+          _row(t('Euro'), _fmt(data['eur']), state.rateDir('eur')),
+          _row(t('Gram Altın'), _fmt(data['gold']), state.rateDir('gold')),
         ],
       ),
     );

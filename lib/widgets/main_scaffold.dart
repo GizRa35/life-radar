@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
+import '../core/i18n.dart';
 import '../core/theme.dart';
 import '../screens/agenda_screen.dart';
 import '../screens/ai_assistant_screen.dart';
@@ -99,12 +100,12 @@ class _MainScaffoldState extends State<MainScaffold>
           children: [
             const Icon(Icons.radar, color: LifeRadarColors.turquoise),
             const SizedBox(width: 8),
-            Text(_titles[index]),
+            Text(t(_titles[index])),
           ],
         ),
         actions: [
           IconButton(
-            tooltip: 'Ara',
+            tooltip: t('Ara'),
             onPressed: _openSearch,
             icon: const Icon(Icons.search),
           ),
@@ -112,7 +113,7 @@ class _MainScaffoldState extends State<MainScaffold>
             alignment: Alignment.center,
             children: [
               IconButton(
-                tooltip: 'Bildirimler',
+                tooltip: t('Bildirimler'),
                 onPressed: _openNotifications,
                 icon: const Icon(Icons.notifications_outlined),
               ),
@@ -152,7 +153,7 @@ class _MainScaffoldState extends State<MainScaffold>
       floatingActionButton: FloatingActionButton(
         onPressed: _openAssistant,
         backgroundColor: LifeRadarColors.turquoise,
-        tooltip: 'Life Radar Asistan',
+        tooltip: t('Life Radar Asistan'),
         child: const Icon(Icons.auto_awesome, color: Colors.white),
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -161,31 +162,31 @@ class _MainScaffoldState extends State<MainScaffold>
           HapticFeedback.selectionClick();
           context.read<AppState>().goToTab(i);
         },
-        items: const [
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            activeIcon: Icon(Icons.home),
-            label: 'Ana Sayfa',
+            icon: const Icon(Icons.home_outlined),
+            activeIcon: const Icon(Icons.home),
+            label: t('Ana Sayfa'),
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.article_outlined),
-            activeIcon: Icon(Icons.article),
-            label: 'Gündem',
+            icon: const Icon(Icons.article_outlined),
+            activeIcon: const Icon(Icons.article),
+            label: t('Gündem'),
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.radar_outlined),
-            activeIcon: Icon(Icons.radar),
-            label: 'Radar',
+            icon: const Icon(Icons.radar_outlined),
+            activeIcon: const Icon(Icons.radar),
+            label: t('Radar'),
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.menu_book_outlined),
-            activeIcon: Icon(Icons.menu_book),
-            label: 'Rehber',
+            icon: const Icon(Icons.menu_book_outlined),
+            activeIcon: const Icon(Icons.menu_book),
+            label: t('Rehber'),
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            activeIcon: Icon(Icons.person),
-            label: 'Profil',
+            icon: const Icon(Icons.person_outline),
+            activeIcon: const Icon(Icons.person),
+            label: t('Profil'),
           ),
         ],
       ),

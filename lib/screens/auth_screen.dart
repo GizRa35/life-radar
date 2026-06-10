@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../core/constants.dart';
+import '../core/i18n.dart';
 import '../core/theme.dart';
 import '../state/app_state.dart';
 
@@ -224,7 +225,7 @@ class _AuthScreenState extends State<AuthScreen> {
                   // Sosyal giriş: Google her platformda; Apple yalnızca iOS'ta.
                   // Google ile devam et
                   _SocialButton(
-                    label: 'Google ile devam et',
+                    label: t('Google ile devam et'),
                     background: Colors.white,
                     foreground: const Color(0xFF3C4043),
                     icon: const Text('G',
@@ -239,7 +240,7 @@ class _AuthScreenState extends State<AuthScreen> {
                   if (_appleAvailable) ...[
                     const SizedBox(height: 10),
                     _SocialButton(
-                      label: 'Apple ile devam et',
+                      label: t('Apple ile devam et'),
                       background: Colors.black,
                       foreground: Colors.white,
                       icon: const Icon(Icons.apple,
@@ -254,7 +255,7 @@ class _AuthScreenState extends State<AuthScreen> {
                           child: Divider(color: Colors.white.withOpacity(0.3))),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 10),
-                        child: Text('veya e-posta ile',
+                        child: Text(t('veya e-posta ile'),
                             style:
                                 TextStyle(color: Colors.white.withOpacity(0.7))),
                       ),
@@ -274,7 +275,7 @@ class _AuthScreenState extends State<AuthScreen> {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         Text(
-                          _isRegister ? 'Kayıt Ol' : 'Giriş Yap',
+                          _isRegister ? t('Kayıt Ol') : t('Giriş Yap'),
                           style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.w800,
@@ -453,9 +454,9 @@ class _AuthScreenState extends State<AuthScreen> {
                         TextField(
                           controller: _email,
                           keyboardType: TextInputType.emailAddress,
-                          decoration: const InputDecoration(
-                            labelText: 'E-posta',
-                            prefixIcon: Icon(Icons.email_outlined),
+                          decoration: InputDecoration(
+                            labelText: t('E-posta'),
+                            prefixIcon: const Icon(Icons.email_outlined),
                           ),
                         ),
                         const SizedBox(height: 12),
@@ -463,7 +464,7 @@ class _AuthScreenState extends State<AuthScreen> {
                           controller: _password,
                           obscureText: _obscure,
                           decoration: InputDecoration(
-                            labelText: 'Şifre',
+                            labelText: t('Şifre'),
                             prefixIcon: const Icon(Icons.lock_outline),
                             suffixIcon: IconButton(
                               icon: Icon(_obscure
@@ -510,7 +511,7 @@ class _AuthScreenState extends State<AuthScreen> {
                                   child: CircularProgressIndicator(
                                       strokeWidth: 2, color: Colors.white),
                                 )
-                              : Text(_isRegister ? 'Kayıt Ol' : 'Giriş Yap'),
+                              : Text(_isRegister ? t('Kayıt Ol') : t('Giriş Yap')),
                         ),
                         const SizedBox(height: 8),
                         TextButton(
@@ -521,8 +522,8 @@ class _AuthScreenState extends State<AuthScreen> {
                                     _error = null;
                                   }),
                           child: Text(_isRegister
-                              ? 'Zaten hesabın var mı? Giriş yap'
-                              : 'Hesabın yok mu? Kayıt ol'),
+                              ? t('Zaten hesabın var mı? Giriş yap')
+                              : t('Hesabın yok mu? Kayıt ol')),
                         ),
                       ],
                     ),
@@ -531,7 +532,7 @@ class _AuthScreenState extends State<AuthScreen> {
                   TextButton(
                     onPressed: () => context.read<AppState>().continueAsGuest(),
                     child: Text(
-                      'Misafir olarak devam et',
+                      t('Misafir olarak devam et'),
                       style: TextStyle(color: Colors.white.withOpacity(0.85)),
                     ),
                   ),
