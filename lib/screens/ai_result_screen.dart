@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../core/api_config.dart';
+import '../core/i18n.dart';
 import '../core/theme.dart';
 import '../state/app_state.dart';
 import '../widgets/action_plan_view.dart';
@@ -67,7 +68,7 @@ class _AiResultScreenState extends State<AiResultScreen> {
                       fontSize: 18,
                       fontWeight: FontWeight.w900)),
               const SizedBox(height: 2),
-              Text(widget.subtitle,
+              Text(t(widget.subtitle),
                   style: TextStyle(
                       color: Colors.white.withOpacity(0.85), fontSize: 12)),
             ],
@@ -175,9 +176,8 @@ class _AiResultScreenState extends State<AiResultScreen> {
                       const SizedBox(width: 6),
                       Expanded(
                         child: Text(
-                          'Bilgilendirme amaçlıdır; kesin tahmin değildir. '
-                          'Resmi kaynakları da takip edin.',
-                          style: TextStyle(
+                          t('Bilgilendirme amaçlıdır; kesin tahmin değildir. Resmi kaynakları da takip edin.'),
+                          style: const TextStyle(
                               fontSize: 11,
                               color: LifeRadarColors.textSecondary),
                         ),
@@ -207,13 +207,13 @@ class _LoadingCard extends StatelessWidget {
           children: [
             CircularProgressIndicator(color: accent),
             const SizedBox(height: 16),
-            const Text('Life Radar Asistan senin için hazırlıyor...',
-                style: TextStyle(
+            Text(t('Life Radar Asistan senin için hazırlıyor...'),
+                style: const TextStyle(
                     color: LifeRadarColors.textSecondary,
                     fontWeight: FontWeight.w600)),
             const SizedBox(height: 6),
-            const Text('Birkaç saniye sürebilir',
-                style: TextStyle(
+            Text(t('Birkaç saniye sürebilir'),
+                style: const TextStyle(
                     color: LifeRadarColors.textSecondary, fontSize: 12)),
           ],
         ),
@@ -226,12 +226,12 @@ class _EmptyCard extends StatelessWidget {
   const _EmptyCard();
   @override
   Widget build(BuildContext context) {
-    return const Card(
+    return Card(
       child: Padding(
-        padding: EdgeInsets.all(24),
+        padding: const EdgeInsets.all(24),
         child: Text(
-          'Sonuç alınamadı. Bağlantını kontrol edip "Yeniden Üret" ile tekrar dene.',
-          style: TextStyle(color: LifeRadarColors.textSecondary),
+          t('Sonuç alınamadı. Bağlantını kontrol edip "Yeniden Üret" ile tekrar dene.'),
+          style: const TextStyle(color: LifeRadarColors.textSecondary),
         ),
       ),
     );

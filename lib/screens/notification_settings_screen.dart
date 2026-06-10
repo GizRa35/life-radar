@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../core/i18n.dart';
 import '../core/theme.dart';
 import '../models/event_category.dart';
 import '../state/app_state.dart';
@@ -15,7 +16,7 @@ class NotificationSettingsScreen extends StatelessWidget {
     final enabled = state.alertsEnabled;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Bildirim Ayarları')),
+      appBar: AppBar(title: Text(t('Bildirim Ayarları'))),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -30,11 +31,10 @@ class NotificationSettingsScreen extends StatelessWidget {
               onChanged: (v) => context.read<AppState>().setAlertsEnabled(v),
               secondary: const Icon(Icons.notifications_active_outlined,
                   color: LifeRadarColors.navy),
-              title: const Text('Bildirimleri aç',
-                  style: TextStyle(fontWeight: FontWeight.w700)),
-              subtitle: const Text(
-                  'Risk eşiği aşılınca, kritik gelişmede ve seçtiğin durumlarda '
-                  'tarayıcı bildirimi gönderir.'),
+              title: Text(t('Bildirimleri aç'),
+                  style: const TextStyle(fontWeight: FontWeight.w700)),
+              subtitle: Text(t(
+                  'Risk eşiği aşılınca, kritik gelişmede ve seçtiğin durumlarda tarayıcı bildirimi gönderir.')),
             ),
           ),
 
@@ -43,20 +43,21 @@ class NotificationSettingsScreen extends StatelessWidget {
             child: Column(
               children: [
                 const SizedBox(height: 8),
-                const _SectionLabel('Bildirim Türleri', Icons.tune),
+                _SectionLabel(t('Bildirim Türleri'), Icons.tune),
                 _TypeTile(
                   icon: Icons.crisis_alert,
                   color: LifeRadarColors.riskHigh,
-                  title: 'Kritik / acil uyarılar',
-                  subtitle: 'Yüksek ve kritik riskli gelişmeler (deprem, afet…)',
+                  title: t('Kritik / acil uyarılar'),
+                  subtitle:
+                      t('Yüksek ve kritik riskli gelişmeler (deprem, afet…)'),
                   value: state.notifCritical,
                   onChanged: (v) => context.read<AppState>().setNotifCritical(v),
                 ),
                 _TypeTile(
                   icon: Icons.wb_sunny_outlined,
                   color: LifeRadarColors.riskMedium,
-                  title: 'Günlük özet brifingi',
-                  subtitle: 'Günde bir kez günün risk özeti',
+                  title: t('Günlük özet brifingi'),
+                  subtitle: t('Günde bir kez günün risk özeti'),
                   value: state.notifDailySummary,
                   onChanged: (v) =>
                       context.read<AppState>().setNotifDailySummary(v),
@@ -64,8 +65,8 @@ class NotificationSettingsScreen extends StatelessWidget {
                 _TypeTile(
                   icon: Icons.bookmark_added_outlined,
                   color: LifeRadarColors.turquoise,
-                  title: 'Takip edilen konularda yeni haber',
-                  subtitle: 'Takip ettiğin kategorilerde önemli gelişme olunca',
+                  title: t('Takip edilen konularda yeni haber'),
+                  subtitle: t('Takip ettiğin kategorilerde önemli gelişme olunca'),
                   value: state.notifFollowedNews,
                   onChanged: (v) =>
                       context.read<AppState>().setNotifFollowedNews(v),
@@ -73,8 +74,8 @@ class NotificationSettingsScreen extends StatelessWidget {
                 _TypeTile(
                   icon: Icons.speed_outlined,
                   color: LifeRadarColors.navy,
-                  title: 'Risk puanı değişimi',
-                  subtitle: 'Kişisel risk puanın eşiği aşınca uyar',
+                  title: t('Risk puanı değişimi'),
+                  subtitle: t('Kişisel risk puanın eşiği aşınca uyar'),
                   value: state.notifRiskChange,
                   onChanged: (v) =>
                       context.read<AppState>().setNotifRiskChange(v),
@@ -82,11 +83,11 @@ class NotificationSettingsScreen extends StatelessWidget {
                 if (state.notifRiskChange) const _ThresholdCard(),
 
                 const SizedBox(height: 8),
-                const _SectionLabel('Kategoriler', Icons.category_outlined),
+                _SectionLabel(t('Kategoriler'), Icons.category_outlined),
                 const _CategoryCard(),
 
                 const SizedBox(height: 8),
-                const _SectionLabel('Sessiz Saatler', Icons.bedtime_outlined),
+                _SectionLabel(t('Sessiz Saatler'), Icons.bedtime_outlined),
                 const _QuietHoursCard(),
 
                 const SizedBox(height: 16),
@@ -100,13 +101,13 @@ class NotificationSettingsScreen extends StatelessWidget {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text(ok
-                              ? 'Test bildirimi gönderildi.'
-                              : 'Bildirim izni verilmedi. Tarayıcı ayarlarından izin ver.'),
+                              ? t('Test bildirimi gönderildi.')
+                              : t('Bildirim izni verilmedi. Tarayıcı ayarlarından izin ver.')),
                         ),
                       );
                     },
                     icon: const Icon(Icons.notifications_outlined),
-                    label: const Text('Test bildirimi gönder'),
+                    label: Text(t('Test bildirimi gönder')),
                   ),
                 ),
               ],
@@ -133,22 +134,22 @@ class _PermissionCard extends StatelessWidget {
       case 'granted':
         c = LifeRadarColors.riskLow;
         icon = Icons.check_circle_outline;
-        label = 'Bildirim izni verildi';
+        label = t('Bildirim izni verildi');
         break;
       case 'denied':
         c = LifeRadarColors.riskHigh;
         icon = Icons.block_outlined;
-        label = 'Bildirim izni reddedildi — tarayıcı ayarlarından aç';
+        label = t('Bildirim izni reddedildi — tarayıcı ayarlarından aç');
         break;
       case 'unsupported':
         c = LifeRadarColors.textSecondary;
         icon = Icons.desktop_access_disabled_outlined;
-        label = 'Bu platformda tarayıcı bildirimi desteklenmiyor';
+        label = t('Bu platformda tarayıcı bildirimi desteklenmiyor');
         break;
       default:
         c = LifeRadarColors.riskMedium;
         icon = Icons.help_outline;
-        label = 'Bildirim izni henüz verilmedi';
+        label = t('Bildirim izni henüz verilmedi');
     }
     return Card(
       color: c.withOpacity(0.08),
@@ -166,7 +167,7 @@ class _PermissionCard extends StatelessWidget {
               TextButton(
                 onPressed: () =>
                     context.read<AppState>().askNotifyPermission(),
-                child: const Text('İzin ver'),
+                child: Text(t('İzin ver')),
               ),
           ],
         ),
@@ -187,7 +188,7 @@ class _ThresholdCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Uyarı eşiği: ${state.alertThreshold}/100',
+            Text('${t('Uyarı eşiği:')} ${state.alertThreshold}/100',
                 style: const TextStyle(
                     fontWeight: FontWeight.w700, color: LifeRadarColors.navy)),
             Slider(
@@ -200,8 +201,8 @@ class _ThresholdCard extends StatelessWidget {
               onChanged: (v) =>
                   context.read<AppState>().setAlertThreshold(v.round()),
             ),
-            const Text('Kişisel risk puanın bu değeri aşarsa uyarılırsın.',
-                style: TextStyle(
+            Text(t('Kişisel risk puanın bu değeri aşarsa uyarılırsın.'),
+                style: const TextStyle(
                     fontSize: 12, color: LifeRadarColors.textSecondary)),
           ],
         ),
@@ -222,8 +223,8 @@ class _CategoryCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Hangi kategorilerde bildirim almak istersin?',
-                style: TextStyle(
+            Text(t('Hangi kategorilerde bildirim almak istersin?'),
+                style: const TextStyle(
                     fontSize: 13, color: LifeRadarColors.textSecondary)),
             const SizedBox(height: 10),
             Wrap(
@@ -234,7 +235,7 @@ class _CategoryCard extends StatelessWidget {
                 return FilterChip(
                   avatar: Icon(cat.icon,
                       size: 18, color: on ? Colors.white : cat.color),
-                  label: Text(cat.label),
+                  label: Text(t(cat.label)),
                   selected: on,
                   showCheckmark: false,
                   selectedColor: cat.color,
@@ -292,9 +293,9 @@ class _QuietHoursCard extends StatelessWidget {
             activeColor: LifeRadarColors.turquoise,
             secondary: const Icon(Icons.do_not_disturb_on_outlined,
                 color: LifeRadarColors.navy),
-            title: const Text('Rahatsız etme',
-                style: TextStyle(fontWeight: FontWeight.w700)),
-            subtitle: const Text('Belirlediğin saatlerde bildirim gönderilmez'),
+            title: Text(t('Rahatsız etme'),
+                style: const TextStyle(fontWeight: FontWeight.w700)),
+            subtitle: Text(t('Belirlediğin saatlerde bildirim gönderilmez')),
             onChanged: (v) => context.read<AppState>().setQuietEnabled(v),
           ),
           if (state.quietEnabled)
@@ -304,7 +305,7 @@ class _QuietHoursCard extends StatelessWidget {
                 children: [
                   Expanded(
                     child: _TimeBox(
-                      label: 'Başlangıç',
+                      label: t('Başlangıç'),
                       value: _fmt(state.quietStart),
                       onTap: () => _pick(context, true),
                     ),
@@ -316,7 +317,7 @@ class _QuietHoursCard extends StatelessWidget {
                   ),
                   Expanded(
                     child: _TimeBox(
-                      label: 'Bitiş',
+                      label: t('Bitiş'),
                       value: _fmt(state.quietEnd),
                       onTap: () => _pick(context, false),
                     ),

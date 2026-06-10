@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../core/i18n.dart';
 import '../core/theme.dart';
 import '../models/event_category.dart';
 import '../models/health_alert.dart';
@@ -18,15 +19,15 @@ class HealthRadarScreen extends StatelessWidget {
     final allHealth = state.eventsByCategory(EventCategory.health);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Sağlık Radarı')),
+      appBar: AppBar(title: Text(t('Sağlık Radarı'))),
       body: RefreshIndicator(
         color: LifeRadarColors.turquoise,
         onRefresh: () => context.read<AppState>().loadFeeds(),
         child: ListView(
           padding: const EdgeInsets.symmetric(vertical: 12),
           children: [
-            const _SourceBanner(
-              'WHO, CDC ve sağlık kaynaklarından güncel haberler (GDELT).',
+            _SourceBanner(
+              t('WHO, CDC ve sağlık kaynaklarından güncel haberler (GDELT).'),
             ),
             if (allHealth.isEmpty && state.loadingFeeds)
               const Padding(
@@ -37,11 +38,11 @@ class HealthRadarScreen extends StatelessWidget {
                 ),
               )
             else if (allHealth.isEmpty)
-              const Padding(
-                padding: EdgeInsets.all(32),
+              Padding(
+                padding: const EdgeInsets.all(32),
                 child: Center(
-                  child: Text('Şu an sağlık gelişmesi bulunamadı.',
-                      style: TextStyle(color: LifeRadarColors.textSecondary)),
+                  child: Text(t('Şu an sağlık gelişmesi bulunamadı.'),
+                      style: const TextStyle(color: LifeRadarColors.textSecondary)),
                 ),
               )
             else
@@ -61,7 +62,7 @@ class HealthRadarScreen extends StatelessWidget {
       Padding(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 6),
         child: Text(
-          section.label,
+          t(section.label),
           style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w700,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+import '../core/i18n.dart';
 import '../core/theme.dart';
 import '../models/subscription.dart';
 import '../services/auth_service.dart';
@@ -41,21 +42,20 @@ class _AccountManagementScreenState extends State<AccountManagementScreen> {
 
     if (!state.isLoggedIn) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Hesap Yönetimi')),
-        body: const Center(
+        appBar: AppBar(title: Text(t('Hesap Yönetimi'))),
+        body: Center(
           child: Padding(
-            padding: EdgeInsets.all(32),
+            padding: const EdgeInsets.all(32),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.account_circle_outlined,
+                const Icon(Icons.account_circle_outlined,
                     size: 64, color: LifeRadarColors.textSecondary),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 Text(
-                  'Hesap yönetimi için e-posta ile giriş yapmalısın. '
-                  'Misafir kullanıcıların verileri yalnızca bu cihazda tutulur.',
+                  t('Hesap yönetimi için e-posta ile giriş yapmalısın. Misafir kullanıcıların verileri yalnızca bu cihazda tutulur.'),
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: LifeRadarColors.textSecondary),
+                  style: const TextStyle(color: LifeRadarColors.textSecondary),
                 ),
               ],
             ),
@@ -65,7 +65,7 @@ class _AccountManagementScreenState extends State<AccountManagementScreen> {
     }
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Hesap Yönetimi')),
+      appBar: AppBar(title: Text(t('Hesap Yönetimi'))),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -82,25 +82,25 @@ class _AccountManagementScreenState extends State<AccountManagementScreen> {
           const SizedBox(height: 8),
 
           // 2) E-posta doğrulama
-          const _SectionLabel('E-posta Doğrulama', Icons.mark_email_read_outlined),
+          _SectionLabel(t('E-posta Doğrulama'), Icons.mark_email_read_outlined),
           _VerifyCard(info: _info),
           const SizedBox(height: 8),
 
           // 3) Şifre yönetimi (yalnızca e-posta/şifre hesapları)
-          const _SectionLabel('Şifre', Icons.password_outlined),
+          _SectionLabel(t('Şifre'), Icons.password_outlined),
           if (_info?.isGoogle == true && _info?.isPassword != true)
-            const Card(
+            Card(
               child: Padding(
-                padding: EdgeInsets.all(14),
+                padding: const EdgeInsets.all(14),
                 child: Row(
                   children: [
-                    Icon(Icons.info_outline, color: LifeRadarColors.turquoise),
-                    SizedBox(width: 12),
+                    const Icon(Icons.info_outline,
+                        color: LifeRadarColors.turquoise),
+                    const SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        'Google ile giriş yaptığın için şifre yönetimi Google '
-                        'hesabından yapılır.',
-                        style: TextStyle(fontSize: 13),
+                        t('Google ile giriş yaptığın için şifre yönetimi Google hesabından yapılır.'),
+                        style: const TextStyle(fontSize: 13),
                       ),
                     ),
                   ],
@@ -112,12 +112,12 @@ class _AccountManagementScreenState extends State<AccountManagementScreen> {
           const SizedBox(height: 8),
 
           // 4) Tehlikeli bölge
-          const _SectionLabel('Tehlikeli Bölge', Icons.dangerous_outlined),
+          _SectionLabel(t('Tehlikeli Bölge'), Icons.dangerous_outlined),
           Card(
             child: ListTile(
               leading: const Icon(Icons.logout, color: LifeRadarColors.navy),
-              title: const Text('Çıkış yap',
-                  style: TextStyle(fontWeight: FontWeight.w600)),
+              title: Text(t('Çıkış yap'),
+                  style: const TextStyle(fontWeight: FontWeight.w600)),
               onTap: () {
                 state.logout();
                 Navigator.of(context).pop();
@@ -129,12 +129,12 @@ class _AccountManagementScreenState extends State<AccountManagementScreen> {
             child: ListTile(
               leading: const Icon(Icons.delete_forever,
                   color: LifeRadarColors.riskHigh),
-              title: const Text('Hesabı kalıcı olarak sil',
-                  style: TextStyle(
+              title: Text(t('Hesabı kalıcı olarak sil'),
+                  style: const TextStyle(
                       fontWeight: FontWeight.w700,
                       color: LifeRadarColors.riskHigh)),
-              subtitle: const Text(
-                  'Hesabın ve tüm yerel verilerin silinir. Geri alınamaz.'),
+              subtitle: Text(
+                  t('Hesabın ve tüm yerel verilerin silinir. Geri alınamaz.')),
               onTap: () => _confirmDelete(context),
             ),
           ),
@@ -148,20 +148,19 @@ class _AccountManagementScreenState extends State<AccountManagementScreen> {
     final ok = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('Hesabı sil'),
-        content: const Text(
-            'Hesabın Firebase\'den kalıcı olarak silinecek ve bu cihazdaki tüm '
-            'verilerin temizlenecek. Bu işlem geri alınamaz. Devam edilsin mi?'),
+        title: Text(t('Hesabı sil')),
+        content: Text(t(
+            'Hesabın Firebase\'den kalıcı olarak silinecek ve bu cihazdaki tüm verilerin temizlenecek. Bu işlem geri alınamaz. Devam edilsin mi?')),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Vazgeç'),
+            child: Text(t('Vazgeç')),
           ),
           TextButton(
             style:
                 TextButton.styleFrom(foregroundColor: LifeRadarColors.riskHigh),
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Hesabı Sil'),
+            child: Text(t('Hesabı Sil')),
           ),
         ],
       ),
@@ -172,20 +171,20 @@ class _AccountManagementScreenState extends State<AccountManagementScreen> {
     if (err == null) {
       Navigator.of(context).popUntil((r) => r.isFirst);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Hesap silindi.')),
+        SnackBar(content: Text(t('Hesap silindi.'))),
       );
     } else {
       showDialog(
         context: context,
         builder: (_) => AlertDialog(
-          title: const Text('Silinemedi'),
+          title: Text(t('Silinemedi')),
           content: Text(err.contains('tekrar giriş')
               ? '$err\n\nÇıkış yapıp yeniden giriş yaptıktan sonra tekrar dene.'
               : err),
           actions: [
             TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text('Tamam')),
+                child: Text(t('Tamam'))),
           ],
         ),
       );
@@ -205,25 +204,25 @@ class _InfoCard extends StatelessWidget {
     required this.onRefresh,
   });
 
-  String _tierLabel(SubscriptionTier t) {
-    switch (t) {
+  String _tierLabel(SubscriptionTier tier) {
+    switch (tier) {
       case SubscriptionTier.vip:
         return 'VIP';
       case SubscriptionTier.premium:
         return 'Premium';
       case SubscriptionTier.free:
-        return 'Ücretsiz';
+        return t('Ücretsiz');
     }
   }
 
   String _fmt(DateTime? d) =>
-      d == null ? '—' : DateFormat('d MMM yyyy', 'tr').format(d);
+      d == null ? '—' : DateFormat('d MMM yyyy', i18nLang).format(d);
 
   @override
   Widget build(BuildContext context) {
     final method = info?.isGoogle == true
         ? 'Google'
-        : (info?.isPassword == true ? 'E-posta / Şifre' : '—');
+        : (info?.isPassword == true ? t('E-posta / Şifre') : '—');
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -253,7 +252,7 @@ class _InfoCard extends StatelessWidget {
                   ),
                 ),
                 IconButton(
-                  tooltip: 'Yenile',
+                  tooltip: t('Yenile'),
                   onPressed: onRefresh,
                   icon: const Icon(Icons.refresh),
                 ),
@@ -261,33 +260,36 @@ class _InfoCard extends StatelessWidget {
             ),
             const Divider(height: 24),
             if (loading)
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 8),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8),
                 child: Row(
                   children: [
-                    SizedBox(
+                    const SizedBox(
                         width: 18,
                         height: 18,
                         child: CircularProgressIndicator(strokeWidth: 2)),
-                    SizedBox(width: 10),
-                    Text('Hesap bilgileri yükleniyor...',
-                        style: TextStyle(color: LifeRadarColors.textSecondary)),
+                    const SizedBox(width: 10),
+                    Text(t('Hesap bilgileri yükleniyor...'),
+                        style: const TextStyle(
+                            color: LifeRadarColors.textSecondary)),
                   ],
                 ),
               )
             else ...[
-              _row(Icons.workspace_premium_outlined, 'Abonelik',
+              _row(Icons.workspace_premium_outlined, t('Abonelik'),
                   _tierLabel(state.tier)),
-              _row(Icons.login, 'Giriş yöntemi', method),
+              _row(Icons.login, t('Giriş yöntemi'), method),
               _row(
                   info?.emailVerified == true
                       ? Icons.verified
                       : Icons.error_outline,
-                  'E-posta doğrulama',
-                  info?.emailVerified == true ? 'Doğrulandı' : 'Doğrulanmadı'),
-              _row(Icons.calendar_today_outlined, 'Hesap oluşturma',
+                  t('E-posta doğrulama'),
+                  info?.emailVerified == true
+                      ? t('Doğrulandı')
+                      : t('Doğrulanmadı')),
+              _row(Icons.calendar_today_outlined, t('Hesap oluşturma'),
                   _fmt(info?.createdAt)),
-              _row(Icons.access_time, 'Son giriş', _fmt(info?.lastLoginAt)),
+              _row(Icons.access_time, t('Son giriş'), _fmt(info?.lastLoginAt)),
             ],
           ],
         ),
@@ -331,10 +333,10 @@ class _VerifyCardState extends State<_VerifyCard> {
     if (verified) {
       return Card(
         color: LifeRadarColors.riskLow.withOpacity(0.10),
-        child: const ListTile(
-          leading: Icon(Icons.verified, color: LifeRadarColors.riskLow),
-          title: Text('E-posta adresin doğrulanmış',
-              style: TextStyle(fontWeight: FontWeight.w700)),
+        child: ListTile(
+          leading: const Icon(Icons.verified, color: LifeRadarColors.riskLow),
+          title: Text(t('E-posta adresin doğrulanmış'),
+              style: const TextStyle(fontWeight: FontWeight.w700)),
         ),
       );
     }
@@ -344,10 +346,9 @@ class _VerifyCardState extends State<_VerifyCard> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-                'E-posta adresin henüz doğrulanmadı. Doğrulama bağlantısını '
-                'gönderip e-postandaki linke tıklayabilirsin.',
-                style: TextStyle(fontSize: 13)),
+            Text(
+                t('E-posta adresin henüz doğrulanmadı. Doğrulama bağlantısını gönderip e-postandaki linke tıklayabilirsin.'),
+                style: const TextStyle(fontSize: 13)),
             const SizedBox(height: 10),
             SizedBox(
               width: double.infinity,
@@ -363,7 +364,7 @@ class _VerifyCardState extends State<_VerifyCard> {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                               content: Text(err == null
-                                  ? 'Doğrulama e-postası gönderildi. Gelen kutunu kontrol et.'
+                                  ? t('Doğrulama e-postası gönderildi. Gelen kutunu kontrol et.')
                                   : err)),
                         );
                       },
@@ -374,7 +375,7 @@ class _VerifyCardState extends State<_VerifyCard> {
                         child: CircularProgressIndicator(
                             strokeWidth: 2, color: Colors.white))
                     : const Icon(Icons.send_outlined, size: 18),
-                label: const Text('Doğrulama e-postası gönder'),
+                label: Text(t('Doğrulama e-postası gönder')),
               ),
             ),
           ],
@@ -409,11 +410,11 @@ class _PasswordCardState extends State<_PasswordCard> {
     final p1 = _pw1.text;
     final p2 = _pw2.text;
     if (p1.length < 6) {
-      _snack('Şifre en az 6 karakter olmalı.');
+      _snack(t('Şifre en az 6 karakter olmalı.'));
       return;
     }
     if (p1 != p2) {
-      _snack('Şifreler eşleşmiyor.');
+      _snack(t('Şifreler eşleşmiyor.'));
       return;
     }
     setState(() => _saving = true);
@@ -423,7 +424,7 @@ class _PasswordCardState extends State<_PasswordCard> {
     if (err == null) {
       _pw1.clear();
       _pw2.clear();
-      _snack('Şifren güncellendi.');
+      _snack(t('Şifren güncellendi.'));
     } else {
       _snack(err);
     }
@@ -442,17 +443,16 @@ class _PasswordCardState extends State<_PasswordCard> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Text('Yeni şifre belirle',
-                style: TextStyle(
+            Text(t('Yeni şifre belirle'),
+                style: const TextStyle(
                     fontWeight: FontWeight.w700, color: LifeRadarColors.navy)),
             const SizedBox(height: 12),
             TextField(
               controller: _pw1,
               obscureText: _obscure,
               decoration: InputDecoration(
-                labelText: 'Yeni şifre',
+                labelText: t('Yeni şifre'),
                 prefixIcon: const Icon(Icons.lock_outline),
-                border: const OutlineInputBorder(),
                 suffixIcon: IconButton(
                   icon: Icon(
                       _obscure ? Icons.visibility : Icons.visibility_off),
@@ -464,10 +464,9 @@ class _PasswordCardState extends State<_PasswordCard> {
             TextField(
               controller: _pw2,
               obscureText: _obscure,
-              decoration: const InputDecoration(
-                labelText: 'Yeni şifre (tekrar)',
-                prefixIcon: Icon(Icons.lock_outline),
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: t('Yeni şifre (tekrar)'),
+                prefixIcon: const Icon(Icons.lock_outline),
               ),
             ),
             const SizedBox(height: 12),
@@ -482,11 +481,11 @@ class _PasswordCardState extends State<_PasswordCard> {
                       child: CircularProgressIndicator(
                           strokeWidth: 2, color: Colors.white))
                   : const Icon(Icons.check),
-              label: const Text('Şifreyi değiştir'),
+              label: Text(t('Şifreyi değiştir')),
             ),
             const Divider(height: 28),
-            const Text('Şifreni mi unuttun?',
-                style: TextStyle(color: LifeRadarColors.textSecondary)),
+            Text(t('Şifreni mi unuttun?'),
+                style: const TextStyle(color: LifeRadarColors.textSecondary)),
             const SizedBox(height: 8),
             OutlinedButton.icon(
               onPressed: _sendingReset
@@ -498,11 +497,11 @@ class _PasswordCardState extends State<_PasswordCard> {
                       if (!mounted) return;
                       setState(() => _sendingReset = false);
                       _snack(err == null
-                          ? 'Şifre sıfırlama e-postası gönderildi.'
+                          ? t('Şifre sıfırlama e-postası gönderildi.')
                           : err);
                     },
               icon: const Icon(Icons.mail_outline, size: 18),
-              label: const Text('Şifre sıfırlama e-postası gönder'),
+              label: Text(t('Şifre sıfırlama e-postası gönder')),
             ),
           ],
         ),

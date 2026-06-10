@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+import '../core/i18n.dart';
 import '../core/theme.dart';
 import '../models/app_notification.dart';
 import '../state/app_state.dart';
@@ -43,7 +44,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         : _items.where((n) => n.category == _filter).toList();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Bildirimler')),
+      appBar: AppBar(title: Text(t('Bildirimler'))),
       body: Column(
         children: [
           SizedBox(
@@ -53,13 +54,13 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               children: [
                 _FilterChip(
-                  label: 'Tümü',
+                  label: t('Tümü'),
                   selected: _filter == null,
                   onTap: () => setState(() => _filter = null),
                 ),
                 for (final c in NotificationCategory.values)
                   _FilterChip(
-                    label: c.label,
+                    label: t(c.label),
                     selected: _filter == c,
                     onTap: () => setState(() => _filter = c),
                   ),
@@ -87,28 +88,27 @@ class _NoNotifications extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
+    return Center(
       child: Padding(
-        padding: EdgeInsets.all(32),
+        padding: const EdgeInsets.all(32),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.notifications_none,
+            const Icon(Icons.notifications_none,
                 size: 64, color: LifeRadarColors.textSecondary),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Text(
-              'Yeni bildirim yok',
-              style: TextStyle(
+              t('Yeni bildirim yok'),
+              style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w800,
                   color: LifeRadarColors.navy),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
-              'Sen uygulamada değilken gelen önemli gelişmeler burada görünür. '
-              'Şu an her şey güncel.',
+              t('Sen uygulamada değilken gelen önemli gelişmeler burada görünür. Şu an her şey güncel.'),
               textAlign: TextAlign.center,
-              style: TextStyle(color: LifeRadarColors.textSecondary),
+              style: const TextStyle(color: LifeRadarColors.textSecondary),
             ),
           ],
         ),
@@ -153,7 +153,7 @@ class _NotificationTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final timeStr = DateFormat('d MMM, HH:mm', 'tr').format(item.time);
+    final timeStr = DateFormat('d MMM, HH:mm', i18nLang).format(item.time);
     return Card(
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
@@ -207,7 +207,7 @@ class _NotificationTile extends StatelessWidget {
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    '${item.category.label} · $timeStr',
+                    '${t(item.category.label)} · $timeStr',
                     style: const TextStyle(
                       color: LifeRadarColors.textSecondary,
                       fontSize: 11,

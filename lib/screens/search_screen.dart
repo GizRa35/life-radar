@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../core/i18n.dart';
 import '../core/theme.dart';
 import '../models/radar_event.dart';
 import '../state/app_state.dart';
@@ -37,7 +38,7 @@ class _SearchScreenState extends State<SearchScreen> {
           autofocus: true,
           textInputAction: TextInputAction.search,
           decoration: InputDecoration(
-            hintText: 'Haberlerde ara...',
+            hintText: t('Haberlerde ara...'),
             border: InputBorder.none,
             suffixIcon: _query.isEmpty
                 ? null
@@ -53,14 +54,14 @@ class _SearchScreenState extends State<SearchScreen> {
         ),
       ),
       body: _query.trim().isEmpty
-          ? const _Hint(
+          ? _Hint(
               icon: Icons.search,
-              text: 'Bir kelime yaz; başlık, özet ve kaynaklarda ararım.',
+              text: t('Bir kelime yaz; başlık, özet ve kaynaklarda ararım.'),
             )
           : results.isEmpty
-              ? const _Hint(
+              ? _Hint(
                   icon: Icons.search_off,
-                  text: 'Eşleşen haber bulunamadı. Farklı bir kelime dene.',
+                  text: t('Eşleşen haber bulunamadı. Farklı bir kelime dene.'),
                 )
               : ListView(
                   padding: const EdgeInsets.symmetric(vertical: 8),
@@ -68,7 +69,7 @@ class _SearchScreenState extends State<SearchScreen> {
                     Padding(
                       padding:
                           const EdgeInsets.fromLTRB(20, 8, 20, 4),
-                      child: Text('${results.length} sonuç',
+                      child: Text('${results.length} ${t('sonuç')}',
                           style: const TextStyle(
                               color: LifeRadarColors.textSecondary,
                               fontWeight: FontWeight.w600)),

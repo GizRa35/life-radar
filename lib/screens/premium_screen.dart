@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../core/api_config.dart';
+import '../core/i18n.dart';
 import '../core/theme.dart';
 import '../models/subscription.dart';
 import '../state/app_state.dart';
@@ -31,7 +32,7 @@ class PremiumScreen extends StatelessWidget {
 
     return CelebrationOverlay(
       child: Scaffold(
-      appBar: AppBar(title: const Text('Life Radar Premium')),
+      appBar: AppBar(title: Text(t('Life Radar Premium'))),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -96,9 +97,9 @@ class PremiumScreen extends StatelessWidget {
                   icon: Icons.star,
                 ),
                 const SizedBox(height: 14),
-                const Text(
-                  'Life Radar Premium',
-                  style: TextStyle(
+                Text(
+                  t('Life Radar Premium'),
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 24,
                     fontWeight: FontWeight.w800,
@@ -106,7 +107,7 @@ class PremiumScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  SubscriptionData.premiumSubtitle,
+                  t(SubscriptionData.premiumSubtitle),
                   style: TextStyle(
                     color: Colors.white.withOpacity(0.85),
                     height: 1.4,
@@ -117,7 +118,7 @@ class PremiumScreen extends StatelessWidget {
                   children: [
                     Expanded(
                       child: _PriceBox(
-                        label: 'Aylık',
+                        label: t('Aylık'),
                         price: _priceText(state, AppState.premiumMonthlyId,
                             SubscriptionData.premiumMonthly),
                       ),
@@ -125,7 +126,7 @@ class PremiumScreen extends StatelessWidget {
                     const SizedBox(width: 12),
                     Expanded(
                       child: _PriceBox(
-                        label: 'Yıllık',
+                        label: t('Yıllık'),
                         price: _priceText(state, AppState.premiumYearlyId,
                             SubscriptionData.premiumYearly),
                         highlight: true,
@@ -140,7 +141,7 @@ class PremiumScreen extends StatelessWidget {
                         color: LifeRadarColors.turquoise, size: 18),
                     const SizedBox(width: 8),
                     Text(
-                      SubscriptionData.freeTrial,
+                      t(SubscriptionData.freeTrial),
                       style: const TextStyle(
                         color: LifeRadarColors.turquoise,
                         fontWeight: FontWeight.w700,
@@ -153,13 +154,13 @@ class PremiumScreen extends StatelessWidget {
           ),
           const SizedBox(height: 24),
 
-          const _SectionTitle('Premium Özellikleri'),
+          _SectionTitle(t('Premium Özellikleri')),
           ...SubscriptionData.premiumFeatures.asMap().entries.map(
                 (e) => _FeatureCard(index: e.key + 1, feature: e.value),
               ),
 
           const SizedBox(height: 16),
-          const _SectionTitle('Planları Karşılaştır'),
+          _SectionTitle(t('Planları Karşılaştır')),
           const PlanComparison(),
 
           const SizedBox(height: 24),
@@ -168,7 +169,7 @@ class PremiumScreen extends StatelessWidget {
               onPressed: null,
               style: ElevatedButton.styleFrom(
                   minimumSize: const Size.fromHeight(52)),
-              child: const Text('Premium Aktif'),
+              child: Text(t('Premium Aktif')),
             )
           else ...[
             // Aylık abonelik
@@ -180,7 +181,7 @@ class PremiumScreen extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                   minimumSize: const Size.fromHeight(52)),
               child: Text(
-                'Aylık  ${_priceText(state, AppState.premiumMonthlyId, SubscriptionData.premiumMonthly)}',
+                '${t('Aylık')}  ${_priceText(state, AppState.premiumMonthlyId, SubscriptionData.premiumMonthly)}',
               ),
             ),
             const SizedBox(height: 10),
@@ -195,14 +196,14 @@ class PremiumScreen extends StatelessWidget {
                 side: const BorderSide(color: LifeRadarColors.turquoise),
               ),
               child: Text(
-                'Yıllık  ${_priceText(state, AppState.premiumYearlyId, SubscriptionData.premiumYearly)}  ·  2 ay bedava',
+                '${t('Yıllık')}  ${_priceText(state, AppState.premiumYearlyId, SubscriptionData.premiumYearly)}  ·  ${t('2 ay bedava')}',
                 style: const TextStyle(color: LifeRadarColors.turquoise),
               ),
             ),
             const SizedBox(height: 6),
             TextButton(
               onPressed: () => context.read<AppState>().restorePurchases(),
-              child: const Text('Satın almaları geri yükle'),
+              child: Text(t('Satın almaları geri yükle')),
             ),
           ],
           const SizedBox(height: 10),
@@ -213,8 +214,8 @@ class PremiumScreen extends StatelessWidget {
               );
             },
             icon: const Icon(Icons.workspace_premium, color: Color(0xFFC9A227)),
-            label: const Text('VIP\'i Keşfet',
-                style: TextStyle(color: Color(0xFFC9A227))),
+            label: Text(t('VIP\'i Keşfet'),
+                style: const TextStyle(color: Color(0xFFC9A227))),
             style: OutlinedButton.styleFrom(
               minimumSize: const Size.fromHeight(52),
               side: const BorderSide(color: Color(0xFFC9A227)),
@@ -338,7 +339,7 @@ class _FeatureCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    feature.title,
+                    t(feature.title),
                     style: const TextStyle(
                       fontWeight: FontWeight.w800,
                       fontSize: 15,
@@ -348,7 +349,7 @@ class _FeatureCard extends StatelessWidget {
                   if (feature.description.isNotEmpty) ...[
                     const SizedBox(height: 4),
                     Text(
-                      feature.description,
+                      t(feature.description),
                       style: const TextStyle(
                         color: LifeRadarColors.textSecondary,
                         height: 1.35,
@@ -369,7 +370,7 @@ class _FeatureCard extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Text(
-                                  ex,
+                                  t(ex),
                                   style: const TextStyle(
                                     fontSize: 12,
                                     color: LifeRadarColors.textSecondary,

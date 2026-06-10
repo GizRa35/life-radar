@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../core/i18n.dart';
 import '../core/theme.dart';
 import '../services/geocode_service.dart';
 import '../state/app_state.dart';
@@ -16,9 +17,9 @@ class CitiesScreen extends StatelessWidget {
   }
 
   String _scoreLabel(int s) {
-    if (s >= 70) return 'Yüksek';
-    if (s >= 40) return 'Orta';
-    return 'Düşük';
+    if (s >= 70) return t('Yüksek');
+    if (s >= 40) return t('Orta');
+    return t('Düşük');
   }
 
   @override
@@ -27,28 +28,27 @@ class CitiesScreen extends StatelessWidget {
     final cities = state.trackedCities;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Takip Edilen Şehirler')),
+      appBar: AppBar(title: Text(t('Takip Edilen Şehirler'))),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _addCity(context),
         icon: const Icon(Icons.add_location_alt_outlined),
-        label: const Text('Şehir Ekle'),
+        label: Text(t('Şehir Ekle')),
         backgroundColor: LifeRadarColors.turquoise,
       ),
       body: cities.isEmpty
-          ? const Center(
+          ? Center(
               child: Padding(
-                padding: EdgeInsets.all(32),
+                padding: const EdgeInsets.all(32),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.location_city,
+                    const Icon(Icons.location_city,
                         size: 56, color: LifeRadarColors.textSecondary),
-                    SizedBox(height: 12),
+                    const SizedBox(height: 12),
                     Text(
-                      'Henüz şehir eklemedin.\nMemleketini veya ailenin şehrini '
-                      'ekleyerek oradaki deprem riskini takip et.',
+                      t('Henüz şehir eklemedin.\nMemleketini veya ailenin şehrini ekleyerek oradaki deprem riskini takip et.'),
                       textAlign: TextAlign.center,
-                      style: TextStyle(color: LifeRadarColors.textSecondary),
+                      style: const TextStyle(color: LifeRadarColors.textSecondary),
                     ),
                   ],
                 ),
@@ -57,10 +57,9 @@ class CitiesScreen extends StatelessWidget {
           : ListView(
               padding: const EdgeInsets.fromLTRB(16, 12, 16, 90),
               children: [
-                const Text(
-                  'Eklediğin şehirlerdeki son 30 günün gerçek deprem '
-                  'aktivitesine göre afet riski.',
-                  style: TextStyle(
+                Text(
+                  t('Eklediğin şehirlerdeki son 30 günün gerçek deprem aktivitesine göre afet riski.'),
+                  style: const TextStyle(
                       fontSize: 12, color: LifeRadarColors.textSecondary),
                 ),
                 const SizedBox(height: 12),
@@ -74,8 +73,8 @@ class CitiesScreen extends StatelessWidget {
                           style:
                               const TextStyle(fontWeight: FontWeight.w700)),
                       subtitle: Text(score == null
-                          ? 'Risk hesaplanıyor...'
-                          : 'Deprem riski: ${_scoreLabel(score)}'),
+                          ? t('Risk hesaplanıyor...')
+                          : '${t('Deprem riski:')} ${_scoreLabel(score)}'),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -96,7 +95,7 @@ class CitiesScreen extends StatelessWidget {
                               ),
                             ),
                           IconButton(
-                            tooltip: 'Kaldır',
+                            tooltip: t('Kaldır'),
                             onPressed: () => context
                                 .read<AppState>()
                                 .removeTrackedCity(c['name'].toString()),
@@ -168,8 +167,8 @@ class _CitySearchSheetState extends State<_CitySearchSheet> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Text('Şehir Ara',
-              style: TextStyle(
+          Text(t('Şehir Ara'),
+              style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w800,
                   color: LifeRadarColors.navy)),
@@ -181,10 +180,10 @@ class _CitySearchSheetState extends State<_CitySearchSheet> {
             onChanged: (v) {
               if (v.trim().length >= 2) _search(v);
             },
-            decoration: const InputDecoration(
-              hintText: 'Örn: İzmir, Ankara, Bursa...',
-              prefixIcon: Icon(Icons.search),
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              hintText: t('Örn: İzmir, Ankara, Bursa...'),
+              prefixIcon: const Icon(Icons.search),
+              border: const OutlineInputBorder(),
             ),
           ),
           const SizedBox(height: 8),

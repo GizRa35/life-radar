@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../core/i18n.dart';
 import '../core/theme.dart';
 import '../models/subscription.dart';
 
@@ -60,7 +61,7 @@ class _PlanColumn extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               Text(
-                tier.label,
+                t(tier.label),
                 style: TextStyle(
                   fontSize: 17,
                   fontWeight: FontWeight.w800,
@@ -78,7 +79,7 @@ class _PlanColumn extends StatelessWidget {
                 children: [
                   Icon(Icons.check, size: 18, color: color),
                   const SizedBox(width: 8),
-                  Expanded(child: Text(f, style: const TextStyle(height: 1.3))),
+                  Expanded(child: Text(t(f), style: const TextStyle(height: 1.3))),
                 ],
               ),
             ),

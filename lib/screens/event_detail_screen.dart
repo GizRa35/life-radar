@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../core/api_config.dart';
+import '../core/i18n.dart';
 import '../core/media.dart';
 import '../core/theme.dart';
 import 'ai_result_screen.dart';
@@ -82,8 +83,8 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
       if (event != null && event.sourceLang != userLang) {
         _articleFuture = base.then((c) async {
           if (c == null || c.text.isEmpty) return c;
-          final t = await _translator.translateOne(c.text, userLang);
-          return ArticleContent(t, c.images);
+          final translated = await _translator.translateOne(c.text, userLang);
+          return ArticleContent(translated, c.images);
         });
       } else {
         _articleFuture = base;
@@ -105,26 +106,26 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
 
     if (event == null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Olay')),
-        body: const Center(child: Text('Olay bulunamadı.')),
+        appBar: AppBar(title: Text(t('Olay'))),
+        body: Center(child: Text(t('Olay bulunamadı.'))),
       );
     }
 
     final saved = state.isSaved(event.id);
-    final timeStr = DateFormat('d MMMM yyyy, HH:mm', 'tr').format(event.publishedAt);
+    final timeStr = DateFormat('d MMMM yyyy, HH:mm', i18nLang).format(event.publishedAt);
     final analysis = event.analysis;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Olay Analizi'),
+        title: Text(t('Olay Analizi')),
         actions: [
           IconButton(
-            tooltip: saved ? 'Kayıttan çıkar' : 'Kaydet',
+            tooltip: saved ? t('Kayıttan çıkar') : t('Kaydet'),
             onPressed: () => context.read<AppState>().toggleSaved(event.id),
             icon: Icon(saved ? Icons.bookmark : Icons.bookmark_border),
           ),
           IconButton(
-            tooltip: 'Paylaş',
+            tooltip: t('Paylaş'),
             onPressed: () async {
               final res = await Media.share(
                 title: event.title,
@@ -135,8 +136,8 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(res == 'copied'
-                      ? 'Haber panoya kopyalandı.'
-                      : 'Paylaşım yapılamadı.'),
+                      ? t('Haber panoya kopyalandı.')
+                      : t('Paylaşım yapılamadı.')),
                 ),
               );
             },
@@ -152,7 +153,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
               Icon(event.category.icon, size: 18, color: event.category.color),
               const SizedBox(width: 6),
               Text(
-                event.category.label,
+                t(event.category.label),
                 style: TextStyle(
                   color: event.category.color,
                   fontWeight: FontWeight.w600,
@@ -214,7 +215,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
               child: OutlinedButton.icon(
                 onPressed: () => Media.openUrl(event.url!),
                 icon: const Icon(Icons.open_in_new, size: 18),
-                label: Text('Haberin tamamını oku (${event.source})'),
+                label: Text('${t('Haberin tamamını oku')} (${event.source})'),
               ),
             ),
           const SizedBox(height: 24),
@@ -252,10 +253,10 @@ class _ActionPlanButton extends StatelessWidget {
           onPressed: () => Navigator.of(context).push(
             MaterialPageRoute(
               builder: (_) => AiResultScreen(
-                title: 'Bana Özel Aksiyon Planı',
+                title: t('Bana Özel Aksiyon Planı'),
                 icon: Icons.checklist_rtl,
                 accent: LifeRadarColors.turquoise,
-                subtitle: 'Hanene ve duruma özel hazırlık önerileri',
+                subtitle: t('Hanene ve duruma özel hazırlık önerileri'),
                 imageQuery: _categoryQuery(event.category),
                 sectionCards: true,
                 run: (s) => s.vipActionPlan(event),
@@ -266,7 +267,7 @@ class _ActionPlanButton extends StatelessWidget {
             minimumSize: const Size.fromHeight(50),
           ),
           icon: const Icon(Icons.checklist_rtl, size: 18),
-          label: const Text('Bana Özel Aksiyon Planı'),
+          label: Text(t('Bana Özel Aksiyon Planı')),
         ),
       );
     }
@@ -300,27 +301,26 @@ class _ActionPlanButton extends StatelessWidget {
               child: const Icon(Icons.lock_outline, color: _gold),
             ),
             const SizedBox(width: 14),
-            const Expanded(
+            Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.checklist_rtl,
+                      const Icon(Icons.checklist_rtl,
                           color: Colors.white, size: 18),
-                      SizedBox(width: 6),
-                      Text('Bana Özel Aksiyon Planı',
-                          style: TextStyle(
+                      const SizedBox(width: 6),
+                      Text(t('Bana Özel Aksiyon Planı'),
+                          style: const TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.w800,
                               fontSize: 15)),
                     ],
                   ),
-                  SizedBox(height: 4),
+                  const SizedBox(height: 4),
                   Text(
-                    'Hane halkına özel, miktarlı hazırlık önerileri. '
-                    'Premium ve VIP üyelere özeldir.',
-                    style: TextStyle(color: Colors.white70, fontSize: 12),
+                    t('Hane halkına özel, miktarlı hazırlık önerileri. Premium ve VIP üyelere özeldir.'),
+                    style: const TextStyle(color: Colors.white70, fontSize: 12),
                   ),
                 ],
               ),
@@ -333,8 +333,8 @@ class _ActionPlanButton extends StatelessWidget {
                 color: _gold,
                 borderRadius: BorderRadius.circular(20),
               ),
-              child: const Text('Yükselt',
-                  style: TextStyle(
+              child: Text(t('Yükselt'),
+                  style: const TextStyle(
                       color: LifeRadarColors.navy,
                       fontWeight: FontWeight.w800,
                       fontSize: 12)),
@@ -386,19 +386,19 @@ class _ArticleSection extends StatelessWidget {
       future: future,
       builder: (context, snap) {
         if (snap.connectionState == ConnectionState.waiting) {
-          return const Padding(
-            padding: EdgeInsets.symmetric(vertical: 8),
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
             child: Row(
               children: [
-                SizedBox(
+                const SizedBox(
                   width: 18,
                   height: 18,
                   child: CircularProgressIndicator(
                       strokeWidth: 2, color: LifeRadarColors.turquoise),
                 ),
-                SizedBox(width: 10),
-                Text('Haberin tamamı yükleniyor...',
-                    style: TextStyle(color: LifeRadarColors.textSecondary)),
+                const SizedBox(width: 10),
+                Text(t('Haberin tamamı yükleniyor...'),
+                    style: const TextStyle(color: LifeRadarColors.textSecondary)),
               ],
             ),
           );
@@ -457,11 +457,10 @@ class _NoAnalysisCard extends StatelessWidget {
           children: [
             const Icon(Icons.auto_awesome, color: LifeRadarColors.turquoise),
             const SizedBox(width: 12),
-            const Expanded(
+            Expanded(
               child: Text(
-                'Bu olay için Life Radar Asistan etki analizi henüz hazırlanmadı. '
-                'Life Radar Asistan butonundan bu haberi sorabilirsiniz.',
-                style: TextStyle(color: LifeRadarColors.textSecondary),
+                t('Bu olay için Life Radar Asistan etki analizi henüz hazırlanmadı. Life Radar Asistan butonundan bu haberi sorabilirsiniz.'),
+                style: const TextStyle(color: LifeRadarColors.textSecondary),
               ),
             ),
           ],
@@ -481,7 +480,7 @@ class _ImpactSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const _SectionTitle('Bu Beni Etkiler mi?', icon: Icons.person_search),
+        _SectionTitle(t('Bu Beni Etkiler mi?'), icon: Icons.person_search),
         Card(
           child: Padding(
             padding: const EdgeInsets.all(16),
@@ -489,9 +488,9 @@ class _ImpactSection extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Etkilenme olasılığı (grafik)
-                const Text(
-                  'Etkilenme Olasılığı',
-                  style: TextStyle(
+                Text(
+                  t('Etkilenme Olasılığı'),
+                  style: const TextStyle(
                     fontWeight: FontWeight.w700,
                     color: LifeRadarColors.navy,
                   ),
@@ -525,22 +524,22 @@ class _ImpactSection extends StatelessWidget {
                 const Divider(height: 28),
                 _InfoRow(
                   icon: Icons.groups_outlined,
-                  label: 'Kimler etkilenebilir',
+                  label: t('Kimler etkilenebilir'),
                   value: analysis.affectedGroups,
                 ),
                 _InfoRow(
                   icon: Icons.flag_outlined,
-                  label: 'Türkiye etkisi',
+                  label: t('Türkiye etkisi'),
                   value: analysis.turkeyImpact,
                 ),
                 _InfoRow(
                   icon: Icons.person_outline,
-                  label: 'Kişisel etkiler',
+                  label: t('Kişisel etkiler'),
                   value: analysis.personalImpact,
                 ),
                 _InfoRow(
                   icon: Icons.schedule,
-                  label: 'Etki süresi',
+                  label: t('Etki süresi'),
                   value: analysis.duration,
                 ),
               ],
@@ -562,17 +561,17 @@ class _ActionSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const _SectionTitle('Ne Yapmalıyım?', icon: Icons.checklist_rtl),
+        _SectionTitle(t('Ne Yapmalıyım?'), icon: Icons.checklist_rtl),
         if (analysis.dos.isNotEmpty)
           _ActionList(
-            title: 'YAPILACAKLAR',
+            title: t('YAPILACAKLAR'),
             items: analysis.dos,
             color: LifeRadarColors.riskLow,
             icon: Icons.check_circle,
           ),
         if (analysis.donts.isNotEmpty)
           _ActionList(
-            title: 'YAPILMAYACAKLAR',
+            title: t('YAPILMAYACAKLAR'),
             items: analysis.donts,
             color: LifeRadarColors.riskHigh,
             icon: Icons.cancel,

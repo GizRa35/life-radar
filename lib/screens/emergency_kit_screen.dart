@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
+import '../core/i18n.dart';
 import '../core/theme.dart';
 import '../state/app_state.dart';
 
@@ -61,7 +62,7 @@ class EmergencyKitScreen extends StatelessWidget {
     final pct = _total == 0 ? 0.0 : done / _total;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Acil Durum Çantası')),
+      appBar: AppBar(title: Text(t('Acil Durum Çantası'))),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 40),
         children: [
@@ -84,7 +85,7 @@ class EmergencyKitScreen extends StatelessWidget {
                     const Icon(Icons.backpack, color: LifeRadarColors.turquoise),
                     const SizedBox(width: 8),
                     Text(
-                      'Hazırlık: %${(pct * 100).round()}',
+                      '${t('Hazırlık:')} %${(pct * 100).round()}',
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 20,
@@ -110,8 +111,8 @@ class EmergencyKitScreen extends StatelessWidget {
                 const SizedBox(height: 10),
                 Text(
                   pct >= 1.0
-                      ? 'Tebrikler! Çantan tam hazır. 🎒'
-                      : 'Maddeleri tamamladıkça hazırlık oranın artar.',
+                      ? t('Tebrikler! Çantan tam hazır. 🎒')
+                      : t('Maddeleri tamamladıkça hazırlık oranın artar.'),
                   style: const TextStyle(color: Colors.white70, fontSize: 13),
                 ),
               ],
@@ -135,7 +136,7 @@ class EmergencyKitScreen extends StatelessWidget {
                   ),
                   const SizedBox(width: 10),
                   Text(
-                    entry.key,
+                    t(entry.key),
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w800,
@@ -182,7 +183,7 @@ class _KitTile extends StatelessWidget {
       activeColor: LifeRadarColors.turquoise,
       controlAffinity: ListTileControlAffinity.leading,
       title: Text(
-        item,
+        t(item),
         style: TextStyle(
           decoration: checked ? TextDecoration.lineThrough : null,
           color: checked

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../core/api_config.dart';
+import '../core/i18n.dart';
 import '../core/theme.dart';
 import '../models/subscription.dart';
 import '../state/app_state.dart';
@@ -33,7 +34,7 @@ class VipScreen extends StatelessWidget {
 
     return CelebrationOverlay(
       child: Scaffold(
-      appBar: AppBar(title: const Text('Life Radar VIP')),
+      appBar: AppBar(title: Text(t('Life Radar VIP'))),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -103,7 +104,7 @@ class VipScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          '${context.read<AppState>().displayName}, sen VIP\'sin 👑',
+                          '${context.read<AppState>().displayName}${t(', sen VIP\'sin 👑')}',
                           style: const TextStyle(
                             color: Color(0xFF1B1B2F),
                             fontWeight: FontWeight.w900,
@@ -111,9 +112,9 @@ class VipScreen extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 2),
-                        const Text(
-                          'En üst düzey koruma ve ayrıcalıklar aktif.',
-                          style: TextStyle(
+                        Text(
+                          t('En üst düzey koruma ve ayrıcalıklar aktif.'),
+                          style: const TextStyle(
                               color: Color(0xFF1B1B2F), fontSize: 12),
                         ),
                       ],
@@ -124,7 +125,7 @@ class VipScreen extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             _GoldButton(
-              label: 'VIP Merkezini Aç',
+              label: t('VIP Merkezini Aç'),
               onPressed: () => Navigator.of(context).push(
                 MaterialPageRoute(builder: (_) => const VipHubScreen()),
               ),
@@ -184,9 +185,9 @@ class VipScreen extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 16),
-                const Text(
-                  'Life Radar VIP',
-                  style: TextStyle(
+                Text(
+                  t('Life Radar VIP'),
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 26,
                     fontWeight: FontWeight.w900,
@@ -194,7 +195,7 @@ class VipScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  SubscriptionData.vipSubtitle,
+                  t(SubscriptionData.vipSubtitle),
                   style: TextStyle(
                     color: _goldLight.withOpacity(0.95),
                     height: 1.4,
@@ -206,7 +207,7 @@ class VipScreen extends StatelessWidget {
                   children: [
                     Expanded(
                       child: _GoldPriceBox(
-                        label: 'Aylık',
+                        label: t('Aylık'),
                         price: _vipPrice(state, AppState.vipMonthlyId,
                             SubscriptionData.vipMonthly),
                       ),
@@ -214,7 +215,7 @@ class VipScreen extends StatelessWidget {
                     const SizedBox(width: 12),
                     Expanded(
                       child: _GoldPriceBox(
-                        label: 'Yıllık',
+                        label: t('Yıllık'),
                         price: _vipPrice(state, AppState.vipYearlyId,
                             SubscriptionData.vipYearly),
                         highlight: true,
@@ -223,13 +224,13 @@ class VipScreen extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 12),
-                const Row(
+                Row(
                   children: [
-                    Icon(Icons.card_giftcard, color: _goldLight, size: 18),
-                    SizedBox(width: 8),
+                    const Icon(Icons.card_giftcard, color: _goldLight, size: 18),
+                    const SizedBox(width: 8),
                     Text(
-                      SubscriptionData.freeTrial,
-                      style: TextStyle(
+                      t(SubscriptionData.freeTrial),
+                      style: const TextStyle(
                         color: _goldLight,
                         fontWeight: FontWeight.w700,
                       ),
@@ -241,13 +242,13 @@ class VipScreen extends StatelessWidget {
           ),
           const SizedBox(height: 24),
 
-          const _SectionTitle('VIP Özellikleri'),
+          _SectionTitle(t('VIP Özellikleri')),
           ...SubscriptionData.vipFeatures.asMap().entries.map(
                 (e) => _VipFeatureCard(index: e.key + 1, feature: e.value),
               ),
 
           const SizedBox(height: 16),
-          const _SectionTitle('Planları Karşılaştır'),
+          _SectionTitle(t('Planları Karşılaştır')),
           const PlanComparison(),
 
           const SizedBox(height: 24),
@@ -255,7 +256,7 @@ class VipScreen extends StatelessWidget {
           // VIP olmayanlara satın alma butonları gösterilir.
           if (!active) ...[
             _GoldButton(
-              label: 'VIP Aylık  ${_vipPrice(state, AppState.vipMonthlyId, SubscriptionData.vipMonthly)}',
+              label: '${t('VIP Aylık')}  ${_vipPrice(state, AppState.vipMonthlyId, SubscriptionData.vipMonthly)}',
               onPressed: () {
                 HapticFeedback.mediumImpact();
                 context.read<AppState>().buySubscription(AppState.vipMonthlyId);
@@ -264,7 +265,7 @@ class VipScreen extends StatelessWidget {
             const SizedBox(height: 10),
             _GoldButton(
               label:
-                  'VIP Yıllık  ${_vipPrice(state, AppState.vipYearlyId, SubscriptionData.vipYearly)}  ·  2 ay bedava',
+                  '${t('VIP Yıllık')}  ${_vipPrice(state, AppState.vipYearlyId, SubscriptionData.vipYearly)}  ·  ${t('2 ay bedava')}',
               onPressed: () {
                 HapticFeedback.mediumImpact();
                 context.read<AppState>().buySubscription(AppState.vipYearlyId);
@@ -273,7 +274,7 @@ class VipScreen extends StatelessWidget {
             const SizedBox(height: 6),
             TextButton(
               onPressed: () => context.read<AppState>().restorePurchases(),
-              child: const Text('Satın almaları geri yükle'),
+              child: Text(t('Satın almaları geri yükle')),
             ),
           ],
           const SizedBox(height: 24),
@@ -364,7 +365,7 @@ class _VipFeatureCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    feature.title,
+                    t(feature.title),
                     style: const TextStyle(
                       fontWeight: FontWeight.w800,
                       fontSize: 15,
@@ -374,7 +375,7 @@ class _VipFeatureCard extends StatelessWidget {
                   if (feature.description.isNotEmpty) ...[
                     const SizedBox(height: 4),
                     Text(
-                      feature.description,
+                      t(feature.description),
                       style: const TextStyle(
                         color: LifeRadarColors.textSecondary,
                         height: 1.35,
@@ -395,7 +396,7 @@ class _VipFeatureCard extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Text(
-                                  ex,
+                                  t(ex),
                                   style: const TextStyle(
                                     fontSize: 12,
                                     color: LifeRadarColors.textSecondary,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../core/i18n.dart';
 import '../core/theme.dart';
 import '../models/event_category.dart';
 import '../models/radar_event.dart';
@@ -94,13 +95,13 @@ class RiskAreaDetailScreen extends StatelessWidget {
       orElse: () => RiskArea(
         type: type,
         score: 30,
-        description: 'Şu an bu alanda belirgin bir gelişme görünmüyor.',
-        expectedImpact: 'Düşük: şu an acil bir etki beklenmiyor.',
+        description: t('Şu an bu alanda belirgin bir gelişme görünmüyor.'),
+        expectedImpact: t('Düşük: şu an acil bir etki beklenmiyor.'),
       ),
     );
 
     return Scaffold(
-      appBar: AppBar(title: Text(type.label)),
+      appBar: AppBar(title: Text(t(type.label))),
       body: RefreshIndicator(
         color: LifeRadarColors.turquoise,
         onRefresh: () => context.read<AppState>().loadFeeds(),
@@ -141,18 +142,18 @@ class RiskAreaDetailScreen extends StatelessWidget {
                           builder: (_) => const EarthquakeMapScreen()),
                     ),
                     icon: const Icon(Icons.map_outlined, size: 18),
-                    label: const Text('Yakındaki Depremleri Haritada Gör'),
+                    label: Text(t('Yakındaki Depremleri Haritada Gör')),
                   ),
                 ),
               ),
             if (type == RiskAreaType.disaster) const SizedBox(height: 12),
-            _SourceBanner(_sourceText),
+            _SourceBanner(t(_sourceText)),
 
             // Ne yapmalıyım?
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 12, 16, 6),
               child: Text(
-                'Ne Yapmalıyım?',
+                t('Ne Yapmalıyım?'),
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
@@ -167,7 +168,7 @@ class RiskAreaDetailScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    for (final t in _tips)
+                    for (final tip in _tips)
                       Padding(
                         padding: const EdgeInsets.only(bottom: 10),
                         child: Row(
@@ -177,7 +178,7 @@ class RiskAreaDetailScreen extends StatelessWidget {
                                 size: 18, color: LifeRadarColors.turquoise),
                             const SizedBox(width: 10),
                             Expanded(
-                              child: Text(t,
+                              child: Text(t(tip),
                                   style: const TextStyle(height: 1.35)),
                             ),
                           ],
@@ -192,7 +193,7 @@ class RiskAreaDetailScreen extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 18, 16, 6),
               child: Text(
-                'İlgili Gelişmeler',
+                t('İlgili Gelişmeler'),
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
@@ -209,11 +210,11 @@ class RiskAreaDetailScreen extends StatelessWidget {
                 ),
               )
             else if (events.isEmpty)
-              const Padding(
-                padding: EdgeInsets.all(24),
+              Padding(
+                padding: const EdgeInsets.all(24),
                 child: Center(
-                  child: Text('Şu an bu alanda gelişme bulunamadı.',
-                      style: TextStyle(color: LifeRadarColors.textSecondary)),
+                  child: Text(t('Şu an bu alanda gelişme bulunamadı.'),
+                      style: const TextStyle(color: LifeRadarColors.textSecondary)),
                 ),
               )
             else

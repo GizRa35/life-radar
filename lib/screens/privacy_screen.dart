@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../core/api_config.dart';
+import '../core/i18n.dart';
 import '../core/media.dart';
 import '../core/theme.dart';
 import '../services/report_export.dart';
@@ -19,25 +20,24 @@ class PrivacyScreen extends StatelessWidget {
     final state = context.watch<AppState>();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Gizlilik')),
+      appBar: AppBar(title: Text(t('Gizlilik'))),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
           // Bilgilendirme
           Card(
             color: LifeRadarColors.turquoise.withOpacity(0.08),
-            child: const Padding(
-              padding: EdgeInsets.all(14),
+            child: Padding(
+              padding: const EdgeInsets.all(14),
               child: Row(
                 children: [
-                  Icon(Icons.verified_user_outlined,
+                  const Icon(Icons.verified_user_outlined,
                       color: LifeRadarColors.turquoise),
-                  SizedBox(width: 12),
+                  const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      'Verilerin yalnızca bu cihazda (tarayıcı belleğinde) tutulur. '
-                      'Hesabımız bunları sunucuda saklamaz.',
-                      style: TextStyle(
+                      t('Verilerin yalnızca bu cihazda (tarayıcı belleğinde) tutulur. Hesabımız bunları sunucuda saklamaz.'),
+                      style: const TextStyle(
                           fontSize: 13, color: LifeRadarColors.navy),
                     ),
                   ),
@@ -48,7 +48,7 @@ class PrivacyScreen extends StatelessWidget {
           const SizedBox(height: 8),
 
           // 1) Veri özeti + dışa aktarma
-          const _SectionLabel('Verilerim', Icons.folder_outlined),
+          _SectionLabel(t('Verilerim'), Icons.folder_outlined),
           Card(
             child: Padding(
               padding: const EdgeInsets.all(12),
@@ -56,24 +56,24 @@ class PrivacyScreen extends StatelessWidget {
                 children: [
                   _DataRow(
                       icon: Icons.person_outline,
-                      label: 'Kişisel bilgiler',
-                      value: state.hasPersonalInfo ? 'Girildi' : 'Boş'),
+                      label: t('Kişisel bilgiler'),
+                      value: state.hasPersonalInfo ? t('Girildi') : t('Boş')),
                   _DataRow(
                       icon: Icons.bookmark_outline,
-                      label: 'Kayıtlı haberler',
-                      value: '${state.savedCount} adet'),
+                      label: t('Kayıtlı haberler'),
+                      value: '${state.savedCount} ${t('adet')}'),
                   _DataRow(
                       icon: Icons.topic_outlined,
-                      label: 'Takip edilen konular',
-                      value: '${state.followedCount} adet'),
+                      label: t('Takip edilen konular'),
+                      value: '${state.followedCount} ${t('adet')}'),
                   _DataRow(
                       icon: Icons.show_chart,
-                      label: 'Risk geçmişi',
-                      value: '${state.riskHistoryCount} kayıt'),
+                      label: t('Risk geçmişi'),
+                      value: '${state.riskHistoryCount} ${t('kayıt')}'),
                   _DataRow(
                       icon: Icons.account_circle_outlined,
-                      label: 'Hesap',
-                      value: state.hasSession ? 'Giriş yapıldı' : 'Misafir'),
+                      label: t('Hesap'),
+                      value: state.hasSession ? t('Giriş yapıldı') : t('Misafir')),
                 ],
               ),
             ),
@@ -92,18 +92,18 @@ class PrivacyScreen extends StatelessWidget {
                 downloadFile(
                     'life-radar-verilerim-$ts.json', json, 'application/json');
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                      content: Text('Verilerin JSON olarak indirildi.')),
+                  SnackBar(
+                      content: Text(t('Verilerin JSON olarak indirildi.'))),
                 );
               },
               icon: const Icon(Icons.download_outlined),
-              label: const Text('Verilerimi indir (JSON)'),
+              label: Text(t('Verilerimi indir (JSON)')),
             ),
           ),
           const SizedBox(height: 8),
 
           // 2) Gizlilik kontrolleri
-          const _SectionLabel('Gizlilik Kontrolleri', Icons.tune),
+          _SectionLabel(t('Gizlilik Kontrolleri'), Icons.tune),
           Card(
             child: Column(
               children: [
@@ -112,11 +112,10 @@ class PrivacyScreen extends StatelessWidget {
                   activeColor: LifeRadarColors.turquoise,
                   secondary: const Icon(Icons.location_on_outlined,
                       color: LifeRadarColors.navy),
-                  title: const Text('Konum kullanımı',
-                      style: TextStyle(fontWeight: FontWeight.w700)),
-                  subtitle: const Text(
-                      'Bulunduğun şehre göre afet/deprem riski hesaplanır. '
-                      'Kapatırsan konum tespiti yapılmaz.'),
+                  title: Text(t('Konum kullanımı'),
+                      style: const TextStyle(fontWeight: FontWeight.w700)),
+                  subtitle: Text(t(
+                      'Bulunduğun şehre göre afet/deprem riski hesaplanır. Kapatırsan konum tespiti yapılmaz.')),
                   onChanged: (v) =>
                       context.read<AppState>().setLocationEnabled(v),
                 ),
@@ -126,11 +125,10 @@ class PrivacyScreen extends StatelessWidget {
                   activeColor: LifeRadarColors.turquoise,
                   secondary: const Icon(Icons.psychology_outlined,
                       color: LifeRadarColors.navy),
-                  title: const Text('Life Radar Asistan analizlerine kişisel veri gönder',
-                      style: TextStyle(fontWeight: FontWeight.w700)),
-                  subtitle: const Text(
-                      'Açıkken yaş, meslek, sağlık gibi bilgiler Life Radar Asistan\'a gönderilip '
-                      'analiz sana özel olur. Kapalıyken yalnızca genel analiz yapılır.'),
+                  title: Text(t('Life Radar Asistan analizlerine kişisel veri gönder'),
+                      style: const TextStyle(fontWeight: FontWeight.w700)),
+                  subtitle: Text(t(
+                      'Açıkken yaş, meslek, sağlık gibi bilgiler Life Radar Asistan\'a gönderilip analiz sana özel olur. Kapalıyken yalnızca genel analiz yapılır.')),
                   onChanged: (v) =>
                       context.read<AppState>().setAiShareContext(v),
                 ),
@@ -140,35 +138,35 @@ class PrivacyScreen extends StatelessWidget {
           const SizedBox(height: 8),
 
           // 3) Veri temizleme
-          const _SectionLabel('Veri Temizleme', Icons.delete_outline),
+          _SectionLabel(t('Veri Temizleme'), Icons.delete_outline),
           Card(
             child: Column(
               children: [
                 _ClearTile(
                   icon: Icons.bookmark_remove_outlined,
-                  title: 'Kayıtlı haberleri temizle',
+                  title: t('Kayıtlı haberleri temizle'),
                   enabled: state.savedCount > 0,
                   onConfirm: () => context.read<AppState>().clearSavedEvents(),
                   confirmText:
-                      'Tüm kayıtlı haberler silinsin mi? Bu işlem geri alınamaz.',
+                      t('Tüm kayıtlı haberler silinsin mi? Bu işlem geri alınamaz.'),
                 ),
                 const Divider(height: 1),
                 _ClearTile(
                   icon: Icons.timeline_outlined,
-                  title: 'Risk geçmişini temizle',
+                  title: t('Risk geçmişini temizle'),
                   enabled: state.riskHistoryCount > 0,
                   onConfirm: () => context.read<AppState>().clearRiskHistory(),
                   confirmText:
-                      'Risk puanı geçmişin silinsin mi? Bu işlem geri alınamaz.',
+                      t('Risk puanı geçmişin silinsin mi? Bu işlem geri alınamaz.'),
                 ),
                 const Divider(height: 1),
                 _ClearTile(
                   icon: Icons.person_off_outlined,
-                  title: 'Kişisel bilgileri temizle',
+                  title: t('Kişisel bilgileri temizle'),
                   enabled: state.hasPersonalInfo,
                   onConfirm: () => context.read<AppState>().clearPersonalInfo(),
                   confirmText:
-                      'Yaş, meslek, sağlık vb. kişisel bilgilerin silinsin mi?',
+                      t('Yaş, meslek, sağlık vb. kişisel bilgilerin silinsin mi?'),
                 ),
               ],
             ),
@@ -179,47 +177,31 @@ class PrivacyScreen extends StatelessWidget {
             child: _ClearTile(
               icon: Icons.warning_amber_rounded,
               iconColor: LifeRadarColors.riskHigh,
-              title: 'Tüm verileri sıfırla (fabrika ayarı)',
+              title: t('Tüm verileri sıfırla (fabrika ayarı)'),
               titleColor: LifeRadarColors.riskHigh,
               enabled: true,
               onConfirm: () {
                 context.read<AppState>().clearAllData();
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
+                  SnackBar(
                       content:
-                          Text('Tüm veriler silindi. Çıkış yapıldı.')),
+                          Text(t('Tüm veriler silindi. Çıkış yapıldı.'))),
                 );
               },
-              confirmText:
-                  'TÜM verilerin (kişisel bilgiler, kayıtlar, ayarlar) silinecek '
-                  've çıkış yapılacak. Bu işlem geri alınamaz. Devam edilsin mi?',
+              confirmText: t(
+                  'TÜM verilerin (kişisel bilgiler, kayıtlar, ayarlar) silinecek ve çıkış yapılacak. Bu işlem geri alınamaz. Devam edilsin mi?'),
             ),
           ),
           const SizedBox(height: 8),
 
           // 4) Gizlilik politikası
-          const _SectionLabel('Gizlilik Politikası', Icons.policy_outlined),
-          const Card(
+          _SectionLabel(t('Gizlilik Politikası'), Icons.policy_outlined),
+          Card(
             child: Padding(
-              padding: EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
               child: Text(
-                'Life Radar, gizliliğine önem verir.\n\n'
-                '• Saklanan veriler: Girdiğin kişisel bilgiler, kayıtlı haberler, '
-                'takip ettiğin konular, risk geçmişin ve uygulama ayarların yalnızca '
-                'bu cihazın tarayıcı belleğinde (localStorage) tutulur.\n\n'
-                '• Hesap: E-posta ile kayıt/giriş Firebase Authentication üzerinden '
-                'yapılır; yalnızca e-posta ve oturum anahtarı işlenir.\n\n'
-                '• Konum: Açıkken yaklaşık konumun IP üzerinden belirlenir ve afet '
-                'riski hesabında kullanılır. İstediğin zaman kapatabilirsin.\n\n'
-                '• Life Radar Asistan: Analizler için başlıklar ve (izin verdiysen) '
-                'kişisel bağlamın bir hizmet sağlayıcıya (Groq) gönderilir. '
-                'Bu paylaşımı "Life Radar Asistan analizlerine kişisel veri gönder" anahtarından kapatabilirsin.\n\n'
-                '• Haberler: Haber içerikleri kaynak sitelerden ve çeviri servisinden '
-                'alınır; bu isteklerde kişisel bilgin gönderilmez.\n\n'
-                '• Hakların: Verilerini istediğin an dışa aktarabilir (JSON) veya '
-                'tamamen silebilirsin. Uygulamayı sildiğinde veya tarayıcı verisini '
-                'temizlediğinde tüm yerel veriler kaybolur.',
-                style: TextStyle(
+                t('Life Radar, gizliliğine önem verir.\n\n• Saklanan veriler: Girdiğin kişisel bilgiler, kayıtlı haberler, takip ettiğin konular, risk geçmişin ve uygulama ayarların yalnızca bu cihazın tarayıcı belleğinde (localStorage) tutulur.\n\n• Hesap: E-posta ile kayıt/giriş Firebase Authentication üzerinden yapılır; yalnızca e-posta ve oturum anahtarı işlenir.\n\n• Konum: Açıkken yaklaşık konumun IP üzerinden belirlenir ve afet riski hesabında kullanılır. İstediğin zaman kapatabilirsin.\n\n• Life Radar Asistan: Analizler için başlıklar ve (izin verdiysen) kişisel bağlamın bir hizmet sağlayıcıya (Groq) gönderilir. Bu paylaşımı "Life Radar Asistan analizlerine kişisel veri gönder" anahtarından kapatabilirsin.\n\n• Haberler: Haber içerikleri kaynak sitelerden ve çeviri servisinden alınır; bu isteklerde kişisel bilgin gönderilmez.\n\n• Hakların: Verilerini istediğin an dışa aktarabilir (JSON) veya tamamen silebilirsin. Uygulamayı sildiğinde veya tarayıcı verisini temizlediğinde tüm yerel veriler kaybolur.'),
+                style: const TextStyle(
                     fontSize: 13, height: 1.5, color: LifeRadarColors.navy),
               ),
             ),
@@ -231,8 +213,8 @@ class PrivacyScreen extends StatelessWidget {
               onPressed: () =>
                   Media.openUrl('${ApiConfig.base}/privacy.html'),
               icon: const Icon(Icons.open_in_new, size: 18),
-              label: const Text(
-                  'Tam yasal metin: Gizlilik · Kullanım Şartları · Sorumluluk Reddi'),
+              label: Text(
+                  t('Tam yasal metin: Gizlilik · Kullanım Şartları · Sorumluluk Reddi')),
             ),
           ),
           const SizedBox(height: 24),
@@ -292,17 +274,17 @@ class _ClearTile extends StatelessWidget {
     final ok = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('Emin misin?'),
+        title: Text(t('Emin misin?')),
         content: Text(confirmText),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Vazgeç'),
+            child: Text(t('Vazgeç')),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             style: TextButton.styleFrom(foregroundColor: LifeRadarColors.riskHigh),
-            child: const Text('Sil'),
+            child: Text(t('Sil')),
           ),
         ],
       ),

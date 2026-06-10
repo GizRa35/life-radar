@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../core/i18n.dart';
 import '../core/theme.dart';
 import '../models/crisis_item.dart';
 import '../state/app_state.dart';
@@ -22,16 +23,15 @@ class CrisisRadarScreen extends StatelessWidget {
     final hasAny = sections.any((e) => e.value.isNotEmpty);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Kriz Radarı')),
+      appBar: AppBar(title: Text(t('Kriz Radarı'))),
       body: RefreshIndicator(
         color: LifeRadarColors.turquoise,
         onRefresh: () => context.read<AppState>().loadFeeds(),
         child: ListView(
           padding: const EdgeInsets.symmetric(vertical: 12),
           children: [
-            const _SourceBanner(
-              'Ekonomi, enerji, gıda, su, jeopolitik ve siber kaynaklı güncel '
-              'riskler (GDELT).',
+            _SourceBanner(
+              t('Ekonomi, enerji, gıda, su, jeopolitik ve siber kaynaklı güncel riskler (GDELT).'),
             ),
             if (!hasAny && state.loadingFeeds)
               const Padding(
@@ -42,11 +42,11 @@ class CrisisRadarScreen extends StatelessWidget {
                 ),
               )
             else if (!hasAny)
-              const Padding(
-                padding: EdgeInsets.all(32),
+              Padding(
+                padding: const EdgeInsets.all(32),
                 child: Center(
-                  child: Text('Şu an kriz sinyali bulunamadı.',
-                      style: TextStyle(color: LifeRadarColors.textSecondary)),
+                  child: Text(t('Şu an kriz sinyali bulunamadı.'),
+                      style: const TextStyle(color: LifeRadarColors.textSecondary)),
                 ),
               )
             else
@@ -55,7 +55,7 @@ class CrisisRadarScreen extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.fromLTRB(16, 16, 16, 6),
                     child: Text(
-                      entry.key.label,
+                      t(entry.key.label),
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,

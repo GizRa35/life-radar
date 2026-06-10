@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../core/i18n.dart';
 import '../core/theme.dart';
 import '../state/app_state.dart';
 
@@ -39,7 +40,7 @@ class _FamilyPlanScreenState extends State<FamilyPlanScreen> {
         .read<AppState>()
         .setFamilyPlan(_home.text, _area.text, _note.text);
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Aile planı kaydedildi')),
+      SnackBar(content: Text(t('Aile planı kaydedildi'))),
     );
     Navigator.of(context).pop();
   }
@@ -47,7 +48,7 @@ class _FamilyPlanScreenState extends State<FamilyPlanScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Aile Acil Planı')),
+      appBar: AppBar(title: Text(t('Aile Acil Planı'))),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -57,16 +58,15 @@ class _FamilyPlanScreenState extends State<FamilyPlanScreen> {
               color: LifeRadarColors.cardBackground,
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Row(
+            child: Row(
               children: [
-                Icon(Icons.family_restroom, color: LifeRadarColors.turquoise),
-                SizedBox(width: 10),
+                const Icon(Icons.family_restroom,
+                    color: LifeRadarColors.turquoise),
+                const SizedBox(width: 10),
                 Expanded(
                   child: Text(
-                    'Afet anında ailenizin nerede buluşacağını ve nasıl '
-                    'iletişim kuracağını önceden belirleyin. Bilgiler yalnızca '
-                    'cihazınızda saklanır.',
-                    style: TextStyle(
+                    t('Afet anında ailenizin nerede buluşacağını ve nasıl iletişim kuracağını önceden belirleyin. Bilgiler yalnızca cihazınızda saklanır.'),
+                    style: const TextStyle(
                         fontSize: 12, color: LifeRadarColors.textSecondary),
                   ),
                 ),
@@ -76,19 +76,19 @@ class _FamilyPlanScreenState extends State<FamilyPlanScreen> {
           const SizedBox(height: 16),
           _field(
             _home,
-            'Ev yakını buluşma noktası',
+            t('Ev yakını buluşma noktası'),
             Icons.home_outlined,
             'Örn: Apartman önü / sokak köşesindeki park',
           ),
           _field(
             _area,
-            'Bölge dışı buluşma noktası',
+            t('Bölge dışı buluşma noktası'),
             Icons.location_city_outlined,
             'Örn: Mahalle meydanı / okul bahçesi',
           ),
           _field(
             _note,
-            'İletişim ve toplanma notu',
+            t('İletişim ve toplanma notu'),
             Icons.notes_outlined,
             'Örn: Şehir dışındaki ... teyzeyi arayın; herkes oraya haber versin',
             maxLines: 4,
@@ -97,7 +97,7 @@ class _FamilyPlanScreenState extends State<FamilyPlanScreen> {
           ElevatedButton.icon(
             onPressed: _save,
             icon: const Icon(Icons.save),
-            label: const Text('Planı Kaydet'),
+            label: Text(t('Planı Kaydet')),
             style: ElevatedButton.styleFrom(
                 minimumSize: const Size.fromHeight(50)),
           ),

@@ -14,6 +14,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await lsInit(); // kalıcı depolamayı belleğe yükle (mobil/masaüstü)
   await initializeDateFormatting('tr', null);
+  await initializeDateFormatting('en', null);
   runApp(const LifeRadarApp());
 }
 

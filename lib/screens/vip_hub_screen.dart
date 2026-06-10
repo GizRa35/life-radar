@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../core/i18n.dart';
 import '../core/theme.dart';
 import '../models/family_member.dart';
 import '../services/report_export.dart';
@@ -21,50 +22,50 @@ class VipHubScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tools = <_VipTool>[
-      _VipTool('Aile Koruma Merkezi', Icons.family_restroom,
-          'Aile üyelerini ekle, her birine özel Life Radar Asistan analizi al.',
+      _VipTool(t('Aile Koruma Merkezi'), Icons.family_restroom,
+          t('Aile üyelerini ekle, her birine özel Life Radar Asistan analizi al.'),
           onTap: (c) => _push(c, const _FamilyCenterScreen())),
-      _VipTool('Akıllı Aksiyon Danışmanı', Icons.shopping_cart_checkout,
-          'Hane halkına göre MİKTARLI hazırlık önerileri (gıda, su, enerji...).',
+      _VipTool(t('Akıllı Aksiyon Danışmanı'), Icons.shopping_cart_checkout,
+          t('Hane halkına göre MİKTARLI hazırlık önerileri (gıda, su, enerji...).'),
           run: (s) => s.vipSmartActions(), imageQuery: 'grocery shopping pantry'),
-      _VipTool('Kişisel Life Radar Asistanı', Icons.psychology,
-          'Bugün sizi etkileyebilecek en önemli gelişmeler.',
+      _VipTool(t('Kişisel Life Radar Asistanı'), Icons.psychology,
+          t('Bugün sizi etkileyebilecek en önemli gelişmeler.'),
           run: (s) => s.vipDailyAnalyst(), imageQuery: 'data analytics screen'),
-      _VipTool('Şehir Bazlı Risk Merkezi', Icons.location_city,
-          'Bulunduğun şehir için deprem/yangın/hava/su/sağlık değerlendirmesi.',
+      _VipTool(t('Şehir Bazlı Risk Merkezi'), Icons.location_city,
+          t('Bulunduğun şehir için deprem/yangın/hava/su/sağlık değerlendirmesi.'),
           run: (s) => s.vipCityRisk(), imageQuery: 'istanbul city skyline'),
-      _VipTool('Kişisel Acil Durum Planı', Icons.health_and_safety,
-          'Aile ve konumuna göre hazırlık planı.',
+      _VipTool(t('Kişisel Acil Durum Planı'), Icons.health_and_safety,
+          t('Aile ve konumuna göre hazırlık planı.'),
           run: (s) => s.vipEmergencyPlan(), imageQuery: 'emergency kit preparedness'),
-      _VipTool('Haber Doğrulama', Icons.fact_check,
-          'Bir haber linki/metni yapıştır, doğruluk ve manipülasyon analizi al.',
+      _VipTool(t('Haber Doğrulama'), Icons.fact_check,
+          t('Bir haber linki/metni yapıştır, doğruluk ve manipülasyon analizi al.'),
           onTap: (c) => _push(c, const _NewsVerifyScreen())),
-      _VipTool('Gelişmiş Risk Skoru', Icons.speed,
-          'Sağlık, finans, yaşam alanı, aile, seyahat, küresel risk skorları.',
+      _VipTool(t('Gelişmiş Risk Skoru'), Icons.speed,
+          t('Sağlık, finans, yaşam alanı, aile, seyahat, küresel risk skorları.'),
           run: (s) => s.vipAdvancedScores(), imageQuery: 'dashboard charts data'),
-      _VipTool('Gelecek Radarı', Icons.radar,
-          'Yaklaşan riskler ve trendler (kehanet değil, eğilim analizi).',
+      _VipTool(t('Gelecek Radarı'), Icons.radar,
+          t('Yaklaşan riskler ve trendler (kehanet değil, eğilim analizi).'),
           run: (s) => s.vipFutureRadar(), imageQuery: 'futuristic technology city'),
-      _VipTool('Seyahat Brifingi', Icons.flight_takeoff,
-          'Gideceğin şehir/ülke için risk + sağlık + güvenlik brifingi.',
+      _VipTool(t('Seyahat Brifingi'), Icons.flight_takeoff,
+          t('Gideceğin şehir/ülke için risk + sağlık + güvenlik brifingi.'),
           onTap: (c) => _push(c, const _TravelBriefScreen())),
-      _VipTool('Risk Geçmişi', Icons.show_chart,
-          'Kişisel risk puanının zaman içindeki değişimi.',
+      _VipTool(t('Risk Geçmişi'), Icons.show_chart,
+          t('Kişisel risk puanının zaman içindeki değişimi.'),
           onTap: (c) => _push(c, const _RiskHistoryScreen())),
-      _VipTool('Akıllı Uyarı', Icons.notifications_active,
-          'Bildirim türleri, kategoriler, sessiz saatler ve risk eşiği.',
+      _VipTool(t('Akıllı Uyarı'), Icons.notifications_active,
+          t('Bildirim türleri, kategoriler, sessiz saatler ve risk eşiği.'),
           onTap: (c) => _push(c, const NotificationSettingsScreen())),
-      _VipTool('VIP Erken Uyarı Merkezi', Icons.warning_amber_rounded,
-          'Kritik ve yüksek riskli güncel gelişmeler tek ekranda.',
+      _VipTool(t('VIP Erken Uyarı Merkezi'), Icons.warning_amber_rounded,
+          t('Kritik ve yüksek riskli güncel gelişmeler tek ekranda.'),
           onTap: (c) => _push(c, const _EarlyWarningScreen())),
-      _VipTool('VIP İstihbarat Raporu', Icons.description,
-          'Haftalık özet rapor — PDF olarak kaydedebilirsin.',
+      _VipTool(t('VIP İstihbarat Raporu'), Icons.description,
+          t('Haftalık özet rapor — PDF olarak kaydedebilirsin.'),
           onTap: (c) => _push(c, const _IntelReportScreen())),
     ];
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('VIP Merkezi'),
+        title: Text(t('VIP Merkezi')),
         backgroundColor: LifeRadarColors.navy,
         foregroundColor: Colors.white,
       ),
@@ -79,14 +80,14 @@ class VipHubScreen extends StatelessWidget {
               borderRadius: BorderRadius.circular(16),
               border: Border.all(color: _gold),
             ),
-            child: const Row(
+            child: Row(
               children: [
-                Icon(Icons.workspace_premium, color: _gold, size: 28),
-                SizedBox(width: 12),
+                const Icon(Icons.workspace_premium, color: _gold, size: 28),
+                const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    'VIP araçların Life Radar Asistan ile çalışır. Aşağıdan seç.',
-                    style: TextStyle(color: Colors.white),
+                    t('VIP araçların Life Radar Asistan ile çalışır. Aşağıdan seç.'),
+                    style: const TextStyle(color: Colors.white),
                   ),
                 ),
               ],
@@ -98,10 +99,10 @@ class VipHubScreen extends StatelessWidget {
               color: _gold.withOpacity(0.1),
               child: ListTile(
                 leading: const Icon(Icons.badge_outlined, color: _gold),
-                title: const Text('Daha kişisel analiz için bilgilerini doldur',
-                    style: TextStyle(fontWeight: FontWeight.w700)),
-                subtitle: const Text(
-                    'Yaş, sağlık, ev tipi, aile... → analizler sana özel olur.'),
+                title: Text(t('Daha kişisel analiz için bilgilerini doldur'),
+                    style: const TextStyle(fontWeight: FontWeight.w700)),
+                subtitle: Text(
+                    t('Yaş, sağlık, ev tipi, aile... → analizler sana özel olur.')),
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () => Navigator.of(context).push(MaterialPageRoute(
                     builder: (_) => const PersonalInfoScreen())),
@@ -183,7 +184,7 @@ class _TravelBriefScreenState extends State<_TravelBriefScreen> {
     if (dest.isEmpty) return;
     Navigator.of(context).push(MaterialPageRoute(
       builder: (_) => AiResultScreen(
-        title: '$dest — Seyahat Brifingi',
+        title: '$dest — ${t('Seyahat Brifingi')}',
         icon: Icons.flight_takeoff,
         imageQuery: '$dest travel',
         run: (s) => s.vipTravelBrief(dest),
@@ -194,31 +195,30 @@ class _TravelBriefScreenState extends State<_TravelBriefScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Seyahat Brifingi')),
+      appBar: AppBar(title: Text(t('Seyahat Brifingi'))),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          const Text(
-            'Gideceğin şehir veya ülkeyi yaz; Life Radar Asistan güvenlik, sağlık ve '
-            'afet açısından kısa bir brifing hazırlasın.',
-            style: TextStyle(color: LifeRadarColors.textSecondary),
+          Text(
+            t('Gideceğin şehir veya ülkeyi yaz; Life Radar Asistan güvenlik, sağlık ve afet açısından kısa bir brifing hazırlasın.'),
+            style: const TextStyle(color: LifeRadarColors.textSecondary),
           ),
           const SizedBox(height: 12),
           TextField(
             controller: _controller,
             textInputAction: TextInputAction.go,
             onSubmitted: (_) => _go(),
-            decoration: const InputDecoration(
-              labelText: 'Şehir / Ülke',
-              prefixIcon: Icon(Icons.place_outlined),
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              labelText: t('Şehir / Ülke'),
+              prefixIcon: const Icon(Icons.place_outlined),
+              border: const OutlineInputBorder(),
             ),
           ),
           const SizedBox(height: 12),
           ElevatedButton.icon(
             onPressed: _go,
             icon: const Icon(Icons.travel_explore),
-            label: const Text('Brifing Al'),
+            label: Text(t('Brifing Al')),
             style:
                 ElevatedButton.styleFrom(minimumSize: const Size.fromHeight(50)),
           ),
@@ -243,18 +243,17 @@ class _RiskHistoryScreen extends StatelessWidget {
         : 0;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Risk Geçmişi')),
+      appBar: AppBar(title: Text(t('Risk Geçmişi'))),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
           if (hist.length < 2)
-            const Card(
+            Card(
               child: Padding(
-                padding: EdgeInsets.all(16),
+                padding: const EdgeInsets.all(16),
                 child: Text(
-                  'Geçmiş oluşması için uygulamayı birkaç kez aç/yenile. Her '
-                  'açılışta o anki risk puanın kaydedilir.',
-                  style: TextStyle(color: LifeRadarColors.textSecondary),
+                  t('Geçmiş oluşması için uygulamayı birkaç kez aç/yenile. Her açılışta o anki risk puanın kaydedilir.'),
+                  style: const TextStyle(color: LifeRadarColors.textSecondary),
                 ),
               ),
             ),
@@ -267,10 +266,10 @@ class _RiskHistoryScreen extends StatelessWidget {
           const SizedBox(height: 12),
           Row(
             children: [
-              _Stat('Şu an', '$current', _gold),
-              _Stat('En yüksek', '$maxV', LifeRadarColors.riskHigh),
-              _Stat('En düşük', '$minV', LifeRadarColors.riskLow),
-              _Stat('Değişim', '${trend >= 0 ? '+' : ''}$trend',
+              _Stat(t('Şu an'), '$current', _gold),
+              _Stat(t('En yüksek'), '$maxV', LifeRadarColors.riskHigh),
+              _Stat(t('En düşük'), '$minV', LifeRadarColors.riskLow),
+              _Stat(t('Değişim'), '${trend >= 0 ? '+' : ''}$trend',
                   trend > 0 ? LifeRadarColors.riskHigh : LifeRadarColors.riskLow),
             ],
           ),
@@ -315,21 +314,21 @@ class _EarlyWarningScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final warnings = context.watch<AppState>().earlyWarnings;
     return Scaffold(
-      appBar: AppBar(title: const Text('VIP Erken Uyarı Merkezi')),
+      appBar: AppBar(title: Text(t('VIP Erken Uyarı Merkezi'))),
       body: warnings.isEmpty
-          ? const Center(
+          ? Center(
               child: Padding(
-                padding: EdgeInsets.all(32),
+                padding: const EdgeInsets.all(32),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.verified_outlined,
+                    const Icon(Icons.verified_outlined,
                         size: 48, color: LifeRadarColors.riskLow),
-                    SizedBox(height: 12),
+                    const SizedBox(height: 12),
                     Text(
-                      'Şu an kritik veya yüksek riskli bir gelişme görünmüyor.',
+                      t('Şu an kritik veya yüksek riskli bir gelişme görünmüyor.'),
                       textAlign: TextAlign.center,
-                      style: TextStyle(color: LifeRadarColors.textSecondary),
+                      style: const TextStyle(color: LifeRadarColors.textSecondary),
                     ),
                   ],
                 ),
@@ -352,7 +351,7 @@ class _EarlyWarningScreen extends StatelessWidget {
                       const SizedBox(width: 10),
                       Expanded(
                         child: Text(
-                          '${warnings.length} öncelikli uyarı — yüksek/kritik riskli gelişmeler.',
+                          '${warnings.length} ${t('öncelikli uyarı — yüksek/kritik riskli gelişmeler.')}',
                           style: const TextStyle(
                               color: LifeRadarColors.riskHigh,
                               fontWeight: FontWeight.w700),
@@ -390,24 +389,24 @@ class _IntelReportScreenState extends State<_IntelReportScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('VIP İstihbarat Raporu')),
+      appBar: AppBar(title: Text(t('VIP İstihbarat Raporu'))),
       body: FutureBuilder<String>(
         future: _future,
         builder: (_, snap) {
           if (snap.connectionState == ConnectionState.waiting) {
-            return const Center(
+            return Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  CircularProgressIndicator(color: _gold),
-                  SizedBox(height: 12),
-                  Text('Rapor hazırlanıyor...',
-                      style: TextStyle(color: LifeRadarColors.textSecondary)),
+                  const CircularProgressIndicator(color: _gold),
+                  const SizedBox(height: 12),
+                  Text(t('Rapor hazırlanıyor...'),
+                      style: const TextStyle(color: LifeRadarColors.textSecondary)),
                 ],
               ),
             );
           }
-          final text = snap.data ?? 'Rapor oluşturulamadı.';
+          final text = snap.data ?? t('Rapor oluşturulamadı.');
           return ListView(
             padding: const EdgeInsets.all(16),
             children: [
@@ -419,19 +418,11 @@ class _IntelReportScreenState extends State<_IntelReportScreen> {
               ),
               const SizedBox(height: 16),
               ElevatedButton.icon(
-                onPressed: () => openHtmlReport('VIP İstihbarat Raporu', text),
+                onPressed: () => openHtmlReport(t('VIP İstihbarat Raporu'), text),
                 icon: const Icon(Icons.picture_as_pdf_outlined),
-                label: const Text('PDF olarak indir / yazdır'),
+                label: Text(t('PDF olarak indir / yazdır')),
                 style: ElevatedButton.styleFrom(
                     minimumSize: const Size.fromHeight(50)),
-              ),
-              const SizedBox(height: 8),
-              OutlinedButton.icon(
-                onPressed: () => setState(() {
-                  _future = context.read<AppState>().vipIntelReport();
-                }),
-                icon: const Icon(Icons.refresh),
-                label: const Text('Yeniden Üret'),
               ),
             ],
           );
@@ -473,22 +464,21 @@ class _NewsVerifyScreenState extends State<_NewsVerifyScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Haber Doğrulama')),
+      appBar: AppBar(title: Text(t('Haber Doğrulama'))),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          const Text(
-            'Şüphelendiğin haberin linkini veya metnini yapıştır; '
-            'Life Radar Asistan doğruluk ve manipülasyon riskini değerlendirsin.',
-            style: TextStyle(color: LifeRadarColors.textSecondary),
+          Text(
+            t('Şüphelendiğin haberin linkini veya metnini yapıştır; Life Radar Asistan doğruluk ve manipülasyon riskini değerlendirsin.'),
+            style: const TextStyle(color: LifeRadarColors.textSecondary),
           ),
           const SizedBox(height: 12),
           TextField(
             controller: _controller,
             maxLines: 5,
-            decoration: const InputDecoration(
-              hintText: 'Haber linki veya metni...',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              hintText: t('Haber linki veya metni...'),
+              border: const OutlineInputBorder(),
             ),
           ),
           const SizedBox(height: 12),
@@ -501,7 +491,7 @@ class _NewsVerifyScreenState extends State<_NewsVerifyScreen> {
                     child: CircularProgressIndicator(
                         strokeWidth: 2, color: Colors.white))
                 : const Icon(Icons.fact_check),
-            label: const Text('Doğrula'),
+            label: Text(t('Doğrula')),
           ),
           if (_result != null) ...[
             const SizedBox(height: 16),
@@ -544,22 +534,22 @@ class _FamilyCenterScreenState extends State<_FamilyCenterScreen> {
       context: context,
       builder: (dctx) => StatefulBuilder(
         builder: (_, setSt) => AlertDialog(
-          title: const Text('Aile Üyesi Ekle'),
+          title: Text(t('Aile Üyesi Ekle')),
           content: SizedBox(
             width: 360,
             child: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  TextField(controller: name, decoration: dec('Ad *')),
+                  TextField(controller: name, decoration: dec(t('Ad *'))),
                   const SizedBox(height: 10),
                   DropdownButtonFormField<String>(
                     value: relation,
-                    decoration: dec('Yakınlık'),
+                    decoration: dec(t('Yakınlık')),
                     items: const [
                       'Eş', 'Çocuk', 'Anne', 'Baba', 'Kardeş', 'Büyükanne',
                       'Büyükbaba', 'Diğer'
-                    ].map((r) => DropdownMenuItem(value: r, child: Text(r))).toList(),
+                    ].map((r) => DropdownMenuItem(value: r, child: Text(t(r)))).toList(),
                     onChanged: (v) => setSt(() => relation = v ?? 'Eş'),
                   ),
                   const SizedBox(height: 10),
@@ -569,16 +559,16 @@ class _FamilyCenterScreenState extends State<_FamilyCenterScreen> {
                         child: TextField(
                             controller: age,
                             keyboardType: TextInputType.number,
-                            decoration: dec('Yaş')),
+                            decoration: dec(t('Yaş'))),
                       ),
                       const SizedBox(width: 10),
                       Expanded(
                         child: DropdownButtonFormField<String>(
                           value: gender.isEmpty ? null : gender,
-                          decoration: dec('Cinsiyet'),
+                          decoration: dec(t('Cinsiyet')),
                           items: const ['Kadın', 'Erkek']
                               .map((g) =>
-                                  DropdownMenuItem(value: g, child: Text(g)))
+                                  DropdownMenuItem(value: g, child: Text(t(g))))
                               .toList(),
                           onChanged: (v) => setSt(() => gender = v ?? ''),
                         ),
@@ -588,19 +578,19 @@ class _FamilyCenterScreenState extends State<_FamilyCenterScreen> {
                   const SizedBox(height: 10),
                   TextField(
                       controller: health,
-                      decoration: dec('Kronik hastalık / sürekli ilaç'),
+                      decoration: dec(t('Kronik hastalık / sürekli ilaç')),
                       maxLines: 2),
                   const SizedBox(height: 10),
-                  TextField(controller: allergies, decoration: dec('Alerjiler')),
+                  TextField(controller: allergies, decoration: dec(t('Alerjiler'))),
                   const SizedBox(height: 10),
                   TextField(
                       controller: special,
                       decoration:
-                          dec('Özel durum (hamilelik, engellilik, vb.)')),
+                          dec(t('Özel durum (hamilelik, engellilik, vb.)'))),
                   const SizedBox(height: 10),
                   TextField(
                       controller: notes,
-                      decoration: dec('Ek not (ops.)'),
+                      decoration: dec(t('Ek not (ops.)')),
                       maxLines: 2),
                 ],
               ),
@@ -609,7 +599,7 @@ class _FamilyCenterScreenState extends State<_FamilyCenterScreen> {
           actions: [
             TextButton(
                 onPressed: () => Navigator.pop(dctx),
-                child: const Text('Vazgeç')),
+                child: Text(t('Vazgeç'))),
             ElevatedButton(
               onPressed: () {
                 if (name.text.trim().isEmpty) return;
@@ -626,7 +616,7 @@ class _FamilyCenterScreenState extends State<_FamilyCenterScreen> {
                     ));
                 Navigator.pop(dctx);
               },
-              child: const Text('Ekle'),
+              child: Text(t('Ekle')),
             ),
           ],
         ),
@@ -638,22 +628,21 @@ class _FamilyCenterScreenState extends State<_FamilyCenterScreen> {
   Widget build(BuildContext context) {
     final family = context.watch<AppState>().family;
     return Scaffold(
-      appBar: AppBar(title: const Text('Aile Koruma Merkezi')),
+      appBar: AppBar(title: Text(t('Aile Koruma Merkezi'))),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _addDialog,
         backgroundColor: _gold,
         icon: const Icon(Icons.add, color: Colors.white),
-        label: const Text('Üye Ekle', style: TextStyle(color: Colors.white)),
+        label: Text(t('Üye Ekle'), style: const TextStyle(color: Colors.white)),
       ),
       body: family.isEmpty
-          ? const Center(
+          ? Center(
               child: Padding(
-                padding: EdgeInsets.all(32),
+                padding: const EdgeInsets.all(32),
                 child: Text(
-                  'Henüz aile üyesi yok. Sağ alttaki "Üye Ekle" ile başla.\n'
-                  'Her üye için Life Radar Asistan özel risk analizi üretebilir.',
+                  t('Henüz aile üyesi yok. Sağ alttaki "Üye Ekle" ile başla.\nHer üye için Life Radar Asistan özel risk analizi üretebilir.'),
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: LifeRadarColors.textSecondary),
+                  style: const TextStyle(color: LifeRadarColors.textSecondary),
                 ),
               ),
             )
@@ -666,12 +655,12 @@ class _FamilyCenterScreenState extends State<_FamilyCenterScreen> {
                             backgroundColor: _gold,
                             child: Icon(Icons.person, color: Colors.white),
                           ),
-                          title: Text('${m.name} · ${m.relation}',
+                          title: Text('${m.name} · ${t(m.relation)}',
                               style: const TextStyle(
                                   fontWeight: FontWeight.w700)),
                           subtitle: Text([
-                            if (m.age.isNotEmpty) '${m.age} yaş',
-                            if (m.gender.isNotEmpty) m.gender,
+                            if (m.age.isNotEmpty) '${m.age} ${t('yaş')}',
+                            if (m.gender.isNotEmpty) t(m.gender),
                             if (m.health.isNotEmpty) m.health,
                             if (m.special.isNotEmpty) m.special,
                           ].join(' · ')),
@@ -679,7 +668,7 @@ class _FamilyCenterScreenState extends State<_FamilyCenterScreen> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               IconButton(
-                                tooltip: 'Life Radar Asistan Analizi',
+                                tooltip: t('Life Radar Asistan Analizi'),
                                 icon: const Icon(Icons.psychology,
                                     color: _gold),
                                 onPressed: () => Navigator.of(context).push(
@@ -694,7 +683,7 @@ class _FamilyCenterScreenState extends State<_FamilyCenterScreen> {
                                 ),
                               ),
                               IconButton(
-                                tooltip: 'Sil',
+                                tooltip: t('Sil'),
                                 icon: const Icon(Icons.delete_outline),
                                 onPressed: () => context
                                     .read<AppState>()

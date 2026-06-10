@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
+import '../core/i18n.dart';
 import '../core/theme.dart';
 import '../state/app_state.dart';
 
@@ -15,15 +16,15 @@ class SourceSettingsScreen extends StatelessWidget {
     final sources = state.knownSources;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Kaynak Seçimi')),
+      appBar: AppBar(title: Text(t('Kaynak Seçimi'))),
       body: sources.isEmpty
-          ? const Center(
+          ? Center(
               child: Padding(
-                padding: EdgeInsets.all(32),
+                padding: const EdgeInsets.all(32),
                 child: Text(
-                  'Henüz kaynak yüklenmedi. Haberler geldikçe burada listelenir.',
+                  t('Henüz kaynak yüklenmedi. Haberler geldikçe burada listelenir.'),
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: LifeRadarColors.textSecondary),
+                  style: const TextStyle(color: LifeRadarColors.textSecondary),
                 ),
               ),
             )
@@ -36,15 +37,15 @@ class SourceSettingsScreen extends StatelessWidget {
                     color: LifeRadarColors.cardBackground,
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Row(
+                  child: Row(
                     children: [
-                      Icon(Icons.tune,
+                      const Icon(Icons.tune,
                           size: 18, color: LifeRadarColors.turquoise),
-                      SizedBox(width: 8),
+                      const SizedBox(width: 8),
                       Expanded(
                         child: Text(
-                          'Kapattığın kaynakların haberleri akışta gösterilmez.',
-                          style: TextStyle(
+                          t('Kapattığın kaynakların haberleri akışta gösterilmez.'),
+                          style: const TextStyle(
                               fontSize: 12,
                               color: LifeRadarColors.textSecondary),
                         ),

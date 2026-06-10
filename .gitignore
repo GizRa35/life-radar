@@ -66,3 +66,9 @@ asc_revoke.js
 android/key.properties
 android/upload-keystore.jks
 *.jks
+
+# Hassas anahtar/kimlik dosyalari (asla commit edilmez)
+*.docx
+GoogleService-Info.plist
+ios/Runner/GoogleService-Info.plist
+android/app/google-services.json

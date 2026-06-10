@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../core/i18n.dart';
 import '../core/theme.dart';
 
 /// Kullanım Kılavuzu — uygulamanın nasıl kullanılacağını anlatır.
@@ -62,7 +63,7 @@ class UsageGuideScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Nasıl Kullanılır?')),
+      appBar: AppBar(title: Text(t('Nasıl Kullanılır?'))),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -76,15 +77,14 @@ class UsageGuideScreen extends StatelessWidget {
               ),
               borderRadius: BorderRadius.circular(18),
             ),
-            child: const Row(
+            child: Row(
               children: [
-                Icon(Icons.radar, color: LifeRadarColors.turquoise, size: 32),
-                SizedBox(width: 12),
+                const Icon(Icons.radar, color: LifeRadarColors.turquoise, size: 32),
+                const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    'Life Radar 3 soruyu yanıtlar: Ne oluyor? Beni etkiler mi? '
-                    'Ne yapmalıyım?',
-                    style: TextStyle(color: Colors.white, height: 1.4),
+                    t('Life Radar 3 soruyu yanıtlar: Ne oluyor? Beni etkiler mi? Ne yapmalıyım?'),
+                    style: const TextStyle(color: Colors.white, height: 1.4),
                   ),
                 ),
               ],
@@ -99,10 +99,9 @@ class UsageGuideScreen extends StatelessWidget {
               color: LifeRadarColors.cardBackground,
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Text(
-              'İpucu: Bilgiler cihazında saklanır ve sadece sana özel analiz için '
-              'kullanılır. İstediğin an Profil > Gizlilik\'ten yönetebilirsin.',
-              style: TextStyle(
+            child: Text(
+              t('İpucu: Bilgiler cihazında saklanır ve sadece sana özel analiz için kullanılır. İstediğin an Profil > Gizlilik\'ten yönetebilirsin.'),
+              style: const TextStyle(
                   fontSize: 12, color: LifeRadarColors.textSecondary),
             ),
           ),
@@ -139,13 +138,13 @@ class UsageGuideScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(s.title,
+                Text(t(s.title),
                     style: const TextStyle(
                         fontWeight: FontWeight.w800,
                         fontSize: 15,
                         color: LifeRadarColors.navy)),
                 const SizedBox(height: 4),
-                Text(s.body,
+                Text(t(s.body),
                     style: const TextStyle(
                         color: LifeRadarColors.textSecondary, height: 1.4)),
               ],

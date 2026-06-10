@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../core/i18n.dart';
 import '../core/theme.dart';
 import '../state/app_state.dart';
 
@@ -14,7 +15,7 @@ class LanguageScreen extends StatelessWidget {
     final current = state.userContext.language == 'en' ? 'en' : 'tr';
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Haber Dili')),
+      appBar: AppBar(title: Text(t('Haber Dili'))),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -24,15 +25,14 @@ class LanguageScreen extends StatelessWidget {
               color: LifeRadarColors.cardBackground,
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Row(
+            child: Row(
               children: [
-                Icon(Icons.translate, color: LifeRadarColors.turquoise),
-                SizedBox(width: 10),
+                const Icon(Icons.translate, color: LifeRadarColors.turquoise),
+                const SizedBox(width: 10),
                 Expanded(
                   child: Text(
-                    'Seçtiğin dil arayüz dilini değil, haber dilini belirler. '
-                    'Yabancı kaynaklı haberler bu dile çevrilir.',
-                    style: TextStyle(
+                    t('Seçtiğin dil arayüz dilini değil, haber dilini belirler. Yabancı kaynaklı haberler bu dile çevrilir.'),
+                    style: const TextStyle(
                         fontSize: 12, color: LifeRadarColors.textSecondary),
                   ),
                 ),

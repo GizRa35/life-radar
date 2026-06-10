@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../core/i18n.dart';
 import '../core/text_utils.dart';
 import '../core/theme.dart';
 import '../models/user_context.dart';
@@ -72,7 +73,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
     );
     context.read<AppState>().updateUserContext(ctx);
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Kişisel bilgiler kaydedildi')),
+      SnackBar(content: Text(t('Kişisel bilgiler kaydedildi'))),
     );
     Navigator.of(context).pop();
   }
@@ -80,7 +81,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Kişisel Bilgiler')),
+      appBar: AppBar(title: Text(t('Kişisel Bilgiler'))),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -90,15 +91,15 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
               color: LifeRadarColors.cardBackground,
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Row(
+            child: Row(
               children: [
-                Icon(Icons.info_outline, color: LifeRadarColors.turquoise),
-                SizedBox(width: 10),
+                const Icon(Icons.info_outline,
+                    color: LifeRadarColors.turquoise),
+                const SizedBox(width: 10),
                 Expanded(
                   child: Text(
-                    'Bu bilgiler yalnızca cihazında tutulur ve Life Radar Asistan '
-                    'analizlerini sana özel hale getirmek için kullanılır.',
-                    style: TextStyle(
+                    t('Bu bilgiler yalnızca cihazında tutulur ve Life Radar Asistan analizlerini sana özel hale getirmek için kullanılır.'),
+                    style: const TextStyle(
                         fontSize: 12, color: LifeRadarColors.textSecondary),
                   ),
                 ),
@@ -106,46 +107,46 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
             ),
           ),
           const SizedBox(height: 16),
-          _field(_name, 'Ad (opsiyonel)', Icons.person_outline),
-          _field(_age, 'Yaş', Icons.cake_outlined,
+          _field(_name, t('Ad (opsiyonel)'), Icons.person_outline),
+          _field(_age, t('Yaş'), Icons.cake_outlined,
               keyboard: TextInputType.number),
           _dropdown(
-            'Cinsiyet',
+            t('Cinsiyet'),
             Icons.wc_outlined,
             _gender,
             const ['Kadın', 'Erkek', 'Belirtmek istemiyorum'],
             (v) => setState(() => _gender = v),
           ),
-          _field(_profession, 'Meslek', Icons.work_outline),
-          _field(_location, 'Şehir', Icons.location_city_outlined),
-          _field(_household, 'Hanede yaşayan kişi sayısı', Icons.groups_outlined,
-              keyboard: TextInputType.number),
-          _field(_health, 'Sağlık durumu / kronik hastalık', Icons.favorite_border,
-              maxLines: 2),
+          _field(_profession, t('Meslek'), Icons.work_outline),
+          _field(_location, t('Şehir'), Icons.location_city_outlined),
+          _field(_household, t('Hanede yaşayan kişi sayısı'),
+              Icons.groups_outlined, keyboard: TextInputType.number),
+          _field(_health, t('Sağlık durumu / kronik hastalık'),
+              Icons.favorite_border, maxLines: 2),
           _dropdown(
-            'Finansal hassasiyet',
+            t('Finansal hassasiyet'),
             Icons.account_balance_wallet_outlined,
             _financial,
             const ['Düşük', 'Orta', 'Yüksek'],
             (v) => setState(() => _financial = v),
           ),
           _dropdown(
-            'Ev tipi',
+            t('Ev tipi'),
             Icons.home_outlined,
             _homeType,
             const ['Apartman', 'Müstakil', 'Site', 'Diğer'],
             (v) => setState(() => _homeType = v),
           ),
-          _field(_family, 'Birlikte yaşadıkların (eş, çocuk...)',
+          _field(_family, t('Birlikte yaşadıkların (eş, çocuk...)'),
               Icons.family_restroom, maxLines: 2),
           // Haber dili: yabancı kaynaklı haberler bu dile çevrilir.
           Padding(
             padding: const EdgeInsets.only(bottom: 12),
             child: DropdownButtonFormField<String>(
               value: _language,
-              decoration: const InputDecoration(
-                labelText: 'Haber Dili',
-                prefixIcon: Icon(Icons.translate_outlined),
+              decoration: InputDecoration(
+                labelText: t('Haber Dili'),
+                prefixIcon: const Icon(Icons.translate_outlined),
                 helperText: 'Yabancı kaynaklı haberler bu dile çevrilir',
               ),
               items: const [
@@ -159,7 +160,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
           ElevatedButton.icon(
             onPressed: _save,
             icon: const Icon(Icons.save),
-            label: const Text('Kaydet'),
+            label: Text(t('Kaydet')),
             style: ElevatedButton.styleFrom(minimumSize: const Size.fromHeight(50)),
           ),
         ],
@@ -194,7 +195,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
           prefixIcon: Icon(icon),
         ),
         items: options
-            .map((o) => DropdownMenuItem(value: o, child: Text(o)))
+            .map((o) => DropdownMenuItem(value: o, child: Text(t(o))))
             .toList(),
         onChanged: (v) => onChanged(v ?? ''),
       ),

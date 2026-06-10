@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../core/i18n.dart';
 import '../core/theme.dart';
 import '../services/contacts_service.dart';
 import '../state/app_state.dart';
@@ -23,7 +24,7 @@ class EmergencyCallScreen extends StatelessWidget {
       } else {
         if (!context.mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Arama başlatılamadı.')),
+          SnackBar(content: Text(t('Arama başlatılamadı.'))),
         );
       }
     } catch (_) {
@@ -39,13 +40,13 @@ class EmergencyCallScreen extends StatelessWidget {
     final state = context.watch<AppState>();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Hızlı Acil Arama')),
+      appBar: AppBar(title: Text(t('Hızlı Acil Arama'))),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 40),
         children: [
-          const Text(
-            'Acil Çağrı Merkezi',
-            style: TextStyle(
+          Text(
+            t('Acil Çağrı Merkezi'),
+            style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w800,
               color: LifeRadarColors.navy,
@@ -77,19 +78,19 @@ class EmergencyCallScreen extends StatelessWidget {
                 children: [
                   const Icon(Icons.emergency, color: Colors.white, size: 40),
                   const SizedBox(width: 16),
-                  const Expanded(
+                  Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('112',
+                        const Text('112',
                             style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 32,
                                 fontWeight: FontWeight.w900,
                                 height: 1.0)),
-                        SizedBox(height: 2),
-                        Text('Acil Çağrı — dokun ve ara',
-                            style: TextStyle(color: Colors.white70, fontSize: 13)),
+                        const SizedBox(height: 2),
+                        Text(t('Acil Çağrı — dokun ve ara'),
+                            style: const TextStyle(color: Colors.white70, fontSize: 13)),
                       ],
                     ),
                   ),
@@ -112,17 +113,15 @@ class EmergencyCallScreen extends StatelessWidget {
               color: LifeRadarColors.cardBackground,
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Row(
+            child: Row(
               children: [
-                Icon(Icons.info_outline,
+                const Icon(Icons.info_outline,
                     size: 18, color: LifeRadarColors.turquoise),
-                SizedBox(width: 8),
+                const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    'Türkiye\'de sağlık, itfaiye, polis, jandarma ve afet '
-                    'çağrıları tek numarada birleşti: 112. (110, 155, 156, 122 '
-                    'aramaları da 112\'ye yönlendirilir.)',
-                    style: TextStyle(
+                    t('Türkiye\'de sağlık, itfaiye, polis, jandarma ve afet çağrıları tek numarada birleşti: 112. (110, 155, 156, 122 aramaları da 112\'ye yönlendirilir.)'),
+                    style: const TextStyle(
                         fontSize: 12, color: LifeRadarColors.textSecondary),
                   ),
                 ),
@@ -132,9 +131,9 @@ class EmergencyCallScreen extends StatelessWidget {
           const SizedBox(height: 16),
           Row(
             children: [
-              const Text(
-                'Acil Durum Kişilerim',
-                style: TextStyle(
+              Text(
+                t('Acil Durum Kişilerim'),
+                style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w800,
                   color: LifeRadarColors.navy,
@@ -159,7 +158,7 @@ class EmergencyCallScreen extends StatelessWidget {
                   child: Icon(Icons.person, color: Colors.white),
                 ),
                 title: Text(
-                  (c['name'] ?? '').isEmpty ? 'Acil kişi' : c['name']!,
+                  (c['name'] ?? '').isEmpty ? t('Acil kişi') : c['name']!,
                   style: const TextStyle(fontWeight: FontWeight.w700),
                 ),
                 subtitle: Text(c['phone'] ?? ''),
@@ -167,7 +166,7 @@ class EmergencyCallScreen extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     IconButton(
-                      tooltip: 'Kaldır',
+                      tooltip: t('Kaldır'),
                       onPressed: () =>
                           context.read<AppState>().removeEmergencyContact(e.key),
                       icon: const Icon(Icons.delete_outline),
@@ -175,7 +174,7 @@ class EmergencyCallScreen extends StatelessWidget {
                     FilledButton.icon(
                       onPressed: () => _call(context, c['phone'] ?? ''),
                       icon: const Icon(Icons.call, size: 18),
-                      label: const Text('Ara'),
+                      label: Text(i18nLang == 'en' ? 'Call' : 'Ara'),
                     ),
                   ],
                 ),
@@ -187,14 +186,14 @@ class EmergencyCallScreen extends StatelessWidget {
             OutlinedButton.icon(
               onPressed: () => _addFromContacts(context),
               icon: const Icon(Icons.contacts_outlined),
-              label: const Text('Rehberden Kişi Seç'),
+              label: Text(t('Rehberden Kişi Seç')),
               style: OutlinedButton.styleFrom(
                 minimumSize: const Size.fromHeight(50),
               ),
             ),
             TextButton(
               onPressed: () => _addManually(context),
-              child: const Text('veya elle ekle'),
+              child: Text(t('veya elle ekle')),
             ),
           ],
           const SizedBox(height: 16),
@@ -204,16 +203,15 @@ class EmergencyCallScreen extends StatelessWidget {
               color: LifeRadarColors.cardBackground,
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Row(
+            child: Row(
               children: [
-                Icon(Icons.info_outline,
+                const Icon(Icons.info_outline,
                     size: 18, color: LifeRadarColors.textSecondary),
-                SizedBox(width: 8),
+                const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    'Gerçek acil durumda önce 112\'yi arayın. Acil kişi bilgisi '
-                    'yalnızca cihazınızda saklanır.',
-                    style: TextStyle(
+                    t('Gerçek acil durumda önce 112\'yi arayın. Acil kişi bilgisi yalnızca cihazınızda saklanır.'),
+                    style: const TextStyle(
                         fontSize: 12, color: LifeRadarColors.textSecondary),
                   ),
                 ),
@@ -231,9 +229,9 @@ class EmergencyCallScreen extends StatelessWidget {
     if (!context.mounted) return;
     if (picked == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
             content: Text(
-                'Kişi seçilmedi veya seçilen kişide telefon numarası yok.')),
+                t('Kişi seçilmedi veya seçilen kişide telefon numarası yok.'))),
       );
       return;
     }
@@ -247,25 +245,25 @@ class EmergencyCallScreen extends StatelessWidget {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Acil Durum Kişisi'),
+        title: Text(t('Acil Durum Kişisi')),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
               controller: nameC,
               textCapitalization: TextCapitalization.words,
-              decoration: const InputDecoration(
-                labelText: 'Ad',
-                prefixIcon: Icon(Icons.person_outline),
+              decoration: InputDecoration(
+                labelText: t('Ad'),
+                prefixIcon: const Icon(Icons.person_outline),
               ),
             ),
             const SizedBox(height: 12),
             TextField(
               controller: phoneC,
               keyboardType: TextInputType.phone,
-              decoration: const InputDecoration(
-                labelText: 'Telefon',
-                prefixIcon: Icon(Icons.phone_outlined),
+              decoration: InputDecoration(
+                labelText: t('Telefon'),
+                prefixIcon: const Icon(Icons.phone_outlined),
                 hintText: '05XX XXX XX XX',
               ),
             ),
@@ -274,7 +272,7 @@ class EmergencyCallScreen extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('İptal'),
+            child: Text(t('İptal')),
           ),
           ElevatedButton(
             onPressed: () {
@@ -283,7 +281,7 @@ class EmergencyCallScreen extends StatelessWidget {
                   .addEmergencyContact(nameC.text, phoneC.text);
               Navigator.pop(ctx);
             },
-            child: const Text('Kaydet'),
+            child: Text(t('Kaydet')),
           ),
         ],
       ),

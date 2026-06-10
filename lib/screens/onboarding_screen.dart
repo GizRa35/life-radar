@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../core/constants.dart';
+import '../core/i18n.dart';
 import '../core/theme.dart';
 import '../state/app_state.dart';
 
@@ -76,7 +77,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               child: TextButton(
                 onPressed: () =>
                     context.read<AppState>().completeOnboarding(),
-                child: Text('Atla',
+                child: Text(t('Atla'),
                     style: TextStyle(color: Colors.white.withOpacity(0.8))),
               ),
             ),
@@ -113,7 +114,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 height: 52,
                 child: ElevatedButton(
                   onPressed: _next,
-                  child: Text(isLast ? 'Başla' : 'Devam'),
+                  child: Text(isLast ? t('Başla') : t('Devam')),
                 ),
               ),
             ),
@@ -149,7 +150,7 @@ class _OnbPage extends StatelessWidget {
           ),
           const SizedBox(height: 36),
           Text(
-            title,
+            t(title),
             textAlign: TextAlign.center,
             style: const TextStyle(
               color: Colors.white,
@@ -159,7 +160,7 @@ class _OnbPage extends StatelessWidget {
           ),
           const SizedBox(height: 14),
           Text(
-            text,
+            t(text),
             textAlign: TextAlign.center,
             style: TextStyle(
               color: Colors.white.withOpacity(0.78),

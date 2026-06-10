@@ -3,6 +3,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 
+import '../core/i18n.dart';
 import '../core/theme.dart';
 import '../services/feed/earthquake_source.dart';
 import '../state/app_state.dart';
@@ -49,7 +50,7 @@ class _EarthquakeMapScreenState extends State<EarthquakeMapScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Yakındaki Depremler')),
+      appBar: AppBar(title: Text(t('Yakındaki Depremler'))),
       body: Stack(
         children: [
           FlutterMap(
@@ -109,9 +110,8 @@ class _EarthquakeMapScreenState extends State<EarthquakeMapScreen> {
                   Expanded(
                     child: Text(
                       _loading
-                          ? 'Depremler yükleniyor...'
-                          : 'Son 30 günde çevredeki ${_quakes.length} deprem '
-                              '(USGS). Bir işarete dokunarak detayını gör.',
+                          ? t('Depremler yükleniyor...')
+                          : '${t('Son 30 günde çevredeki')} ${_quakes.length} ${t('deprem (USGS). Bir işarete dokunarak detayını gör.')}',
                       style: const TextStyle(
                           fontSize: 12, color: LifeRadarColors.textSecondary),
                     ),
@@ -127,7 +127,7 @@ class _EarthquakeMapScreenState extends State<EarthquakeMapScreen> {
 
   void _showQuake(Map<String, dynamic> q) {
     final mag = (q['mag'] as num).toDouble();
-    final place = q['place']?.toString() ?? 'Bilinmeyen konum';
+    final place = q['place']?.toString() ?? t('Bilinmeyen konum');
     showModalBottomSheet(
       context: context,
       builder: (_) => Padding(
