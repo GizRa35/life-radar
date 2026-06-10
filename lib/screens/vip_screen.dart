@@ -84,6 +84,53 @@ class VipScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 12),
+          // Aktif VIP kullanıcıya özel "Sen VIP'sin" karşılaması
+          if (active) ...[
+            Container(
+              padding: const EdgeInsets.all(18),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                    colors: [_gold, _goldLight]),
+                borderRadius: BorderRadius.circular(18),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.workspace_premium,
+                      color: Color(0xFF1B1B2F), size: 36),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '${context.read<AppState>().displayName}, sen VIP\'sin 👑',
+                          style: const TextStyle(
+                            color: Color(0xFF1B1B2F),
+                            fontWeight: FontWeight.w900,
+                            fontSize: 16,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        const Text(
+                          'En üst düzey koruma ve ayrıcalıklar aktif.',
+                          style: TextStyle(
+                              color: Color(0xFF1B1B2F), fontSize: 12),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 8),
+            _GoldButton(
+              label: 'VIP Merkezini Aç',
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const VipHubScreen()),
+              ),
+            ),
+            const SizedBox(height: 16),
+          ],
           // VIP kartı — altın detaylar, premium görünüm
           Container(
             decoration: BoxDecoration(
@@ -204,14 +251,9 @@ class VipScreen extends StatelessWidget {
           const PlanComparison(),
 
           const SizedBox(height: 24),
-          if (active)
-            _GoldButton(
-              label: 'VIP Merkezini Aç',
-              onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const VipHubScreen()),
-              ),
-            )
-          else ...[
+          // Aktif VIP için "Merkezi Aç" butonu yukarıda; burada yalnızca
+          // VIP olmayanlara satın alma butonları gösterilir.
+          if (!active) ...[
             _GoldButton(
               label: 'VIP Aylık  ${_vipPrice(state, AppState.vipMonthlyId, SubscriptionData.vipMonthly)}',
               onPressed: () {

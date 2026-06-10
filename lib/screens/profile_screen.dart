@@ -14,6 +14,7 @@ import 'privacy_screen.dart';
 import 'premium_screen.dart';
 import 'language_screen.dart';
 import 'source_settings_screen.dart';
+import 'usage_guide_screen.dart';
 import 'vip_screen.dart';
 
 /// SAYFA 11 — PROFİL
@@ -95,6 +96,13 @@ class ProfileScreen extends StatelessWidget {
         ),
 
         _SectionTitle('Ayarlar', icon: Icons.settings_outlined),
+        _SettingTile(
+          icon: Icons.help_outline,
+          title: 'Nasıl Kullanılır?',
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute(builder: (_) => const UsageGuideScreen()),
+          ),
+        ),
         _SettingTile(
           icon: Icons.notifications_outlined,
           title: 'Bildirim Ayarları',

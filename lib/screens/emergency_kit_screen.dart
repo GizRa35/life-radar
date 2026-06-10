@@ -43,6 +43,14 @@ class EmergencyKitScreen extends StatelessWidget {
     ],
   };
 
+  static const Map<String, IconData> _sectionIcons = {
+    'Su ve Gıda': Icons.restaurant,
+    'Sağlık': Icons.medical_services_outlined,
+    'Aydınlatma & İletişim': Icons.flashlight_on_outlined,
+    'Belgeler & Para': Icons.folder_shared_outlined,
+    'Diğer': Icons.inventory_2_outlined,
+  };
+
   int get _total =>
       _sections.values.fold(0, (sum, list) => sum + list.length);
 
@@ -112,22 +120,42 @@ class EmergencyKitScreen extends StatelessWidget {
           const SizedBox(height: 16),
           for (final entry in _sections.entries) ...[
             Padding(
-              padding: const EdgeInsets.fromLTRB(4, 12, 4, 6),
-              child: Text(
-                entry.key,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w800,
-                  color: LifeRadarColors.navy,
-                ),
+              padding: const EdgeInsets.fromLTRB(4, 16, 4, 8),
+              child: Row(
+                children: [
+                  Container(
+                    width: 30,
+                    height: 30,
+                    decoration: BoxDecoration(
+                      color: LifeRadarColors.turquoise.withOpacity(0.12),
+                      borderRadius: BorderRadius.circular(9),
+                    ),
+                    child: Icon(_sectionIcons[entry.key] ?? Icons.check,
+                        size: 18, color: LifeRadarColors.turquoise),
+                  ),
+                  const SizedBox(width: 10),
+                  Text(
+                    entry.key,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w800,
+                      color: LifeRadarColors.navy,
+                    ),
+                  ),
+                ],
               ),
             ),
             Card(
               margin: EdgeInsets.zero,
               child: Column(
                 children: [
-                  for (final item in entry.value)
-                    _KitTile(item: item, checked: state.isKitChecked(item)),
+                  for (var k = 0; k < entry.value.length; k++) ...[
+                    _KitTile(
+                        item: entry.value[k],
+                        checked: state.isKitChecked(entry.value[k])),
+                    if (k < entry.value.length - 1)
+                      const Divider(height: 1, indent: 56, endIndent: 12),
+                  ],
                 ],
               ),
             ),
