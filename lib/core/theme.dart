@@ -127,30 +127,34 @@ class LifeRadarTheme {
         showUnselectedLabels: true,
         elevation: 0,
       ),
-      // Tüm form alanları (TextField/Dropdown) için tutarlı, modern stil.
+      // Tüm form alanları (TextField/Dropdown) için tutarlı, profesyonel stil:
+      // hafif dolgu + net kenarlık + odakta turkuaz çerçeve.
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: const Color(0xFFF1F5F9),
+        fillColor: const Color(0xFFF7F9FC),
         contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
         prefixIconColor: LifeRadarColors.textSecondary,
         suffixIconColor: LifeRadarColors.textSecondary,
-        labelStyle: const TextStyle(color: LifeRadarColors.textSecondary),
+        floatingLabelBehavior: FloatingLabelBehavior.never,
+        labelStyle: const TextStyle(
+            color: LifeRadarColors.textSecondary, fontSize: 15),
         floatingLabelStyle: const TextStyle(
             color: LifeRadarColors.turquoise, fontWeight: FontWeight.w600),
-        hintStyle: TextStyle(color: LifeRadarColors.textSecondary.withOpacity(0.7)),
+        hintStyle:
+            TextStyle(color: LifeRadarColors.textSecondary.withOpacity(0.6)),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide.none,
+          borderSide: const BorderSide(color: Color(0xFFDCE3EC), width: 1.2),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide.none,
+          borderSide: const BorderSide(color: Color(0xFFDCE3EC), width: 1.2),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
           borderSide:
-              const BorderSide(color: LifeRadarColors.turquoise, width: 1.6),
+              const BorderSide(color: LifeRadarColors.turquoise, width: 1.8),
         ),
       ),
       textTheme: const TextTheme(

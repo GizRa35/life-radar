@@ -146,7 +146,6 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
               decoration: const InputDecoration(
                 labelText: 'Haber Dili',
                 prefixIcon: Icon(Icons.translate_outlined),
-                border: OutlineInputBorder(),
                 helperText: 'Yabancı kaynaklı haberler bu dile çevrilir',
               ),
               items: const [
@@ -179,7 +178,6 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
         decoration: InputDecoration(
           labelText: label,
           prefixIcon: Icon(icon),
-          border: const OutlineInputBorder(),
         ),
       ),
     );
@@ -194,7 +192,6 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
         decoration: InputDecoration(
           labelText: label,
           prefixIcon: Icon(icon),
-          border: const OutlineInputBorder(),
         ),
         items: options
             .map((o) => DropdownMenuItem(value: o, child: Text(o)))

@@ -119,7 +119,6 @@ class _FamilyPlanScreenState extends State<FamilyPlanScreen> {
           labelText: label,
           hintText: hint,
           prefixIcon: Icon(icon),
-          border: const OutlineInputBorder(),
         ),
       ),
     );
