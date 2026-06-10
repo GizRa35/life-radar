@@ -13,7 +13,7 @@ class RssSource {
   /// Kategori → besleme adresleri (çoklu kaynak).
   // Tüm kaynaklar doğrudan-linkli ve tam-metin çekilebilir (Google Haberler yok).
   static const Map<EventCategory, List<String>> _feeds = {
-    // Dünya: Türkçe gazeteler + ABD/Avrupa
+    // Dünya: Türkçe gazeteler + ABD/Avrupa/Orta Doğu
     EventCategory.world: [
       'https://www.aa.com.tr/tr/rss/default?cat=dunya',
       'https://www.ntv.com.tr/dunya.rss',
@@ -21,9 +21,14 @@ class RssSource {
       'https://www.theguardian.com/world/rss',
       'https://moxie.foxnews.com/google-publisher/world.xml',
       'https://nypost.com/feed/',
+      'https://www.aljazeera.com/xml/rss/all.xml',
+      'https://rss.nytimes.com/services/xml/rss/nyt/World.xml',
+      'https://feeds.washingtonpost.com/rss/world',
+      'https://rss.politico.com/politics-news.xml',
+      'https://www.reddit.com/r/worldnews/.rss',
     ],
     // Türkiye: AA + Hürriyet + Sözcü + En Son Haber + NTV + Habertürk +
-    // TRT Haber + Cumhuriyet + Yeni Şafak
+    // TRT Haber + Cumhuriyet + Yeni Şafak + Halk TV + Odatv
     EventCategory.turkey: [
       'https://www.aa.com.tr/tr/rss/default?cat=guncel',
       'https://www.hurriyet.com.tr/rss/gundem',
@@ -34,17 +39,28 @@ class RssSource {
       'https://www.trthaber.com/sondakika.rss',
       'https://www.cumhuriyet.com.tr/rss/son_dakika.xml',
       'https://www.yenisafak.com/rss?xml=gundem',
+      'https://halktv.com.tr/rss',
+      'https://www.odatv.com/rss',
     ],
     EventCategory.economy: [
       'https://www.aa.com.tr/tr/rss/default?cat=ekonomi',
       'https://www.ntv.com.tr/ekonomi.rss',
       'https://www.haberturk.com/rss/ekonomi.xml',
       'https://www.dunya.com/rss',
+      'https://www.cnbc.com/id/100003114/device/rss/rss.html',
+      'https://www.forbes.com/business/feed/',
+      'https://www.businessinsider.com/rss',
+      'https://rss.nytimes.com/services/xml/rss/nyt/Business.xml',
     ],
     EventCategory.technology: [
       'https://www.ntv.com.tr/teknoloji.rss',
       'https://www.aa.com.tr/tr/rss/default?cat=bilim-teknoloji',
       'https://www.haberturk.com/rss/teknoloji.xml',
+      'https://techcrunch.com/feed/',
+      'https://news.ycombinator.com/rss',
+      'https://rss.nytimes.com/services/xml/rss/nyt/Technology.xml',
+      'https://www.donanimhaber.com/rss/tum/',
+      'https://www.shiftdelete.net/feed',
     ],
     // Sağlık: AA + NTV + Habertürk (TR) + Healthline + WHO + MedicineNet (EN)
     EventCategory.health: [
@@ -92,9 +108,23 @@ class RssSource {
     ['cumhuriyet.com.tr', 'Cumhuriyet', 'tr'],
     ['yenisafak.com', 'Yeni Şafak', 'tr'],
     ['dunya.com', 'Dünya', 'tr'],
+    ['halktv.com.tr', 'Halk TV', 'tr'],
+    ['odatv.com', 'Odatv', 'tr'],
+    ['donanimhaber.com', 'DonanımHaber', 'tr'],
+    ['shiftdelete.net', 'ShiftDelete', 'tr'],
     ['theguardian.com', 'The Guardian', 'en'],
     ['foxnews.com', 'Fox News', 'en'],
     ['nypost.com', 'New York Post', 'en'],
+    ['aljazeera.com', 'Al Jazeera', 'en'],
+    ['nytimes.com', 'The New York Times', 'en'],
+    ['washingtonpost.com', 'The Washington Post', 'en'],
+    ['politico.com', 'Politico', 'en'],
+    ['cnbc.com', 'CNBC', 'en'],
+    ['forbes.com', 'Forbes', 'en'],
+    ['businessinsider.com', 'Business Insider', 'en'],
+    ['techcrunch.com', 'TechCrunch', 'en'],
+    ['ycombinator.com', 'Hacker News', 'en'],
+    ['reddit.com', 'Reddit', 'en'],
     ['carbonbrief.org', 'Carbon Brief', 'en'],
     ['insideclimatenews.org', 'Inside Climate News', 'en'],
     ['earth.org', 'Earth.Org', 'en'],
@@ -166,7 +196,7 @@ class RssSource {
         final image = (m['image'] ?? '').toString();
         final summary = (m['summary'] ?? '').toString();
         final ev = RadarEvent(
-          id: link.isNotEmpty ? link : '${category.name}-$src-${i}',
+          id: link.isNotEmpty ? link : '${category.name}-$src-$i',
           title: (m['title'] ?? 'Başlıksız').toString(),
           summary: summary.isEmpty ? 'Detay için dokunun.' : summary,
           category: category,
