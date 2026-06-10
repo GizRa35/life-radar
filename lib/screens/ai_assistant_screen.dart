@@ -178,10 +178,10 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Row(
-          children: const [
-            Icon(Icons.auto_awesome, color: LifeRadarColors.turquoise),
-            SizedBox(width: 8),
-            Text('Life Radar Asistan'),
+          children: [
+            const Icon(Icons.auto_awesome, color: LifeRadarColors.turquoise),
+            const SizedBox(width: 8),
+            Text(t('Life Radar Asistan')),
           ],
         ),
         actions: [
@@ -349,7 +349,7 @@ class _EmptyState extends StatelessWidget {
                 children: [
                   const Icon(Icons.chat_bubble_outline, size: 18),
                   const SizedBox(width: 10),
-                  Expanded(child: Text(e)),
+                  Expanded(child: Text(t(e))),
                 ],
               ),
             ),

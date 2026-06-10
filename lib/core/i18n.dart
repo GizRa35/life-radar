@@ -74,6 +74,32 @@ const Map<String, String> _en = {
   'Misafir olarak devam et': 'Continue as guest',
   'Hesabın yok mu? Kayıt ol': 'No account? Sign up',
   'Zaten hesabın var mı? Giriş yap': 'Already have an account? Sign in',
+  'Şifremi Unuttum': 'Forgot Password',
+  'Önce e-posta adresinizi girin.': 'Please enter your email first.',
+  'Şifre sıfırlama bağlantısı e-postana gönderildi.':
+      'A password reset link has been sent to your email.',
+  'Seni daha iyi tanıyalım (isteğe bağlı)': 'Let us get to know you (optional)',
+  'Bu bilgiler analizleri sana göre kişiselleştirir; istemezsen boş bırakabilirsin.':
+      'This info personalizes analyses for you; you can leave it blank if you prefer.',
+  'Yaş aralığı': 'Age range',
+  'Yaşam durumu': 'Living situation',
+  'Sağlık durumu': 'Health status',
+  // Anket seçenekleri
+  'Yalnız yaşıyorum': 'I live alone',
+  'Eşimle': 'With my spouse',
+  'Çocuklu aile': 'Family with children',
+  'Ebeveynlerimle': 'With my parents',
+  'Ev arkadaşıyla': 'With a roommate',
+  'Belirgin bir sağlık sorunum yok': 'No notable health issues',
+  'Kronik hastalığım var': 'I have a chronic illness',
+  'Bağışıklığım düşük': 'I have low immunity',
+  'Hamile / yeni doğum': 'Pregnant / new birth',
+  '65 yaş üstü bakım': 'Over-65 care',
+  'Döviz/altın takip ederim': 'I track forex/gold',
+  'Kira öderim': 'I pay rent',
+  'Kredi/borç ödemem var': 'I have loan/debt payments',
+  'Sabit gelirli/emekli': 'Fixed income / retired',
+  'Yatırımcıyım': 'I am an investor',
 
   // --- Kategoriler (EventCategory) ---
   'Dünya': 'World',
@@ -185,6 +211,10 @@ const Map<String, String> _en = {
   'Sohbeti temizle': 'Clear chat',
   'Sesli sor': 'Ask by voice',
   'Bu beni nasıl etkiler?': 'How does this affect me?',
+  'Bu savaş Türkiye\'yi etkiler mi?': 'Will this war affect Türkiye?',
+  'Bu hastalık tehlikeli mi?': 'Is this disease dangerous?',
+  'Altın neden yükseliyor?': 'Why is gold rising?',
+  'Bu haber hakkında ne yapmalıyım?': 'What should I do about this news?',
   'Kaynak güvenilir mi?': 'Is the source reliable?',
   'Önümüzdeki günlerde ne beklenir?': 'What to expect in coming days?',
   'Merak ettiğin gelişmeyi sor.\nSana etkisini ve ne yapman gerektiğini anlatayım.':
@@ -476,6 +506,54 @@ const Map<String, String> _en = {
       'Remember to check the expiry dates of the food in your kit every 6 months.',
   'Profil Tamamlama': 'Profile Completion',
   'Hazırlık Durumu': 'Readiness Status',
+
+  // --- Satın alma mesajları ---
+  'Satın alma yalnızca mobil uygulamada kullanılabilir.':
+      'Purchases are only available in the mobile app.',
+  'Mağaza şu an kullanılamıyor. Daha sonra deneyin.':
+      'The store is currently unavailable. Please try again later.',
+  'Ürün bulunamadı. Lütfen daha sonra tekrar deneyin.':
+      'Product not found. Please try again later.',
+  'Satın alma başlatılamadı.': 'Could not start the purchase.',
+  'Aboneliğin etkinleştirildi. Teşekkürler!':
+      'Your subscription is active. Thank you!',
+  'Satın alma başarısız oldu.': 'The purchase failed.',
+
+  // --- Profil ekranı (ek) ---
+  'Henüz kaydedilmiş haber yok. Haberlerdeki kaydet simgesine dokunarak buraya ekleyebilirsiniz.':
+      'No saved news yet. Tap the bookmark icon on a story to add it here.',
+  'Avatar Seç': 'Choose Avatar',
+  'Unisex': 'Unisex',
+  'Sınırsız Life Radar Asistan, kişisel risk analizi, reklamsız.':
+      'Unlimited Life Radar Assistant, personal risk analysis, ad-free.',
+  'Aile koruma, şehir risk merkezi, erken uyarı.':
+      'Family protection, city risk center, early warning.',
+  'Life Radar Asistan analizleri bilgilerine göre kişiselleştiriliyor.':
+      'Life Radar Assistant analyses are personalized to your info.',
+  'Doldur → analizler sana özel olsun (yaş, sağlık, ev, aile...).':
+      'Fill in → get tailored analyses (age, health, home, family...).',
+  'Misafir kullanıcı': 'Guest user',
+  'Verileriniz yalnızca bu cihazda. Giriş yapın.':
+      'Your data stays only on this device. Sign in.',
+  'Çıkış Yap': 'Sign Out',
+  'Dünyayı Anla. Riskleri Gör. Hazırlıklı Ol.':
+      'Understand the world. See the risks. Be prepared.',
+  'yakında': 'coming soon',
+
+  // --- Radar ekranı (ek) ---
+  'Profilinize göre güncel genel risk seviyeniz. Aşağıdaki alanlara dokunarak detayları görün.':
+      'Your current overall risk level based on your profile. Tap the areas below for details.',
+  'Memleketin/ailenin şehrini ekle': 'Add your hometown / family\'s city',
+  'şehir takip ediliyor': 'cities tracked',
+
+  // --- Ana sayfa (ek) ---
+  'Öne Çıkan': 'Featured',
+  'Devamını Görüntüle': 'View More',
+  'İlgilendiğin konuları seçersen burada onların öne çıkan haberlerini gösteririz. Profil > Takip Edilen Konular\'dan seç.':
+      'Pick topics you care about and we\'ll show their featured news here. Choose from Profile > Followed Topics.',
+  'Kullanım Kılavuzu': 'Usage Guide',
+  'Uygulamayı en iyi şekilde kullanmak için kısa rehbere göz at.':
+      'Check the short guide to get the most out of the app.',
 
   // --- Aile Acil Planı ---
   'Ev yakını buluşma noktası': 'Meeting point near home',

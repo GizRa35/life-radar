@@ -32,6 +32,18 @@ class VipScreen extends StatelessWidget {
     final state = context.watch<AppState>();
     final active = state.isVip;
 
+    // Satın alma sonucu / hata mesajını kullanıcıya göster.
+    final msg = state.purchaseMessage;
+    if (msg != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!context.mounted) return;
+        ScaffoldMessenger.of(context)
+          ..clearSnackBars()
+          ..showSnackBar(SnackBar(content: Text(t(msg))));
+        context.read<AppState>().clearPurchaseMessage();
+      });
+    }
+
     return CelebrationOverlay(
       child: Scaffold(
       appBar: AppBar(title: Text(t('Life Radar VIP'))),

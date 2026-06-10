@@ -130,6 +130,20 @@ class _AuthScreenState extends State<AuthScreen> {
     });
   }
 
+  Future<void> _forgotPassword() async {
+    final email = _email.text.trim();
+    final state = context.read<AppState>();
+    final err = await state.sendPasswordResetTo(email);
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(err == null
+            ? t('Şifre sıfırlama bağlantısı e-postana gönderildi.')
+            : (email.isEmpty ? t('Önce e-posta adresinizi girin.') : err)),
+      ),
+    );
+  }
+
   Future<void> _submit() async {
     setState(() {
       _loading = true;
@@ -290,8 +304,8 @@ class _AuthScreenState extends State<AuthScreen> {
                                 child: TextField(
                                   controller: _firstName,
                                   textCapitalization: TextCapitalization.words,
-                                  decoration: const InputDecoration(
-                                    labelText: 'Ad',
+                                  decoration: InputDecoration(
+                                    labelText: t('Ad'),
                                   ),
                                 ),
                               ),
@@ -300,8 +314,8 @@ class _AuthScreenState extends State<AuthScreen> {
                                 child: TextField(
                                   controller: _lastName,
                                   textCapitalization: TextCapitalization.words,
-                                  decoration: const InputDecoration(
-                                    labelText: 'Soyad',
+                                  decoration: InputDecoration(
+                                    labelText: t('Soyad'),
                                   ),
                                 ),
                               ),
@@ -310,22 +324,22 @@ class _AuthScreenState extends State<AuthScreen> {
                           const SizedBox(height: 12),
                           DropdownButtonFormField<String>(
                             value: _gender.isEmpty ? null : _gender,
-                            decoration: const InputDecoration(
-                              labelText: 'Cinsiyet',
-                              prefixIcon: Icon(Icons.wc_outlined),
+                            decoration: InputDecoration(
+                              labelText: t('Cinsiyet'),
+                              prefixIcon: const Icon(Icons.wc_outlined),
                             ),
                             items: const ['Kadın', 'Erkek']
                                 .map((g) =>
-                                    DropdownMenuItem(value: g, child: Text(g)))
+                                    DropdownMenuItem(value: g, child: Text(t(g))))
                                 .toList(),
                             onChanged: (v) => setState(() => _gender = v ?? ''),
                           ),
                           const SizedBox(height: 12),
                           DropdownButtonFormField<String>(
                             value: _language,
-                            decoration: const InputDecoration(
-                              labelText: 'Haber Dili',
-                              prefixIcon: Icon(Icons.translate_outlined),
+                            decoration: InputDecoration(
+                              labelText: t('Haber Dili'),
+                              prefixIcon: const Icon(Icons.translate_outlined),
                               helperText:
                                   'Yabancı kaynaklı haberler bu dile çevrilir',
                             ),
@@ -340,11 +354,11 @@ class _AuthScreenState extends State<AuthScreen> {
                           ),
                           const SizedBox(height: 16),
                           // ---- Kısa tanışma anketi (isteğe bağlı) ----
-                          const Align(
+                          Align(
                             alignment: Alignment.centerLeft,
                             child: Text(
-                              'Seni daha iyi tanıyalım (isteğe bağlı)',
-                              style: TextStyle(
+                              t('Seni daha iyi tanıyalım (isteğe bağlı)'),
+                              style: const TextStyle(
                                 fontWeight: FontWeight.w700,
                                 color: LifeRadarColors.navy,
                                 fontSize: 13,
@@ -352,12 +366,11 @@ class _AuthScreenState extends State<AuthScreen> {
                             ),
                           ),
                           const SizedBox(height: 4),
-                          const Align(
+                          Align(
                             alignment: Alignment.centerLeft,
                             child: Text(
-                              'Bu bilgiler analizleri sana göre kişiselleştirir; '
-                              'istemezsen boş bırakabilirsin.',
-                              style: TextStyle(
+                              t('Bu bilgiler analizleri sana göre kişiselleştirir; istemezsen boş bırakabilirsin.'),
+                              style: const TextStyle(
                                 color: LifeRadarColors.textSecondary,
                                 fontSize: 11,
                               ),
@@ -367,9 +380,9 @@ class _AuthScreenState extends State<AuthScreen> {
                           DropdownButtonFormField<String>(
                             value: _ageRange.isEmpty ? null : _ageRange,
                             isExpanded: true,
-                            decoration: const InputDecoration(
-                              labelText: 'Yaş aralığı',
-                              prefixIcon: Icon(Icons.cake_outlined),
+                            decoration: InputDecoration(
+                              labelText: t('Yaş aralığı'),
+                              prefixIcon: const Icon(Icons.cake_outlined),
                             ),
                             items: const [
                               '18-24',
@@ -389,9 +402,9 @@ class _AuthScreenState extends State<AuthScreen> {
                           DropdownButtonFormField<String>(
                             value: _household.isEmpty ? null : _household,
                             isExpanded: true,
-                            decoration: const InputDecoration(
-                              labelText: 'Yaşam durumu',
-                              prefixIcon: Icon(Icons.home_outlined),
+                            decoration: InputDecoration(
+                              labelText: t('Yaşam durumu'),
+                              prefixIcon: const Icon(Icons.home_outlined),
                             ),
                             items: const [
                               'Yalnız yaşıyorum',
@@ -401,7 +414,7 @@ class _AuthScreenState extends State<AuthScreen> {
                               'Ev arkadaşıyla',
                             ]
                                 .map((g) => DropdownMenuItem(
-                                    value: g, child: Text(g)))
+                                    value: g, child: Text(t(g))))
                                 .toList(),
                             onChanged: (v) =>
                                 setState(() => _household = v ?? ''),
@@ -410,10 +423,10 @@ class _AuthScreenState extends State<AuthScreen> {
                           DropdownButtonFormField<String>(
                             value: _health.isEmpty ? null : _health,
                             isExpanded: true,
-                            decoration: const InputDecoration(
-                              labelText: 'Sağlık durumu',
+                            decoration: InputDecoration(
+                              labelText: t('Sağlık durumu'),
                               prefixIcon:
-                                  Icon(Icons.health_and_safety_outlined),
+                                  const Icon(Icons.health_and_safety_outlined),
                             ),
                             items: const [
                               'Belirgin bir sağlık sorunum yok',
@@ -423,7 +436,7 @@ class _AuthScreenState extends State<AuthScreen> {
                               '65 yaş üstü bakım',
                             ]
                                 .map((g) => DropdownMenuItem(
-                                    value: g, child: Text(g)))
+                                    value: g, child: Text(t(g))))
                                 .toList(),
                             onChanged: (v) =>
                                 setState(() => _health = v ?? ''),
@@ -432,9 +445,9 @@ class _AuthScreenState extends State<AuthScreen> {
                           DropdownButtonFormField<String>(
                             value: _finance.isEmpty ? null : _finance,
                             isExpanded: true,
-                            decoration: const InputDecoration(
-                              labelText: 'Finansal hassasiyet',
-                              prefixIcon: Icon(Icons.savings_outlined),
+                            decoration: InputDecoration(
+                              labelText: t('Finansal hassasiyet'),
+                              prefixIcon: const Icon(Icons.savings_outlined),
                             ),
                             items: const [
                               'Döviz/altın takip ederim',
@@ -444,7 +457,7 @@ class _AuthScreenState extends State<AuthScreen> {
                               'Yatırımcıyım',
                             ]
                                 .map((g) => DropdownMenuItem(
-                                    value: g, child: Text(g)))
+                                    value: g, child: Text(t(g))))
                                 .toList(),
                             onChanged: (v) =>
                                 setState(() => _finance = v ?? ''),
@@ -475,6 +488,14 @@ class _AuthScreenState extends State<AuthScreen> {
                             ),
                           ),
                         ),
+                        if (!_isRegister)
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: TextButton(
+                              onPressed: _loading ? null : _forgotPassword,
+                              child: Text(t('Şifremi Unuttum')),
+                            ),
+                          ),
                         if (_error != null) ...[
                           const SizedBox(height: 12),
                           Container(

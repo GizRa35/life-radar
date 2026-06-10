@@ -43,8 +43,7 @@ class ProfileScreen extends StatelessWidget {
 
         _SectionTitle(t('Kayıtlı Haberler'), icon: Icons.bookmark_outline),
         if (state.savedEvents.isEmpty)
-          const _EmptyHint('Henüz kaydedilmiş haber yok. Haberlerdeki kaydet '
-              'simgesine dokunarak buraya ekleyebilirsiniz.')
+          _EmptyHint(t('Henüz kaydedilmiş haber yok. Haberlerdeki kaydet simgesine dokunarak buraya ekleyebilirsiniz.'))
         else
           // Konuya göre klasörlenmiş kayıtlar.
           ...state.savedByCategory.entries.expand((entry) => [
@@ -55,7 +54,7 @@ class ProfileScreen extends StatelessWidget {
                       Icon(entry.key.icon, size: 16, color: entry.key.color),
                       const SizedBox(width: 6),
                       Text(
-                        '${entry.key.label} (${entry.value.length})',
+                        '${t(entry.key.label)} (${entry.value.length})',
                         style: TextStyle(
                           fontWeight: FontWeight.w700,
                           color: entry.key.color,
@@ -78,7 +77,7 @@ class ProfileScreen extends StatelessWidget {
             children: EventCategory.values.map((c) {
               final followed = state.isFollowed(c);
               return FilterChip(
-                label: Text(c.label),
+                label: Text(t(c.label)),
                 selected: followed,
                 onSelected: (_) => context.read<AppState>().toggleFollowed(c),
                 avatar: Icon(c.icon,
@@ -149,10 +148,10 @@ class ProfileScreen extends StatelessWidget {
         const _AccountTile(),
 
         const SizedBox(height: 24),
-        const Center(
+        Center(
           child: Text(
-            'Dünyayı Anla. Riskleri Gör. Hazırlıklı Ol.',
-            style: TextStyle(
+            t('Dünyayı Anla. Riskleri Gör. Hazırlıklı Ol.'),
+            style: const TextStyle(
               color: LifeRadarColors.textSecondary,
               fontStyle: FontStyle.italic,
             ),
@@ -238,9 +237,9 @@ void showAvatarSheet(BuildContext context) {
                 ),
               ),
             ),
-            const Text(
-              'Avatar Seç',
-              style: TextStyle(
+            Text(
+              t('Avatar Seç'),
+              style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w800,
                   color: LifeRadarColors.navy),
@@ -250,7 +249,7 @@ void showAvatarSheet(BuildContext context) {
               Padding(
                 padding: const EdgeInsets.fromLTRB(2, 14, 0, 8),
                 child: Text(
-                  group.key,
+                  t(group.key),
                   style: const TextStyle(
                     fontWeight: FontWeight.w700,
                     color: LifeRadarColors.textSecondary,
@@ -440,8 +439,8 @@ class _UpgradeCards extends StatelessWidget {
             child: ListTile(
               leading: const Icon(Icons.verified_user_outlined,
                   color: LifeRadarColors.navy),
-              title: const Text('Mevcut Plan',
-                  style: TextStyle(fontWeight: FontWeight.w600)),
+              title: Text(t('Mevcut Plan'),
+                  style: const TextStyle(fontWeight: FontWeight.w600)),
               trailing: Container(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -460,8 +459,8 @@ class _UpgradeCards extends StatelessWidget {
             ),
           ),
           _UpgradeTile(
-            title: 'Life Radar Premium',
-            subtitle: 'Sınırsız Life Radar Asistan, kişisel risk analizi, reklamsız.',
+            title: t('Life Radar Premium'),
+            subtitle: t('Sınırsız Life Radar Asistan, kişisel risk analizi, reklamsız.'),
             icon: Icons.star,
             color: LifeRadarColors.turquoise,
             onTap: () => Navigator.of(context).push(
@@ -469,8 +468,8 @@ class _UpgradeCards extends StatelessWidget {
             ),
           ),
           _UpgradeTile(
-            title: 'Life Radar VIP',
-            subtitle: 'Aile koruma, şehir risk merkezi, erken uyarı.',
+            title: t('Life Radar VIP'),
+            subtitle: t('Aile koruma, şehir risk merkezi, erken uyarı.'),
             icon: Icons.workspace_premium,
             color: const Color(0xFFC9A227),
             onTap: () => Navigator.of(context).push(
@@ -530,11 +529,11 @@ class _PersonalInfoTile extends StatelessWidget {
             filled ? Icons.badge : Icons.badge_outlined,
             color: filled ? LifeRadarColors.turquoise : LifeRadarColors.navy,
           ),
-          title: const Text('Kişisel Bilgilerim',
-              style: TextStyle(fontWeight: FontWeight.w700)),
+          title: Text(t('Kişisel Bilgilerim'),
+              style: const TextStyle(fontWeight: FontWeight.w700)),
           subtitle: Text(filled
-              ? 'Life Radar Asistan analizleri bilgilerine göre kişiselleştiriliyor.'
-              : 'Doldur → analizler sana özel olsun (yaş, sağlık, ev, aile...).'),
+              ? t('Life Radar Asistan analizleri bilgilerine göre kişiselleştiriliyor.')
+              : t('Doldur → analizler sana özel olsun (yaş, sağlık, ev, aile...).')),
           trailing: const Icon(Icons.chevron_right),
           onTap: () => Navigator.of(context).push(
             MaterialPageRoute(builder: (_) => const PersonalInfoScreen()),
@@ -561,15 +560,15 @@ class _AccountTile extends StatelessWidget {
             color: loggedIn ? LifeRadarColors.turquoise : LifeRadarColors.navy,
           ),
           title: Text(
-            loggedIn ? (state.authEmail ?? 'Hesap') : 'Misafir kullanıcı',
+            loggedIn ? (state.authEmail ?? t('Hesap')) : t('Misafir kullanıcı'),
             style: const TextStyle(fontWeight: FontWeight.w700),
           ),
           subtitle: Text(loggedIn
-              ? 'Giriş yapıldı'
-              : 'Verileriniz yalnızca bu cihazda. Giriş yapın.'),
+              ? t('Giriş yapıldı')
+              : t('Verileriniz yalnızca bu cihazda. Giriş yapın.')),
           trailing: TextButton(
             onPressed: () => state.logout(),
-            child: Text(loggedIn ? 'Çıkış Yap' : 'Giriş Yap'),
+            child: Text(loggedIn ? t('Çıkış Yap') : t('Giriş Yap')),
           ),
         ),
       ),
@@ -605,7 +604,7 @@ class _SettingTile extends StatelessWidget {
         onTap: onTap ??
             () {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('$title yakında')),
+                SnackBar(content: Text('$title ${t('yakında')}')),
               );
             },
       ),

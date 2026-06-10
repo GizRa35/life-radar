@@ -10,6 +10,7 @@ import '../services/weather_service.dart';
 import '../state/app_state.dart';
 import '../widgets/event_card.dart';
 import 'event_detail_screen.dart';
+import 'usage_guide_screen.dart';
 
 /// SAYFA 1 — ANA SAYFA
 /// Amaç: kullanıcı 30 saniyede gündemi anlasın.
@@ -39,7 +40,8 @@ class HomeScreen extends StatelessWidget {
       if (list.isEmpty) continue;
       final top = list.first;
       shown.add(top.id);
-      topicSections.add(_SectionTitle('Öne Çıkan ${c.label}', icon: c.icon));
+      topicSections.add(
+          _SectionTitle('${t('Öne Çıkan')} ${t(c.label)}', icon: c.icon));
       topicSections.add(EventCard(event: top, showActions: false));
       topicSections.add(_ViewMoreButton(category: c));
     }
@@ -103,6 +105,61 @@ class HomeScreen extends StatelessWidget {
           const LinearProgressIndicator(
             color: LifeRadarColors.turquoise,
             backgroundColor: LifeRadarColors.cardBackground,
+          ),
+
+        // Kullanım kılavuzu kartı (ilk kullananlar için, kapatılabilir)
+        if (!state.homeGuideDismissed)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(14),
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const UsageGuideScreen()),
+                ),
+                child: Container(
+                  padding: const EdgeInsets.fromLTRB(14, 12, 6, 12),
+                  decoration: BoxDecoration(
+                    color: LifeRadarColors.turquoise.withOpacity(0.08),
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(
+                        color: LifeRadarColors.turquoise.withOpacity(0.3)),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.menu_book_outlined,
+                          color: LifeRadarColors.turquoise),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(t('Kullanım Kılavuzu'),
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.w800,
+                                    color: LifeRadarColors.navy)),
+                            const SizedBox(height: 2),
+                            Text(
+                              t('Uygulamayı en iyi şekilde kullanmak için kısa rehbere göz at.'),
+                              style: const TextStyle(
+                                  fontSize: 12,
+                                  color: LifeRadarColors.textSecondary),
+                            ),
+                          ],
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.close,
+                            size: 18, color: LifeRadarColors.textSecondary),
+                        onPressed: () =>
+                            context.read<AppState>().dismissHomeGuide(),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
           ),
 
         // Hava durumu + Piyasa (döviz/altın)
@@ -504,8 +561,8 @@ class _ViewMoreButton extends StatelessWidget {
         child: TextButton.icon(
           onPressed: () =>
               context.read<AppState>().openAgendaCategory(category),
-          icon: const Text('Devamını Görüntüle',
-              style: TextStyle(fontWeight: FontWeight.w600)),
+          icon: Text(t('Devamını Görüntüle'),
+              style: const TextStyle(fontWeight: FontWeight.w600)),
           label: const Icon(Icons.arrow_forward, size: 18),
           style: TextButton.styleFrom(
             foregroundColor: LifeRadarColors.turquoise,
@@ -528,11 +585,10 @@ class _FollowHint extends StatelessWidget {
           children: [
             const Icon(Icons.topic_outlined, color: LifeRadarColors.turquoise),
             const SizedBox(width: 12),
-            const Expanded(
+            Expanded(
               child: Text(
-                'İlgilendiğin konuları seçersen burada onların öne çıkan '
-                'haberlerini gösteririz. Profil > Takip Edilen Konular\'dan seç.',
-                style: TextStyle(color: LifeRadarColors.textSecondary),
+                t('İlgilendiğin konuları seçersen burada onların öne çıkan haberlerini gösteririz. Profil > Takip Edilen Konular\'dan seç.'),
+                style: const TextStyle(color: LifeRadarColors.textSecondary),
               ),
             ),
           ],

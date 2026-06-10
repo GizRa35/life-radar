@@ -118,10 +118,9 @@ class RadarScreen extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 32),
                 child: Text(
-                  'Profilinize göre güncel genel risk seviyeniz. '
-                  'Aşağıdaki alanlara dokunarak detayları görün.',
+                  t('Profilinize göre güncel genel risk seviyeniz. Aşağıdaki alanlara dokunarak detayları görün.'),
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: LifeRadarColors.textSecondary,
                     fontSize: 13,
                   ),
@@ -190,8 +189,8 @@ class RadarScreen extends StatelessWidget {
                         ),
                         Text(
                           state.trackedCities.isEmpty
-                              ? 'Memleketin/ailenin şehrini ekle'
-                              : '${state.trackedCities.length} şehir takip ediliyor',
+                              ? t('Memleketin/ailenin şehrini ekle')
+                              : '${state.trackedCities.length} ${t('şehir takip ediliyor')}',
                           style: const TextStyle(
                               fontSize: 12,
                               color: LifeRadarColors.textSecondary),

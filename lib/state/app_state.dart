@@ -121,6 +121,16 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
+  // ---- Ana sayfa "Nasıl Kullanılır?" kartı (kapatılabilir) ----
+  bool _homeGuideDismissed = false;
+  bool get homeGuideDismissed => _homeGuideDismissed;
+
+  void dismissHomeGuide() {
+    _homeGuideDismissed = true;
+    lsSet('lr_home_guide', '1');
+    notifyListeners();
+  }
+
   // ---- Uygulama içi puan isteği ----
   int _appOpens = 0;
   bool _reviewAsked = false;
@@ -608,6 +618,12 @@ class AppState extends ChangeNotifier {
     final email = _authEmail;
     if (email == null || email.isEmpty) return 'Hesaba bağlı e-posta yok.';
     return _auth.sendPasswordReset(email);
+  }
+
+  /// Giriş ekranı için: girilen e-postaya şifre sıfırlama bağlantısı gönder.
+  Future<String?> sendPasswordResetTo(String email) async {
+    if (email.trim().isEmpty) return 'Önce e-posta adresinizi girin.';
+    return _auth.sendPasswordReset(email.trim());
   }
 
   /// E-posta doğrulama bağlantısı gönder — başarılıysa null, hata varsa mesaj.
@@ -1761,15 +1777,25 @@ class AppState extends ChangeNotifier {
 
   // ---- Ana Sayfa metinleri (gerçek verilerden hesaplanır) ----
 
-  /// Dünya Risk Endeksi — tüm olayların ortalama risk değeri.
-  int get worldRiskIndex => _avgRisk(_events);
+  /// Dünya Risk Endeksi — küresel (Türkiye dışı) olayların ortalaması.
+  int get worldRiskIndex {
+    final intl =
+        _events.where((e) => e.category != EventCategory.turkey).toList();
+    return _avgRisk(intl.isEmpty ? _events : intl);
+  }
 
-  /// Türkiye Risk Endeksi — Türkiye + afet olaylarına odaklı.
+  /// Türkiye Risk Endeksi — Türkiye + afet olayları, konuma özgü deprem
+  /// riskiyle harmanlanır (böylece Dünya endeksinden anlamlı şekilde ayrışır).
   int get turkeyRiskIndex {
-    final tr = _events.where((e) =>
-        e.category == EventCategory.turkey ||
-        e.category == EventCategory.disaster);
-    return _avgRisk(tr.isEmpty ? _events : tr);
+    final tr = _events
+        .where((e) =>
+            e.category == EventCategory.turkey ||
+            e.category == EventCategory.disaster)
+        .toList();
+    final base = _avgRisk(tr.isEmpty ? _events : tr);
+    final loc = _localDisasterScore;
+    if (loc != null) return ((base + loc) / 2).round();
+    return base;
   }
 
   /// Günün Özeti — o anki gerçek manşetlerden otomatik üretilir.
