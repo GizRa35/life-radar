@@ -202,14 +202,24 @@ class VipScreen extends StatelessWidget {
                     fontStyle: FontStyle.italic,
                   ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 24),
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
                       child: _GoldPriceBox(
                         label: t('Aylık'),
                         price: _vipPrice(state, AppState.vipMonthlyId,
                             SubscriptionData.vipMonthly),
+                        active: active,
+                        onTap: active
+                            ? null
+                            : () {
+                                HapticFeedback.mediumImpact();
+                                context
+                                    .read<AppState>()
+                                    .buySubscription(AppState.vipMonthlyId);
+                              },
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -219,24 +229,44 @@ class VipScreen extends StatelessWidget {
                         price: _vipPrice(state, AppState.vipYearlyId,
                             SubscriptionData.vipYearly),
                         highlight: true,
+                        badge: t('2 ay bedava'),
+                        active: active,
+                        onTap: active
+                            ? null
+                            : () {
+                                HapticFeedback.mediumImpact();
+                                context
+                                    .read<AppState>()
+                                    .buySubscription(AppState.vipYearlyId);
+                              },
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 14),
                 Row(
                   children: [
                     const Icon(Icons.card_giftcard, color: _goldLight, size: 18),
                     const SizedBox(width: 8),
-                    Text(
-                      t(SubscriptionData.freeTrial),
-                      style: const TextStyle(
-                        color: _goldLight,
-                        fontWeight: FontWeight.w700,
+                    Expanded(
+                      child: Text(
+                        t(SubscriptionData.freeTrial),
+                        style: const TextStyle(
+                          color: _goldLight,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
                     ),
                   ],
                 ),
+                if (!active) ...[
+                  const SizedBox(height: 6),
+                  Text(
+                    t('Bir plana dokunarak hemen başla'),
+                    style: TextStyle(
+                        color: Colors.white.withOpacity(0.6), fontSize: 12),
+                  ),
+                ],
               ],
             ),
           ),
@@ -251,32 +281,16 @@ class VipScreen extends StatelessWidget {
           _SectionTitle(t('Planları Karşılaştır')),
           const PlanComparison(),
 
-          const SizedBox(height: 24),
-          // Aktif VIP için "Merkezi Aç" butonu yukarıda; burada yalnızca
-          // VIP olmayanlara satın alma butonları gösterilir.
-          if (!active) ...[
-            _GoldButton(
-              label: '${t('VIP Aylık')}  ${_vipPrice(state, AppState.vipMonthlyId, SubscriptionData.vipMonthly)}',
-              onPressed: () {
-                HapticFeedback.mediumImpact();
-                context.read<AppState>().buySubscription(AppState.vipMonthlyId);
-              },
+          const SizedBox(height: 16),
+          // Satın alma artık fiyat kutularına dokunarak yapılır.
+          // VIP olmayanlara yalnızca "geri yükle" bağlantısı gösterilir.
+          if (!active)
+            Center(
+              child: TextButton(
+                onPressed: () => context.read<AppState>().restorePurchases(),
+                child: Text(t('Satın almaları geri yükle')),
+              ),
             ),
-            const SizedBox(height: 10),
-            _GoldButton(
-              label:
-                  '${t('VIP Yıllık')}  ${_vipPrice(state, AppState.vipYearlyId, SubscriptionData.vipYearly)}  ·  ${t('2 ay bedava')}',
-              onPressed: () {
-                HapticFeedback.mediumImpact();
-                context.read<AppState>().buySubscription(AppState.vipYearlyId);
-              },
-            ),
-            const SizedBox(height: 6),
-            TextButton(
-              onPressed: () => context.read<AppState>().restorePurchases(),
-              child: Text(t('Satın almaları geri yükle')),
-            ),
-          ],
           const SizedBox(height: 24),
         ],
       ),
@@ -289,38 +303,95 @@ class _GoldPriceBox extends StatelessWidget {
   final String label;
   final String price;
   final bool highlight;
+  final bool active;
+  final String? badge;
+  final VoidCallback? onTap;
   const _GoldPriceBox({
     required this.label,
     required this.price,
     this.highlight = false,
+    this.active = false,
+    this.badge,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(14),
+    final ctaColor = active ? LifeRadarColors.riskLow : _goldLight;
+    final box = Container(
+      padding: const EdgeInsets.fromLTRB(14, 16, 14, 13),
       decoration: BoxDecoration(
         color: highlight ? _gold.withOpacity(0.18) : Colors.white.withOpacity(0.06),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: highlight ? _gold : Colors.white.withOpacity(0.18),
+          color: highlight ? _gold : Colors.white.withOpacity(0.2),
+          width: highlight ? 1.8 : 1.2,
         ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(label,
-              style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 12)),
-          const SizedBox(height: 4),
+              style: TextStyle(
+                  color: Colors.white.withOpacity(0.75),
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600)),
+          const SizedBox(height: 6),
           Text(
             price,
             style: const TextStyle(
               color: Colors.white,
-              fontWeight: FontWeight.w800,
-              fontSize: 15,
+              fontWeight: FontWeight.w900,
+              fontSize: 18,
             ),
           ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Icon(active ? Icons.check_circle : Icons.touch_app_outlined,
+                  size: 15, color: ctaColor),
+              const SizedBox(width: 5),
+              Text(active ? t('Aktif') : t('Dokun & Başla'),
+                  style: TextStyle(
+                      color: ctaColor,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700)),
+            ],
+          ),
         ],
+      ),
+    );
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            box,
+            if (badge != null)
+              Positioned(
+                top: -9,
+                right: 10,
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(colors: [_gold, _goldLight]),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(badge!.toUpperCase(),
+                      style: const TextStyle(
+                          color: Color(0xFF1B1B2F),
+                          fontSize: 9.5,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 0.5)),
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }

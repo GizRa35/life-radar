@@ -462,6 +462,11 @@ const Map<String, String> _en = {
   ', sen VIP\'sin 👑': ', you are VIP 👑',
   'VIP Aylık': 'VIP Monthly',
   'VIP Yıllık': 'VIP Yearly',
+  'Dokun & Başla': 'Tap & Start',
+  'Aktif': 'Active',
+  'Bir plana dokunarak hemen başla': 'Tap a plan to start now',
+  'En avantajlı': 'Best value',
+  'Planını seç': 'Choose your plan',
 
   // --- Aile Acil Planı ---
   'Ev yakını buluşma noktası': 'Meeting point near home',

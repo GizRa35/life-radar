@@ -91,7 +91,7 @@ class PremiumScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _Badge(
+                const _Badge(
                   label: 'PREMIUM',
                   color: LifeRadarColors.turquoise,
                   icon: Icons.star,
@@ -113,14 +113,24 @@ class PremiumScreen extends StatelessWidget {
                     height: 1.4,
                   ),
                 ),
-                const SizedBox(height: 18),
+                const SizedBox(height: 22),
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
                       child: _PriceBox(
                         label: t('Aylık'),
                         price: _priceText(state, AppState.premiumMonthlyId,
                             SubscriptionData.premiumMonthly),
+                        active: active,
+                        onTap: active
+                            ? null
+                            : () {
+                                HapticFeedback.mediumImpact();
+                                context
+                                    .read<AppState>()
+                                    .buySubscription(AppState.premiumMonthlyId);
+                              },
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -130,25 +140,45 @@ class PremiumScreen extends StatelessWidget {
                         price: _priceText(state, AppState.premiumYearlyId,
                             SubscriptionData.premiumYearly),
                         highlight: true,
+                        badge: t('2 ay bedava'),
+                        active: active,
+                        onTap: active
+                            ? null
+                            : () {
+                                HapticFeedback.mediumImpact();
+                                context
+                                    .read<AppState>()
+                                    .buySubscription(AppState.premiumYearlyId);
+                              },
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 14),
                 Row(
                   children: [
                     const Icon(Icons.card_giftcard,
                         color: LifeRadarColors.turquoise, size: 18),
                     const SizedBox(width: 8),
-                    Text(
-                      t(SubscriptionData.freeTrial),
-                      style: const TextStyle(
-                        color: LifeRadarColors.turquoise,
-                        fontWeight: FontWeight.w700,
+                    Expanded(
+                      child: Text(
+                        t(SubscriptionData.freeTrial),
+                        style: const TextStyle(
+                          color: LifeRadarColors.turquoise,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
                     ),
                   ],
                 ),
+                if (!active) ...[
+                  const SizedBox(height: 6),
+                  Text(
+                    t('Bir plana dokunarak hemen başla'),
+                    style: TextStyle(
+                        color: Colors.white.withOpacity(0.6), fontSize: 12),
+                  ),
+                ],
               ],
             ),
           ),
@@ -163,49 +193,37 @@ class PremiumScreen extends StatelessWidget {
           _SectionTitle(t('Planları Karşılaştır')),
           const PlanComparison(),
 
-          const SizedBox(height: 24),
+          const SizedBox(height: 20),
           if (active)
-            ElevatedButton(
-              onPressed: null,
-              style: ElevatedButton.styleFrom(
-                  minimumSize: const Size.fromHeight(52)),
-              child: Text(t('Premium Aktif')),
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              decoration: BoxDecoration(
+                color: LifeRadarColors.riskLow.withOpacity(0.12),
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(
+                    color: LifeRadarColors.riskLow.withOpacity(0.5)),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.check_circle,
+                      color: LifeRadarColors.riskLow),
+                  const SizedBox(width: 8),
+                  Text(t('Premium Aktif'),
+                      style: const TextStyle(
+                          color: LifeRadarColors.riskLow,
+                          fontWeight: FontWeight.w800,
+                          fontSize: 16)),
+                ],
+              ),
             )
-          else ...[
-            // Aylık abonelik
-            ElevatedButton(
-              onPressed: () {
-                HapticFeedback.mediumImpact();
-                context.read<AppState>().buySubscription(AppState.premiumMonthlyId);
-              },
-              style: ElevatedButton.styleFrom(
-                  minimumSize: const Size.fromHeight(52)),
-              child: Text(
-                '${t('Aylık')}  ${_priceText(state, AppState.premiumMonthlyId, SubscriptionData.premiumMonthly)}',
+          else
+            Center(
+              child: TextButton(
+                onPressed: () => context.read<AppState>().restorePurchases(),
+                child: Text(t('Satın almaları geri yükle')),
               ),
             ),
-            const SizedBox(height: 10),
-            // Yıllık abonelik (indirimli)
-            OutlinedButton(
-              onPressed: () {
-                HapticFeedback.mediumImpact();
-                context.read<AppState>().buySubscription(AppState.premiumYearlyId);
-              },
-              style: OutlinedButton.styleFrom(
-                minimumSize: const Size.fromHeight(52),
-                side: const BorderSide(color: LifeRadarColors.turquoise),
-              ),
-              child: Text(
-                '${t('Yıllık')}  ${_priceText(state, AppState.premiumYearlyId, SubscriptionData.premiumYearly)}  ·  ${t('2 ay bedava')}',
-                style: const TextStyle(color: LifeRadarColors.turquoise),
-              ),
-            ),
-            const SizedBox(height: 6),
-            TextButton(
-              onPressed: () => context.read<AppState>().restorePurchases(),
-              child: Text(t('Satın almaları geri yükle')),
-            ),
-          ],
           const SizedBox(height: 10),
           OutlinedButton.icon(
             onPressed: () {
@@ -268,25 +286,35 @@ class _PriceBox extends StatelessWidget {
   final String label;
   final String price;
   final bool highlight;
+  final bool active;
+  final String? badge;
+  final VoidCallback? onTap;
   const _PriceBox({
     required this.label,
     required this.price,
     this.highlight = false,
+    this.active = false,
+    this.badge,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(14),
+    final ctaColor = active
+        ? LifeRadarColors.riskLow
+        : (highlight ? LifeRadarColors.turquoise : Colors.white70);
+    final box = Container(
+      padding: const EdgeInsets.fromLTRB(14, 16, 14, 13),
       decoration: BoxDecoration(
         color: highlight
-            ? LifeRadarColors.turquoise.withOpacity(0.15)
-            : Colors.white.withOpacity(0.08),
-        borderRadius: BorderRadius.circular(12),
+            ? LifeRadarColors.turquoise.withOpacity(0.18)
+            : Colors.white.withOpacity(0.07),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: highlight
               ? LifeRadarColors.turquoise
-              : Colors.white.withOpacity(0.2),
+              : Colors.white.withOpacity(0.22),
+          width: highlight ? 1.8 : 1.2,
         ),
       ),
       child: Column(
@@ -294,18 +322,67 @@ class _PriceBox extends StatelessWidget {
         children: [
           Text(
             label,
-            style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 12),
+            style: TextStyle(
+                color: Colors.white.withOpacity(0.75),
+                fontSize: 13,
+                fontWeight: FontWeight.w600),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 6),
           Text(
             price,
             style: const TextStyle(
               color: Colors.white,
-              fontWeight: FontWeight.w800,
-              fontSize: 15,
+              fontWeight: FontWeight.w900,
+              fontSize: 18,
             ),
           ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Icon(active ? Icons.check_circle : Icons.touch_app_outlined,
+                  size: 15, color: ctaColor),
+              const SizedBox(width: 5),
+              Text(active ? t('Aktif') : t('Dokun & Başla'),
+                  style: TextStyle(
+                      color: ctaColor,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700)),
+            ],
+          ),
         ],
+      ),
+    );
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            box,
+            if (badge != null)
+              Positioned(
+                top: -9,
+                right: 10,
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: LifeRadarColors.turquoise,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(badge!.toUpperCase(),
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 9.5,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 0.5)),
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }
