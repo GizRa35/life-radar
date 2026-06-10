@@ -174,22 +174,50 @@ class _AuthScreenState extends State<AuthScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.radar,
-                      color: LifeRadarColors.turquoise, size: 56),
-                  const SizedBox(height: 12),
+                  // Işıltılı radar logosu
+                  Container(
+                    width: 96,
+                    height: 96,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: RadialGradient(
+                        colors: [
+                          LifeRadarColors.turquoise.withOpacity(0.35),
+                          LifeRadarColors.turquoise.withOpacity(0.05),
+                        ],
+                      ),
+                      border: Border.all(
+                          color: LifeRadarColors.turquoise.withOpacity(0.5),
+                          width: 2),
+                      boxShadow: [
+                        BoxShadow(
+                          color: LifeRadarColors.turquoise.withOpacity(0.4),
+                          blurRadius: 24,
+                          spreadRadius: 2,
+                        ),
+                      ],
+                    ),
+                    child: const Icon(Icons.radar,
+                        color: LifeRadarColors.turquoise, size: 50),
+                  ),
+                  const SizedBox(height: 16),
                   const Text(
                     AppConstants.appName,
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 28,
+                      fontSize: 30,
                       fontWeight: FontWeight.w900,
+                      letterSpacing: 0.5,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 6),
                   Text(
                     AppConstants.slogan,
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.white.withOpacity(0.7)),
+                    style: TextStyle(
+                        color: Colors.white.withOpacity(0.75),
+                        fontSize: 13,
+                        height: 1.4),
                   ),
                   const SizedBox(height: 28),
 
@@ -263,7 +291,6 @@ class _AuthScreenState extends State<AuthScreen> {
                                   textCapitalization: TextCapitalization.words,
                                   decoration: const InputDecoration(
                                     labelText: 'Ad',
-                                    border: OutlineInputBorder(),
                                   ),
                                 ),
                               ),
@@ -274,7 +301,6 @@ class _AuthScreenState extends State<AuthScreen> {
                                   textCapitalization: TextCapitalization.words,
                                   decoration: const InputDecoration(
                                     labelText: 'Soyad',
-                                    border: OutlineInputBorder(),
                                   ),
                                 ),
                               ),
@@ -286,7 +312,6 @@ class _AuthScreenState extends State<AuthScreen> {
                             decoration: const InputDecoration(
                               labelText: 'Cinsiyet',
                               prefixIcon: Icon(Icons.wc_outlined),
-                              border: OutlineInputBorder(),
                             ),
                             items: const ['Kadın', 'Erkek']
                                 .map((g) =>
@@ -300,7 +325,6 @@ class _AuthScreenState extends State<AuthScreen> {
                             decoration: const InputDecoration(
                               labelText: 'Haber Dili',
                               prefixIcon: Icon(Icons.translate_outlined),
-                              border: OutlineInputBorder(),
                               helperText:
                                   'Yabancı kaynaklı haberler bu dile çevrilir',
                             ),
@@ -345,7 +369,6 @@ class _AuthScreenState extends State<AuthScreen> {
                             decoration: const InputDecoration(
                               labelText: 'Yaş aralığı',
                               prefixIcon: Icon(Icons.cake_outlined),
-                              border: OutlineInputBorder(),
                             ),
                             items: const [
                               '18-24',
@@ -368,7 +391,6 @@ class _AuthScreenState extends State<AuthScreen> {
                             decoration: const InputDecoration(
                               labelText: 'Yaşam durumu',
                               prefixIcon: Icon(Icons.home_outlined),
-                              border: OutlineInputBorder(),
                             ),
                             items: const [
                               'Yalnız yaşıyorum',
@@ -391,7 +413,6 @@ class _AuthScreenState extends State<AuthScreen> {
                               labelText: 'Sağlık durumu',
                               prefixIcon:
                                   Icon(Icons.health_and_safety_outlined),
-                              border: OutlineInputBorder(),
                             ),
                             items: const [
                               'Belirgin bir sağlık sorunum yok',
@@ -413,7 +434,6 @@ class _AuthScreenState extends State<AuthScreen> {
                             decoration: const InputDecoration(
                               labelText: 'Finansal hassasiyet',
                               prefixIcon: Icon(Icons.savings_outlined),
-                              border: OutlineInputBorder(),
                             ),
                             items: const [
                               'Döviz/altın takip ederim',
@@ -436,7 +456,6 @@ class _AuthScreenState extends State<AuthScreen> {
                           decoration: const InputDecoration(
                             labelText: 'E-posta',
                             prefixIcon: Icon(Icons.email_outlined),
-                            border: OutlineInputBorder(),
                           ),
                         ),
                         const SizedBox(height: 12),
@@ -446,7 +465,6 @@ class _AuthScreenState extends State<AuthScreen> {
                           decoration: InputDecoration(
                             labelText: 'Şifre',
                             prefixIcon: const Icon(Icons.lock_outline),
-                            border: const OutlineInputBorder(),
                             suffixIcon: IconButton(
                               icon: Icon(_obscure
                                   ? Icons.visibility
