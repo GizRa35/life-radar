@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
+import '../core/i18n.dart';
 import '../core/theme.dart';
 import '../services/ai/groq_service.dart';
 import '../state/app_state.dart';
@@ -186,7 +187,7 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
         actions: [
           if (messages.isNotEmpty)
             IconButton(
-              tooltip: 'Sohbeti temizle',
+              tooltip: t('Sohbeti temizle'),
               onPressed: () {
                 showDialog(
                   context: context,
@@ -283,7 +284,7 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
                     Padding(
                       padding: const EdgeInsets.only(right: 8),
                       child: ActionChip(
-                        label: Text(s),
+                        label: Text(t(s)),
                         onPressed: () => _send(s),
                         backgroundColor:
                             LifeRadarColors.turquoise.withOpacity(0.1),
@@ -326,10 +327,11 @@ class _EmptyState extends StatelessWidget {
         const Icon(Icons.auto_awesome,
             size: 56, color: LifeRadarColors.turquoise),
         const SizedBox(height: 12),
-        const Text(
-          'Merak ettiğin gelişmeyi sor.\nSana etkisini ve ne yapman gerektiğini anlatayım.',
+        Text(
+          t('Merak ettiğin gelişmeyi sor.\nSana etkisini ve ne yapman gerektiğini anlatayım.'),
           textAlign: TextAlign.center,
-          style: TextStyle(color: LifeRadarColors.textSecondary, height: 1.4),
+          style: const TextStyle(
+              color: LifeRadarColors.textSecondary, height: 1.4),
         ),
         const SizedBox(height: 24),
         ...examples.map(
@@ -405,10 +407,10 @@ class _TypingIndicator extends StatelessWidget {
           color: LifeRadarColors.cardBackground,
           borderRadius: BorderRadius.circular(16),
         ),
-        child: const Row(
+        child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            SizedBox(
+            const SizedBox(
               width: 16,
               height: 16,
               child: CircularProgressIndicator(
@@ -416,9 +418,9 @@ class _TypingIndicator extends StatelessWidget {
                 color: LifeRadarColors.turquoise,
               ),
             ),
-            SizedBox(width: 10),
-            Text('Analiz ediliyor...',
-                style: TextStyle(color: LifeRadarColors.textSecondary)),
+            const SizedBox(width: 10),
+            Text(t('Analiz ediliyor...'),
+                style: const TextStyle(color: LifeRadarColors.textSecondary)),
           ],
         ),
       ),
@@ -451,7 +453,7 @@ class _Composer extends StatelessWidget {
                 textInputAction: TextInputAction.send,
                 onSubmitted: (_) => onSend(),
                 decoration: InputDecoration(
-                  hintText: listening ? 'Dinleniyor...' : 'Bir soru sor...',
+                  hintText: listening ? t('Dinleniyor...') : t('Bir soru sor...'),
                   filled: true,
                   fillColor: LifeRadarColors.cardBackground,
                   contentPadding:
@@ -461,7 +463,7 @@ class _Composer extends StatelessWidget {
                     borderSide: BorderSide.none,
                   ),
                   suffixIcon: IconButton(
-                    tooltip: 'Sesli sor',
+                    tooltip: t('Sesli sor'),
                     onPressed: onMic,
                     icon: Icon(
                       listening ? Icons.mic : Icons.mic_none,

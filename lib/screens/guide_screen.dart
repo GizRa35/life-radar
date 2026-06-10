@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../core/api_config.dart';
+import '../core/i18n.dart';
 import '../core/theme.dart';
 import '../data/mock_data.dart';
 import '../models/emergency_guide.dart';
@@ -20,18 +21,18 @@ class GuideScreen extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
-        const Text(
-          'Acil Durum Rehberi',
-          style: TextStyle(
+        Text(
+          t('Acil Durum Rehberi'),
+          style: const TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.w800,
             color: LifeRadarColors.navy,
           ),
         ),
         const SizedBox(height: 4),
-        const Text(
-          'Bir kategoriye dokunarak hazırlık adımlarını görün.',
-          style: TextStyle(color: LifeRadarColors.textSecondary),
+        Text(
+          t('Bir kategoriye dokunarak hazırlık adımlarını görün.'),
+          style: const TextStyle(color: LifeRadarColors.textSecondary),
         ),
         const SizedBox(height: 16),
         // Hızlı erişim: acil çanta + hızlı arama
@@ -40,7 +41,7 @@ class GuideScreen extends StatelessWidget {
             Expanded(
               child: _QuickCard(
                 icon: Icons.backpack,
-                label: 'Acil Çantam',
+                label: t('Acil Çantam'),
                 color: LifeRadarColors.turquoise,
                 onTap: () => Navigator.of(context).push(
                   MaterialPageRoute(
@@ -52,7 +53,7 @@ class GuideScreen extends StatelessWidget {
             Expanded(
               child: _QuickCard(
                 icon: Icons.call,
-                label: 'Hızlı Arama',
+                label: t('Hızlı Arama'),
                 color: const Color(0xFFFF453A),
                 onTap: () => Navigator.of(context).push(
                   MaterialPageRoute(
@@ -76,21 +77,22 @@ class GuideScreen extends StatelessWidget {
               borderRadius: BorderRadius.circular(16),
               border: Border.all(color: LifeRadarColors.navy.withOpacity(0.25)),
             ),
-            child: const Row(
+            child: Row(
               children: [
-                Icon(Icons.family_restroom, color: LifeRadarColors.navy),
-                SizedBox(width: 12),
+                const Icon(Icons.family_restroom, color: LifeRadarColors.navy),
+                const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    'Aile Acil Planı',
-                    style: TextStyle(
+                    t('Aile Acil Planı'),
+                    style: const TextStyle(
                       fontWeight: FontWeight.w800,
                       color: LifeRadarColors.navy,
                       fontSize: 15,
                     ),
                   ),
                 ),
-                Icon(Icons.chevron_right, color: LifeRadarColors.textSecondary),
+                const Icon(Icons.chevron_right,
+                    color: LifeRadarColors.textSecondary),
               ],
             ),
           ),
@@ -244,7 +246,7 @@ class _GuideCategoryCard extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             Text(
-              guide.title,
+              t(guide.title),
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontWeight: FontWeight.w800,
@@ -268,7 +270,7 @@ class _GuideDetailScreen extends StatelessWidget {
     final color = guideColor(guide.title);
 
     return Scaffold(
-      appBar: AppBar(title: Text(guide.title)),
+      appBar: AppBar(title: Text(t(guide.title))),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 90),
         children: [
@@ -318,7 +320,7 @@ class _GuideDetailScreen extends StatelessWidget {
                         Icon(guide.icon, color: Colors.white, size: 34),
                         const SizedBox(height: 6),
                         Text(
-                          guide.title,
+                          t(guide.title),
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 24,
@@ -339,25 +341,25 @@ class _GuideDetailScreen extends StatelessWidget {
           const SizedBox(height: 16),
 
           _GuideBlock(
-            title: 'Hazırlık Listesi',
+            title: t('Hazırlık Listesi'),
             icon: Icons.fact_check_outlined,
             accent: LifeRadarColors.turquoise,
             items: guide.preparation,
           ),
           _GuideBlock(
-            title: 'İlk 24 Saat',
+            title: t('İlk 24 Saat'),
             icon: Icons.timer_outlined,
             accent: LifeRadarColors.riskMedium,
             items: guide.first24Hours,
           ),
           _GuideBlock(
-            title: 'Gerekli Malzemeler',
+            title: t('Gerekli Malzemeler'),
             icon: Icons.inventory_2_outlined,
             accent: LifeRadarColors.navy,
             items: guide.supplies,
           ),
           _GuideBlock(
-            title: 'İlk Yardım Bilgileri',
+            title: t('İlk Yardım Bilgileri'),
             icon: Icons.medical_services_outlined,
             accent: LifeRadarColors.riskHigh,
             items: guide.firstAid,

@@ -149,4 +149,47 @@ const Map<String, String> _en = {
   'Satın almaları geri yükle': 'Restore purchases',
   'Aylık': 'Monthly',
   'Yıllık': 'Yearly',
+  'Premium Özellikleri': 'Premium Features',
+  'VIP Özellikleri': 'VIP Features',
+  'Planları Karşılaştır': 'Compare Plans',
+  '7 Gün Ücretsiz Deneme': '7-Day Free Trial',
+
+  // --- Rehber detay ---
+  'Bir kategoriye dokunarak hazırlık adımlarını görün.':
+      'Tap a category to see preparation steps.',
+  'Deprem': 'Earthquake',
+  'Sel': 'Flood',
+  'Yangın': 'Fire',
+  'Elektrik Kesintisi': 'Power Outage',
+  'Su Kesintisi': 'Water Outage',
+  'Salgın Hastalık': 'Epidemic',
+  'Aşırı Hava Olayları': 'Extreme Weather',
+  'Diğer': 'Other',
+  'Hazırlık Listesi': 'Preparation List',
+  'İlk 24 Saat': 'First 24 Hours',
+  'Gerekli Malzemeler': 'Supplies',
+  'İlk Yardım Bilgileri': 'First Aid',
+  'Resmi Acil Hatlar': 'Official Emergency Lines',
+  'Acil Çağrı': 'Emergency Call',
+  'Acil durum kişisi ekle': 'Add emergency contact',
+  'Hazırlık:': 'Readiness:',
+
+  // --- Asistan ---
+  'Bir soru sor...': 'Ask a question...',
+  'Dinleniyor...': 'Listening...',
+  'Analiz ediliyor...': 'Analyzing...',
+  'Sohbeti temizle': 'Clear chat',
+  'Sesli sor': 'Ask by voice',
+  'Bu beni nasıl etkiler?': 'How does this affect me?',
+  'Kaynak güvenilir mi?': 'Is the source reliable?',
+  'Önümüzdeki günlerde ne beklenir?': 'What to expect in coming days?',
+  'Merak ettiğin gelişmeyi sor.\nSana etkisini ve ne yapman gerektiğini anlatayım.':
+      'Ask about any development.\nI\'ll explain its impact and what to do.',
+
+  // --- Bildirimler ---
+  'Bildirim ayarları': 'Notification Settings',
+
+  // --- Onboarding/diğer ---
+  'Misafir': 'Guest',
+  'Kullanıcı': 'User',
 };
