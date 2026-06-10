@@ -33,7 +33,6 @@ class RssSource {
       'https://www.aa.com.tr/tr/rss/default?cat=guncel',
       'https://www.hurriyet.com.tr/rss/gundem',
       'https://www.sozcu.com.tr/rss/tum-haberler.xml',
-      'https://www.ensonhaber.com/rss/gundem.xml',
       'https://www.ntv.com.tr/gundem.rss',
       'https://www.haberturk.com/rss/gundem.xml',
       'https://www.trthaber.com/sondakika.rss',
@@ -64,7 +63,7 @@ class RssSource {
     ],
     // Sağlık: AA + NTV + Habertürk (TR) + Healthline + WHO + MedicineNet (EN)
     EventCategory.health: [
-      'https://www.aa.com.tr/tr/rss/default?cat=saglik',
+      'https://www.aa.com.tr/tr/rss/default?cat=yasam',
       'https://www.ntv.com.tr/saglik.rss',
       'https://www.haberturk.com/rss/saglik.xml',
       'https://www.healthline.com/rss/health-news',
@@ -77,7 +76,7 @@ class RssSource {
     // İklim: AA çevre (TR) + Guardian Climate + Carbon Brief + Earth.Org +
     // Grist + Inside Climate News (dünyanın en çok okunan iklim kaynakları)
     EventCategory.climate: [
-      'https://www.aa.com.tr/tr/rss/default?cat=cevre',
+      'https://www.sozcu.com.tr/rss/cevre.xml',
       'https://www.theguardian.com/environment/climate-crisis/rss',
       'https://www.carbonbrief.org/feed/',
       'https://earth.org/feed/',
@@ -86,7 +85,7 @@ class RssSource {
     ],
     EventCategory.security: [
       'https://www.hurriyet.com.tr/rss/dunya',
-      'https://www.cnnturk.com/feed/rss/turkiye/news',
+      'https://www.ntv.com.tr/turkiye.rss',
     ],
     // Afet: küresel afet uyarı sistemi (BM/AB ortaklı GDACS). Depremler ayrıca
     // USGS'ten (EarthquakeSource) gerçek zamanlı çekilir.
@@ -102,7 +101,6 @@ class RssSource {
     ['ntv.com.tr', 'NTV', 'tr'],
     ['hurriyet.com.tr', 'Hürriyet', 'tr'],
     ['sozcu.com.tr', 'Sözcü', 'tr'],
-    ['ensonhaber.com', 'En Son Haber', 'tr'],
     ['haberturk.com', 'Habertürk', 'tr'],
     ['trthaber.com', 'TRT Haber', 'tr'],
     ['cumhuriyet.com.tr', 'Cumhuriyet', 'tr'],
