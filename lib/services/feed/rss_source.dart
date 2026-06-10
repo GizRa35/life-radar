@@ -135,6 +135,14 @@ class RssSource {
     ['gdacs.org', 'GDACS', 'en'],
   ];
 
+  /// Uygulamada tanımlı tüm kaynak adları (Kaynak Seçimi ekranı için).
+  /// Haber gelmese bile listede görünsünler diye kullanılır.
+  static List<String> get configuredSourceNames {
+    final set = <String>{for (final s in _sourceMap) s[1]};
+    final list = set.toList()..sort();
+    return list;
+  }
+
   static ({String name, bool tr}) _srcInfo(String feed) {
     for (final s in _sourceMap) {
       if (feed.contains(s[0])) return (name: s[1], tr: s[2] == 'tr');

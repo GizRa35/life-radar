@@ -28,6 +28,7 @@ import '../services/notify.dart';
 import '../services/ai/groq_service.dart';
 import '../services/feed/earthquake_source.dart';
 import '../services/feed/feed_service.dart';
+import '../services/feed/rss_source.dart';
 import '../services/feed/translation_service.dart';
 import '../services/location_service.dart';
 import '../services/purchase_service.dart';
@@ -1227,9 +1228,14 @@ class AppState extends ChangeNotifier {
   final Set<String> _blockedSources = {};
   bool isSourceOn(String source) => !_blockedSources.contains(source);
 
-  /// Mevcut haberlerdeki benzersiz kaynaklar (alfabetik).
+  /// Kaynak Seçimi listesi: uygulamada TANIMLI tüm kaynaklar + o an haber
+  /// gelmiş kaynaklar (birleşim). Böylece henüz haber yüklenmese bile kullanıcı
+  /// tüm kaynak listesini görüp seçebilir.
   List<String> get knownSources {
-    final set = <String>{for (final e in _events) e.source};
+    final set = <String>{
+      ...RssSource.configuredSourceNames,
+      for (final e in _events) e.source,
+    };
     final list = set.where((s) => s.isNotEmpty).toList()..sort();
     return list;
   }
