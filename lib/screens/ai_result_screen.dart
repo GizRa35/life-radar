@@ -44,9 +44,6 @@ class _AiResultScreenState extends State<AiResultScreen> {
     _future = widget.run(context.read<AppState>());
   }
 
-  void _regen() =>
-      setState(() => _future = widget.run(context.read<AppState>()));
-
   Widget _header(Color accent) {
     final content = Row(
       children: [
@@ -171,18 +168,6 @@ class _AiResultScreenState extends State<AiResultScreen> {
                       ),
                     ),
                   const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: OutlinedButton.icon(
-                          onPressed: _regen,
-                          icon: const Icon(Icons.refresh),
-                          label: const Text('Yeniden Üret'),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
                   Row(
                     children: [
                       const Icon(Icons.shield_outlined,

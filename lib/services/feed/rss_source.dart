@@ -112,6 +112,11 @@ class RssSource {
     return (name: 'Haber Kaynağı', tr: false);
   }
 
+  // Japonca/Çince/Korece karakter tespiti (bozuk/alakasız haberleri elemek için).
+  static final RegExp _cjk = RegExp(
+      '[　-〿぀-ヿ㐀-䶿一-鿿가-힯＀-￯]');
+  static bool _hasCJK(String s) => _cjk.hasMatch(s);
+
   static const Map<EventCategory, RiskLevel> _defaultRisk = {
     EventCategory.world: RiskLevel.medium,
     EventCategory.turkey: RiskLevel.medium,
@@ -149,7 +154,13 @@ class RssSource {
       final items = (data['items'] as List?) ?? [];
       final now = DateTime.now();
       var i = 0;
-      return items.map<RadarEvent>((raw) {
+      return items
+          .where((raw) {
+            // CJK (Japonca/Çince/Korece) içeren bozuk başlıkları ele.
+            final t = ((raw as Map)['title'] ?? '').toString();
+            return !_hasCJK(t);
+          })
+          .map<RadarEvent>((raw) {
         final m = raw as Map;
         final link = (m['link'] ?? '').toString();
         final image = (m['image'] ?? '').toString();

@@ -127,6 +127,32 @@ class LifeRadarTheme {
         showUnselectedLabels: true,
         elevation: 0,
       ),
+      // Tüm form alanları (TextField/Dropdown) için tutarlı, modern stil.
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: const Color(0xFFF1F5F9),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        prefixIconColor: LifeRadarColors.textSecondary,
+        suffixIconColor: LifeRadarColors.textSecondary,
+        labelStyle: const TextStyle(color: LifeRadarColors.textSecondary),
+        floatingLabelStyle: const TextStyle(
+            color: LifeRadarColors.turquoise, fontWeight: FontWeight.w600),
+        hintStyle: TextStyle(color: LifeRadarColors.textSecondary.withOpacity(0.7)),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: BorderSide.none,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: BorderSide.none,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide:
+              const BorderSide(color: LifeRadarColors.turquoise, width: 1.6),
+        ),
+      ),
       textTheme: const TextTheme(
         headlineSmall: TextStyle(
           color: LifeRadarColors.textPrimary,
@@ -139,14 +165,6 @@ class LifeRadarTheme {
         // Metin kutusu (TextField) yazısı bunu kullanır → koyu renk garanti.
         bodyLarge: TextStyle(color: LifeRadarColors.textPrimary),
         bodyMedium: TextStyle(color: LifeRadarColors.textSecondary),
-      ),
-      // Metin girişi: yazı koyu, etiket/ipucu gri, imleç turkuaz.
-      inputDecorationTheme: const InputDecorationTheme(
-        labelStyle: TextStyle(color: LifeRadarColors.textSecondary),
-        hintStyle: TextStyle(color: LifeRadarColors.textSecondary),
-        floatingLabelStyle: TextStyle(color: LifeRadarColors.turquoise),
-        prefixIconColor: LifeRadarColors.textSecondary,
-        suffixIconColor: LifeRadarColors.textSecondary,
       ),
       textSelectionTheme: const TextSelectionThemeData(
         cursorColor: LifeRadarColors.turquoise,

@@ -41,11 +41,10 @@ class AdsService {
   int _frequency(SubscriptionTier tier) {
     switch (tier) {
       case SubscriptionTier.vip:
-        return 0; // VIP: hiç reklam
       case SubscriptionTier.premium:
-        return 8; // Premium: çok seyrek
+        return 0; // Premium ve VIP: HİÇ reklam yok
       case SubscriptionTier.free:
-        return 3; // Ücretsiz: sık
+        return 3; // Yalnızca ücretsiz: reklam
     }
   }
 
