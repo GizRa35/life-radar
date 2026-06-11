@@ -34,7 +34,7 @@ if (keystorePropertiesFile.exists()) {
 android {
     namespace "com.liferadar.life_radar"
     compileSdk 35
-    ndkVersion flutter.ndkVersion
+    ndkVersion "26.1.10909125"   // eklentilerin istediği NDK sürümü
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
