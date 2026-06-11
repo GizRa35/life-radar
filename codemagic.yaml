@@ -58,3 +58,52 @@ workflows:
         # build otomatik TestFlight'a düşer).
         beta_groups:
           - TEST
+
+  # ---------------------------------------------------------------------------
+  # ANDROID — Google Play için imzalı AAB üretir.
+  #
+  # Codemagic arayüzünde yapılması gerekenler (TEK SEFER):
+  #  1) App settings → Code signing → Android keystore →
+  #     "upload-keystore.jks" dosyasını yükle, şifre/alias/key şifresini gir,
+  #     Reference name olarak BİREBİR şunu yaz: liferadar_upload
+  #  2) Bu workflow'u (Android Google Play) seç → "Start new build".
+  #  3) Build bitince build/.../bundle/release/app-release.aab dosyasını indir,
+  #     Google Play Console'a yükle.
+  # ---------------------------------------------------------------------------
+  android-googleplay:
+    name: Android Google Play
+    instance_type: linux_x2
+    max_build_duration: 60
+    environment:
+      android_signing:
+        - liferadar_upload   # ← Codemagic UI'da bu isimle keystore yüklenecek
+      flutter: 3.19.6
+    cache:
+      cache_paths:
+        - $HOME/.pub-cache       # Flutter paketleri
+        - $HOME/.gradle/caches   # Gradle önbelleği (hızlandırır)
+    scripts:
+      - name: key.properties oluştur (Codemagic keystore'undan)
+        script: |
+          # build.gradle imzalamayı key.properties'ten okur; Codemagic'in
+          # sağladığı keystore değişkenlerinden bu dosyayı üret.
+          cat > "$CM_BUILD_DIR/android/key.properties" <<EOF
+          storeFile=$CM_KEYSTORE_PATH
+          storePassword=$CM_KEYSTORE_PASSWORD
+          keyAlias=$CM_KEY_ALIAS
+          keyPassword=$CM_KEY_PASSWORD
+          EOF
+      - name: Flutter paketlerini al
+        script: flutter pub get
+      - name: AAB derle (Google Play, imzalı)
+        script: |
+          # Benzersiz, artan versionCode (Unix zaman damgası) →
+          # "version code already used" hatasını önler.
+          BUILD_NUM=$(date +%s)
+          echo "Build number: $BUILD_NUM"
+          flutter build appbundle --release \
+            --build-number=$BUILD_NUM \
+            --dart-define=API_BASE=https://life-radar.liferadar-kaya.workers.dev
+    artifacts:
+      - build/**/outputs/bundle/**/*.aab
+      - build/**/outputs/**/mapping.txt
