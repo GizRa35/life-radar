@@ -2,7 +2,50 @@
 
 Bu dosya, unutmamak için tutulur. Tamamlananları ve kalanları gösterir.
 
-## 🚀 YAYIN İÇİN KALANLAR (önce bunlar)
+---
+
+## ✅ DURUM (14 Haz 2026)
+- 🍎 **iOS:** App Store incelemesinde (Waiting for Review). Banka/sözleşme/vergi
+  Active; ilk red (IAP hatası + veri sorusu) düzeltilip yeniden gönderildi.
+  Manuel yayın seçili → onay gelince "Release"e basılacak.
+  ⚠️ Gönderilen build 1781168282 ESKİ — 1.0.1'de güncellenecek (aşağıda).
+- 🤖 **Android:** Kapalı test (Closed testing - Alpha) incelemede. AAB build 69
+  (en güncel kod). Üretim için: 12 testçi opt-in (şu an ~3) + 14 gün şart.
+- 💰 **AdMob:** entegre + çalışıyor (istek geliyor). Gerçek gelir yayın sonrası.
+  Banka/vergi: gelir birikince Google açacak (şu an kilitli, normal).
+
+---
+
+## 🔜 1.1 YOL HARİTASI (sonraki sürüm)
+
+### A) iOS'u Android ile eşitle (1.0.1 — öncelikli)
+- [ ] Resmi 4 renkli Google logosu (giriş)
+- [ ] 4 ölü kaynak düzeltmesi (Sözcü Çevre / AA Yaşam / NTV Türkiye)
+- [ ] Gündem + AI asistan kalan Türkçe metinler (EN modunda)
+- [ ] in_app_review kaldırma (Android'de yapıldı; iOS'a da yansısın)
+
+### B) Yeni özellikler
+- [ ] Push bildirim (firebase_messaging + worker FCM; APNs Firebase'de hazır)
+- [ ] Ana ekran widget'ı (iOS + Android)
+- [ ] Daha iyi AI sesi (Miso One değerlendirilecek veya bulut TTS)
+- [ ] in_app_review'i uyumlu sürümle geri ekle
+
+### C) Gelir / güvenlik
+- [ ] ATT + SKAdNetwork (iOS — kişiselleştirilmiş reklam, daha yüksek gelir)
+- [ ] Sunucu tarafı abonelik doğrulama (sahte premium engeli)
+- [ ] AdMob banka/vergi (gelir ₺200'e yaklaşınca)
+
+### D) Android tamamlama
+- [ ] Google ile giriş (Android) → google-services.json + SHA-1
+- [ ] 14 gün test bitince → "Apply for production"
+
+### E) Opsiyonel
+- [ ] Mediastack / GNews API → BBC/CNN/Reuters gibi RSS'siz kaynaklar
+- [ ] Play feature graphic'i daha şık tasarla
+
+---
+
+## 🚀 YAYIN İÇİN KALANLAR (eski liste — büyük kısmı TAMAMLANDI ✅)
 
 ### 0) TEST (göndermeden önce şart)
 - [ ] Codemagic'te yeni build al → TestFlight'a düşür
