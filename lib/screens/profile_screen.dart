@@ -402,7 +402,7 @@ class _ProfileHeader extends StatelessWidget {
                           border: Border.all(color: ring),
                         ),
                         child: Text(
-                          tier.label,
+                          t(tier.label),
                           style: TextStyle(
                             color: ring,
                             fontWeight: FontWeight.w800,
@@ -449,7 +449,7 @@ class _UpgradeCards extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
-                  tier.label,
+                  t(tier.label),
                   style: TextStyle(
                     color: tier.color,
                     fontWeight: FontWeight.w800,
