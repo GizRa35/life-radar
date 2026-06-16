@@ -161,17 +161,22 @@ class EmergencyCallScreen extends StatelessWidget {
           }),
           if (state.canAddEmergencyContact) ...[
             const SizedBox(height: 4),
-            OutlinedButton.icon(
-              onPressed: () => _addFromContacts(context),
-              icon: const Icon(Icons.contacts_outlined),
-              label: Text(t('Rehberden Kişi Seç')),
-              style: OutlinedButton.styleFrom(
+            FilledButton.icon(
+              onPressed: () => _addManually(context),
+              icon: const Icon(Icons.edit_outlined),
+              label: Text(t('Elle Ekle')),
+              style: FilledButton.styleFrom(
                 minimumSize: const Size.fromHeight(50),
               ),
             ),
-            TextButton(
-              onPressed: () => _addManually(context),
-              child: Text(t('veya elle ekle')),
+            const SizedBox(height: 8),
+            OutlinedButton.icon(
+              onPressed: () => _addFromContacts(context),
+              icon: const Icon(Icons.contacts_outlined),
+              label: Text(t('Rehberden Seç')),
+              style: OutlinedButton.styleFrom(
+                minimumSize: const Size.fromHeight(50),
+              ),
             ),
           ],
           const SizedBox(height: 16),
@@ -191,8 +196,13 @@ class EmergencyCallScreen extends StatelessWidget {
     if (picked == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text(
-                t('Kişi seçilmedi veya seçilen kişide telefon numarası yok.'))),
+          content: Text(
+              t('Kişi seçilmedi veya seçilen kişide telefon numarası yok.')),
+          action: SnackBarAction(
+            label: t('Elle Ekle'),
+            onPressed: () => _addManually(context),
+          ),
+        ),
       );
       return;
     }

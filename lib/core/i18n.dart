@@ -170,6 +170,8 @@ const Map<String, String> _en = {
   'Acil Çağrı Merkezi': 'Emergency Call Center',
   'Acil Durum Kişilerim': 'My Emergency Contacts',
   'Rehberden Kişi Seç': 'Pick from Contacts',
+  'Rehberden Seç': 'Pick from Contacts',
+  'Elle Ekle': 'Add Manually',
 
   // --- Bildirimler ---
   'Yeni bildirim yok': 'No new notifications',
