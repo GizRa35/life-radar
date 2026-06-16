@@ -438,7 +438,7 @@ class _GuideBlock extends StatelessWidget {
                           Icon(Icons.check_circle, size: 18, color: accent),
                           const SizedBox(width: 10),
                           Expanded(
-                            child: Text(i,
+                            child: Text(t(i),
                                 style: const TextStyle(
                                     height: 1.35, fontSize: 14)),
                           ),
