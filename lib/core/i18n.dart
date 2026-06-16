@@ -202,6 +202,7 @@ const Map<String, String> _en = {
   'Su Kesintisi': 'Water Outage',
   'Salgın Hastalık': 'Epidemic',
   'Aşırı Hava Olayları': 'Extreme Weather',
+  'Hazırlık ve acil durum rehberi': 'Preparedness and emergency guide',
   // --- Afet rehberi içerik öğeleri ---
   'Deprem çantası hazırla': 'Prepare an earthquake bag',
   'Eşyaları sabitle': 'Secure furniture and objects',

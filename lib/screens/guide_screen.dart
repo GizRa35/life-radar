@@ -327,9 +327,10 @@ class _GuideDetailScreen extends StatelessWidget {
                             fontWeight: FontWeight.w900,
                           ),
                         ),
-                        const Text(
-                          'Hazırlık ve acil durum rehberi',
-                          style: TextStyle(color: Colors.white70, fontSize: 13),
+                        Text(
+                          t('Hazırlık ve acil durum rehberi'),
+                          style: const TextStyle(
+                              color: Colors.white70, fontSize: 13),
                         ),
                       ],
                     ),
