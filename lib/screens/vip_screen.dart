@@ -9,6 +9,7 @@ import '../models/subscription.dart';
 import '../state/app_state.dart';
 import '../widgets/celebration_overlay.dart';
 import '../widgets/plan_comparison.dart';
+import '../widgets/subscription_legal.dart';
 import 'vip_hub_screen.dart';
 
 /// Fiyatı TL olarak gösterir. Mağaza TL döndürmezse (örn. test USD) TL yedeği.
@@ -279,6 +280,11 @@ class VipScreen extends StatelessWidget {
                         color: Colors.white.withOpacity(0.6), fontSize: 12),
                   ),
                 ],
+                const SizedBox(height: 14),
+                SubscriptionLegal(
+                  textColor: Colors.white.withOpacity(0.65),
+                  linkColor: _goldLight,
+                ),
               ],
             ),
           ),

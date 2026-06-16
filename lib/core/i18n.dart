@@ -514,6 +514,9 @@ const Map<String, String> _en = {
   'Bir plana dokunarak hemen başla': 'Tap a plan to start now',
   'En avantajlı': 'Best value',
   'Planını seç': 'Choose your plan',
+  'Kullanım Şartları': 'Terms of Use',
+  'Abonelik otomatik yenilenir; dönem bitiminden en az 24 saat önce iptal edilmezse aynı fiyattan yenilenir. Aboneliği istediğin zaman cihaz ayarlarından yönetebilir veya iptal edebilirsin.':
+      'Subscription auto-renews; unless cancelled at least 24 hours before the end of the period, it renews at the same price. You can manage or cancel anytime in your device settings.',
 
   // --- Form tasarımı (durum/ipucu kartları) ---
   'Çanta Hazırlık Durumu': 'Kit Readiness',

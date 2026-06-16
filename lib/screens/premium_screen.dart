@@ -9,6 +9,7 @@ import '../models/subscription.dart';
 import '../state/app_state.dart';
 import '../widgets/celebration_overlay.dart';
 import '../widgets/plan_comparison.dart';
+import '../widgets/subscription_legal.dart';
 import 'vip_screen.dart';
 
 /// Fiyatı TL olarak gösterir. Mağaza TL fiyatı döndürürse onu, aksi halde
@@ -191,6 +192,11 @@ class PremiumScreen extends StatelessWidget {
                         color: Colors.white.withOpacity(0.6), fontSize: 12),
                   ),
                 ],
+                const SizedBox(height: 14),
+                SubscriptionLegal(
+                  textColor: Colors.white.withOpacity(0.6),
+                  linkColor: LifeRadarColors.turquoise,
+                ),
               ],
             ),
           ),
