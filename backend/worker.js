@@ -65,6 +65,13 @@ export default {
       if (p === '/api/register-token') return await registerToken(request, env);
       if (p === '/api/send-push') return await sendPush(request, env);
       if (p === '/api/health') return json({ ok: true, service: 'Life Radar API' });
+      // AdMob doğrulaması: yetkili satıcı beyanı (app-ads.txt).
+      if (p === '/app-ads.txt') {
+        return new Response(
+          'google.com, pub-5548072655592841, DIRECT, f08c47fec0942fa0\n',
+          { headers: { 'Content-Type': 'text/plain; charset=utf-8', ...CORS } },
+        );
+      }
       // /api dışındaki her şey → Flutter web uygulaması (statik dosyalar + SPA fallback)
       if (env.ASSETS) return env.ASSETS.fetch(request);
       return json({ error: 'not found' }, 404);
