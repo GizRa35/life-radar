@@ -340,18 +340,15 @@ async function _fcmAccessToken(sa) {
   const r = await fetch(aud, {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: `grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=${jwt}`,
+    body: 'grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=' +
+        encodeURIComponent(jwt),
   });
-  const j = await r.json();
-  if (!j.access_token) throw new Error('oauth: ' + JSON.stringify(j));
-  return j.access_token;
+  const j = await r.json().catch(() => ({}));
+  return { token: j.access_token || null, raw: j, httpStatus: r.status };
 }
 
 // Tüm kayıtlı token'lara bildirim gönderir; geçersiz token'ları KV'den siler.
-async function _broadcast(env, title, text) {
-  const sa = JSON.parse(env.FCM_SERVICE_ACCOUNT);
-  const accessToken = await _fcmAccessToken(sa);
-  const projectId = sa.project_id;
+async function _broadcast(env, accessToken, projectId, title, text) {
   let cursor;
   let total = 0, sent = 0, removed = 0;
   const errors = [];
@@ -410,8 +407,18 @@ async function sendPush(request, env) {
   const text = String(body.body || '').trim().slice(0, 400);
   if (!text) return json({ error: 'no body' }, 400);
   try {
-    const res = await _broadcast(env, title, text);
-    return json({ ok: true, ...res });
+    const sa = JSON.parse(env.FCM_SERVICE_ACCOUNT);
+    const auth = await _fcmAccessToken(sa);
+    if (!auth.token) {
+      return json({
+        error: 'oauth failed',
+        oauthStatus: auth.httpStatus,
+        oauthError: auth.raw?.error || auth.raw?.error_description || auth.raw,
+        clientEmail: sa.client_email,
+      }, 502);
+    }
+    const res = await _broadcast(env, auth.token, sa.project_id, title, text);
+    return json({ ok: true, tokenLen: auth.token.length, ...res });
   } catch (e) {
     return json({ error: String(e) }, 502);
   }
