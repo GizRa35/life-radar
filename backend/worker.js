@@ -280,7 +280,7 @@ async function tts(request, env) {
   if (!text) return json({ error: 'no text' }, 400);
   // Google TTS tek istekte en fazla ~5000 bayt kabul eder.
   if (text.length > 4800) text = text.slice(0, 4800);
-  const voice = String(body.voice || 'tr-TR-Wavenet-E');
+  const voice = String(body.voice || 'tr-TR-Wavenet-C');
   const r = await fetch(
     `https://texttospeech.googleapis.com/v1/text:synthesize?key=${env.GOOGLE_TTS_KEY}`,
     {
