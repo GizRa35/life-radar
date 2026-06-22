@@ -63,6 +63,7 @@ export default {
       if (p === '/api/weather') return await weather(url);
       if (p === '/api/tts') return await tts(request, env);
       if (p === '/api/register-token') return await registerToken(request, env);
+      if (p === '/api/send-push') return await sendPush(request, env);
       if (p === '/api/health') return json({ ok: true, service: 'Life Radar API' });
       // /api dışındaki her şey → Flutter web uygulaması (statik dosyalar + SPA fallback)
       if (env.ASSETS) return env.ASSETS.fetch(request);
@@ -286,6 +287,122 @@ async function registerToken(request, env) {
     JSON.stringify({ platform, ts: Date.now() }),
   );
   return json({ ok: true });
+}
+
+// ---- Push gönderimi (FCM HTTP v1) ----
+// Service account JSON'dan (FCM_SERVICE_ACCOUNT secret) OAuth access token üretir
+// (JWT'yi RS256 ile imzalar), sonra tüm kayıtlı token'lara bildirim gönderir.
+function _b64url(input) {
+  const s = typeof input === 'string'
+    ? btoa(input)
+    : btoa(String.fromCharCode(...new Uint8Array(input)));
+  return s.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+function _pemToArrayBuffer(pem) {
+  const b64 = pem
+    .replace(/-----BEGIN PRIVATE KEY-----/, '')
+    .replace(/-----END PRIVATE KEY-----/, '')
+    .replace(/\s+/g, '');
+  const bin = atob(b64);
+  const buf = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) buf[i] = bin.charCodeAt(i);
+  return buf.buffer;
+}
+async function _fcmAccessToken(sa) {
+  const now = Math.floor(Date.now() / 1000);
+  const aud = sa.token_uri || 'https://oauth2.googleapis.com/token';
+  const header = _b64url(JSON.stringify({ alg: 'RS256', typ: 'JWT' }));
+  const claim = _b64url(JSON.stringify({
+    iss: sa.client_email,
+    scope: 'https://www.googleapis.com/auth/firebase.messaging',
+    aud,
+    iat: now,
+    exp: now + 3600,
+  }));
+  const unsigned = `${header}.${claim}`;
+  const key = await crypto.subtle.importKey(
+    'pkcs8',
+    _pemToArrayBuffer(sa.private_key),
+    { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' },
+    false,
+    ['sign'],
+  );
+  const sig = await crypto.subtle.sign(
+    'RSASSA-PKCS1-v1_5', key, new TextEncoder().encode(unsigned));
+  const jwt = `${unsigned}.${_b64url(sig)}`;
+  const r = await fetch(aud, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: `grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=${jwt}`,
+  });
+  const j = await r.json();
+  if (!j.access_token) throw new Error('oauth: ' + JSON.stringify(j));
+  return j.access_token;
+}
+
+// Tüm kayıtlı token'lara bildirim gönderir; geçersiz token'ları KV'den siler.
+async function _broadcast(env, title, text) {
+  const sa = JSON.parse(env.FCM_SERVICE_ACCOUNT);
+  const accessToken = await _fcmAccessToken(sa);
+  const projectId = sa.project_id;
+  let cursor;
+  let total = 0, sent = 0, removed = 0;
+  do {
+    const list = await env.TOKENS.list({ prefix: 'tok:', cursor });
+    cursor = list.list_complete ? null : list.cursor;
+    for (const k of list.keys) {
+      total++;
+      const token = k.name.slice(4);
+      const r = await fetch(
+        `https://fcm.googleapis.com/v1/projects/${projectId}/messages:send`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            message: { token, notification: { title, body: text } },
+          }),
+        });
+      if (r.ok) {
+        sent++;
+      } else {
+        const e = await r.json().catch(() => ({}));
+        const code = e?.error?.status;
+        if (code === 'NOT_FOUND' || code === 'UNREGISTERED' ||
+            code === 'INVALID_ARGUMENT') {
+          await env.TOKENS.delete(k.name);
+          removed++;
+        }
+      }
+    }
+  } while (cursor);
+  return { total, sent, removed };
+}
+
+// ---- /api/send-push ---- (korumalı: admin secret ile tüm cihazlara bildirim)
+// POST { title, body }  +  header "x-admin-secret" veya ?secret=...
+async function sendPush(request, env) {
+  const url = new URL(request.url);
+  const secret =
+    request.headers.get('x-admin-secret') || url.searchParams.get('secret');
+  if (!env.PUSH_ADMIN_SECRET || secret !== env.PUSH_ADMIN_SECRET) {
+    return json({ error: 'unauthorized' }, 401);
+  }
+  if (!env.FCM_SERVICE_ACCOUNT || !env.TOKENS) {
+    return json({ error: 'not configured' }, 503);
+  }
+  const body = await request.json().catch(() => ({}));
+  const title = String(body.title || 'Life Radar').slice(0, 120);
+  const text = String(body.body || '').trim().slice(0, 400);
+  if (!text) return json({ error: 'no body' }, 400);
+  try {
+    const res = await _broadcast(env, title, text);
+    return json({ ok: true, ...res });
+  } catch (e) {
+    return json({ error: String(e) }, 502);
+  }
 }
 
 // ---- /api/tts ---- (Google Cloud Text-to-Speech; anahtar Worker secret'ında)
