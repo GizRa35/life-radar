@@ -456,20 +456,31 @@ async function verifyPurchase(request, env) {
 }
 
 // Apple makbuz doğrulama (verifyReceipt; önce prod, 21007 ise sandbox).
+// valid: true=aktif, false=KESİN geçersiz/süresi dolmuş, null=kararsız (engelleme).
 async function _verifyApple(env, receipt) {
-  if (!env.APPLE_SHARED_SECRET) return { valid: false, detail: 'no apple secret' };
+  if (!env.APPLE_SHARED_SECRET) return { valid: null, detail: 'no apple secret' };
   const body = JSON.stringify({
     'receipt-data': receipt,
     password: env.APPLE_SHARED_SECRET,
     'exclude-old-transactions': true,
   });
-  let r = await fetch('https://buy.itunes.apple.com/verifyReceipt', { method: 'POST', body });
-  let j = await r.json().catch(() => ({}));
-  if (j.status === 21007) {
-    r = await fetch('https://sandbox.itunes.apple.com/verifyReceipt', { method: 'POST', body });
+  let r, j;
+  try {
+    r = await fetch('https://buy.itunes.apple.com/verifyReceipt', { method: 'POST', body });
     j = await r.json().catch(() => ({}));
+    if (j.status === 21007) {
+      r = await fetch('https://sandbox.itunes.apple.com/verifyReceipt', { method: 'POST', body });
+      j = await r.json().catch(() => ({}));
+    }
+  } catch (e) {
+    return { valid: null, detail: 'apple net ' + e };
   }
-  if (j.status !== 0) return { valid: false, detail: 'apple status ' + j.status };
+  // 21002/21003/21010 = makbuz bozuk/sahte → KESİN geçersiz. Diğer hatalar
+  // (21004 secret, 21005 sunucu vb.) → kararsız (engelleme).
+  if (j.status === 21002 || j.status === 21003 || j.status === 21010) {
+    return { valid: false, detail: 'apple invalid ' + j.status };
+  }
+  if (j.status !== 0) return { valid: null, detail: 'apple status ' + j.status };
   let exp = 0;
   for (const it of (j.latest_receipt_info || [])) {
     const e = parseInt(it.expires_date_ms || '0', 10);
@@ -479,17 +490,25 @@ async function _verifyApple(env, receipt) {
 }
 
 // Google Play abonelik doğrulama (Play Developer API, subscriptionsv2).
+// valid: true=aktif, false=KESİN geçersiz, null=kararsız/kurulum eksik (engelleme).
 async function _verifyGoogle(env, purchaseToken) {
-  if (!env.FCM_SERVICE_ACCOUNT) return { valid: false, detail: 'no service account' };
+  if (!env.FCM_SERVICE_ACCOUNT) return { valid: null, detail: 'no service account' };
   const sa = JSON.parse(env.FCM_SERVICE_ACCOUNT);
   const auth = await _fcmAccessToken(
     sa, 'https://www.googleapis.com/auth/androidpublisher');
-  if (!auth.token) return { valid: false, detail: 'google oauth fail' };
+  if (!auth.token) return { valid: null, detail: 'google oauth fail' };
   const pkg = 'com.liferadar.life_radar';
   const url = `https://androidpublisher.googleapis.com/androidpublisher/v3/applications/${pkg}/purchases/subscriptionsv2/tokens/${encodeURIComponent(purchaseToken)}`;
   const r = await fetch(url, { headers: { Authorization: `Bearer ${auth.token}` } });
   const j = await r.json().catch(() => ({}));
-  if (!r.ok) return { valid: false, detail: 'play ' + (j?.error?.status || r.status) };
+  // 401/403 = service account izni/kurulum eksik → kararsız (engelleme).
+  // 404/400 = token bulunamadı/sahte → KESİN geçersiz.
+  if (!r.ok) {
+    if (r.status === 404 || r.status === 400) {
+      return { valid: false, detail: 'play invalid ' + r.status };
+    }
+    return { valid: null, detail: 'play ' + (j?.error?.status || r.status) };
+  }
   const state = j.subscriptionState;
   const active = state === 'SUBSCRIPTION_STATE_ACTIVE' ||
       state === 'SUBSCRIPTION_STATE_IN_GRACE_PERIOD';

@@ -176,7 +176,10 @@ class PurchaseService {
           .timeout(const Duration(seconds: 12));
       if (res.statusCode != 200) return null; // karar yok
       final j = jsonDecode(res.body) as Map<String, dynamic>;
-      return j['valid'] == true; // true/false net karar
+      final v = j['valid'];
+      if (v == true) return true; // aktif abonelik
+      if (v == false) return false; // KESİN geçersiz → engelle
+      return null; // kararsız (kurulum/geçici) → engelleme
     } catch (_) {
       return null; // ağ hatası → engelleme
     }
