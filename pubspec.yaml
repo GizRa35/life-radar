@@ -19,7 +19,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.1+70
 
 environment:
-  sdk: '>=3.3.4 <4.0.0'
+  sdk: '>=3.5.0 <4.0.0'
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -56,8 +56,8 @@ dependencies:
   flutter_contacts: ^1.1.7+1  # acil durum kişisini rehberden seç
   google_mobile_ads: ^5.1.0   # AdMob reklamlar (ücretsiz/premium kademeli)
   app_tracking_transparency: ^2.0.6  # iOS ATT izni (kişiselleştirilmiş reklam + dolum)
-  firebase_core: ^2.32.0      # push için Firebase başlatma (Dart 3.3.4 uyumlu)
-  firebase_messaging: ^14.9.4 # FCM push bildirim (kritik gelişme uyarısı)
+  firebase_core: ^3.8.0       # push için Firebase başlatma (Xcode 26 uyumlu sürüm)
+  firebase_messaging: ^15.1.5 # FCM push bildirim — non-modular import sorunu yok
 
 dev_dependencies:
   flutter_test:

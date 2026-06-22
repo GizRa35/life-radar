@@ -21,7 +21,7 @@ workflows:
       groups:
         - appstore
         - firebase            # GOOGLE_SERVICE_INFO_PLIST (base64) burada tanımlı
-      flutter: 3.19.6
+      flutter: 3.24.5
       xcode: latest
       cocoapods: default
     scripts:
@@ -85,7 +85,7 @@ workflows:
         - liferadar_upload   # ← Codemagic UI'da bu isimle keystore yüklenecek
       groups:
         - firebase           # GOOGLE_SERVICES_JSON (base64) burada tanımlı
-      flutter: 3.19.6
+      flutter: 3.24.5
     cache:
       cache_paths:
         - $HOME/.pub-cache       # Flutter paketleri
