@@ -20,12 +20,18 @@ workflows:
     environment:
       groups:
         - appstore
+        - firebase            # GOOGLE_SERVICE_INFO_PLIST (base64) burada tanımlı
       flutter: 3.19.6
       xcode: latest
       cocoapods: default
     scripts:
       - name: Flutter paketlerini al
         script: flutter pub get
+      - name: GoogleService-Info.plist enjekte et (push için)
+        script: |
+          # Public repo: plist commit edilmez, Codemagic env'inden çözülür.
+          echo "$GOOGLE_SERVICE_INFO_PLIST" | openssl base64 -d -A > ios/Runner/GoogleService-Info.plist
+          echo "plist yazildi: $(wc -c < ios/Runner/GoogleService-Info.plist) bayt"
       - name: CocoaPods kurulumu
         script: find . -name "Podfile" -execdir pod install \;
       - name: İmzalama (kalıcı anahtarla sertifika+profil oluştur ve uygula)
@@ -77,6 +83,8 @@ workflows:
     environment:
       android_signing:
         - liferadar_upload   # ← Codemagic UI'da bu isimle keystore yüklenecek
+      groups:
+        - firebase           # GOOGLE_SERVICES_JSON (base64) burada tanımlı
       flutter: 3.19.6
     cache:
       cache_paths:
@@ -95,6 +103,11 @@ workflows:
           EOF
       - name: Flutter paketlerini al
         script: flutter pub get
+      - name: google-services.json enjekte et (push için)
+        script: |
+          # Public repo: json commit edilmez, Codemagic env'inden çözülür.
+          echo "$GOOGLE_SERVICES_JSON" | openssl base64 -d -A > android/app/google-services.json
+          echo "json yazildi: $(wc -c < android/app/google-services.json) bayt"
       - name: AAB derle (Google Play, imzalı)
         script: |
           # Benzersiz, artan versionCode (Unix zaman damgası) →
