@@ -354,6 +354,7 @@ async function _broadcast(env, title, text) {
   const projectId = sa.project_id;
   let cursor;
   let total = 0, sent = 0, removed = 0;
+  const errors = [];
   do {
     const list = await env.TOKENS.list({ prefix: 'tok:', cursor });
     cursor = list.list_complete ? null : list.cursor;
@@ -377,6 +378,10 @@ async function _broadcast(env, title, text) {
       } else {
         const e = await r.json().catch(() => ({}));
         const code = e?.error?.status;
+        // Hata teşhisi için ilk birkaç hatayı topla.
+        if (errors.length < 3) {
+          errors.push({ status: code, message: e?.error?.message || r.status });
+        }
         if (code === 'NOT_FOUND' || code === 'UNREGISTERED' ||
             code === 'INVALID_ARGUMENT') {
           await env.TOKENS.delete(k.name);
@@ -385,7 +390,7 @@ async function _broadcast(env, title, text) {
       }
     }
   } while (cursor);
-  return { total, sent, removed };
+  return { total, sent, removed, errors };
 }
 
 // ---- /api/send-push ---- (korumalı: admin secret ile tüm cihazlara bildirim)
