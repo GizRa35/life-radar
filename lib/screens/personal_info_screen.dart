@@ -150,9 +150,9 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
             padding: const EdgeInsets.only(bottom: 12),
             child: DropdownButtonFormField<String>(
               value: _language,
-              decoration: const InputDecoration(
-                prefixIcon: Icon(Icons.translate_outlined),
-                helperText: 'Yabancı kaynaklı haberler bu dile çevrilir',
+              decoration: InputDecoration(
+                prefixIcon: const Icon(Icons.translate_outlined),
+                helperText: t('Yabancı kaynaklı haberler bu dile çevrilir'),
               ),
               items: const [
                 DropdownMenuItem(value: 'tr', child: Text('Türkçe')),

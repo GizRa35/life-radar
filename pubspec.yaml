@@ -54,6 +54,7 @@ dependencies:
   speech_to_text: ^6.6.2      # sesli soru sorma (mikrofon)
   flutter_contacts: ^1.1.7+1  # acil durum kişisini rehberden seç
   google_mobile_ads: ^5.1.0   # AdMob reklamlar (ücretsiz/premium kademeli)
+  app_tracking_transparency: ^2.0.6  # iOS ATT izni (kişiselleştirilmiş reklam + dolum)
 
 dev_dependencies:
   flutter_test:

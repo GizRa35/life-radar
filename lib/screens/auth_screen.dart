@@ -336,8 +336,8 @@ class _AuthScreenState extends State<AuthScreen> {
                             decoration: InputDecoration(
                               labelText: t('Haber Dili'),
                               prefixIcon: const Icon(Icons.translate_outlined),
-                              helperText:
-                                  'Yabancı kaynaklı haberler bu dile çevrilir',
+                              helperText: t(
+                                  'Yabancı kaynaklı haberler bu dile çevrilir'),
                             ),
                             items: const [
                               DropdownMenuItem(

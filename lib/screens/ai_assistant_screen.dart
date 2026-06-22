@@ -55,8 +55,9 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
     if (!_speechReady) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text('Mikrofon kullanılamıyor veya izin verilmedi.')),
+          SnackBar(
+              content:
+                  Text(t('Mikrofon kullanılamıyor veya izin verilmedi.'))),
         );
       }
       return;

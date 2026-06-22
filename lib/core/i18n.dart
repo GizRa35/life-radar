@@ -903,6 +903,12 @@ const Map<String, String> _en = {
   'Sınırsız asistan, kişisel risk analizi, aile koruma merkezi ve reklamsız kullanım. VIP en üst düzey koruma sunar.':
       'Unlimited assistant, personal risk analysis, family protection center and ad-free use. VIP offers top-tier protection.',
 
+  // --- Çeşitli (snackbar / yardımcı metin) ---
+  'Mikrofon kullanılamıyor veya izin verilmedi.':
+      'Microphone is unavailable or permission was not granted.',
+  'Yabancı kaynaklı haberler bu dile çevrilir':
+      'Foreign-source news is translated into this language',
+
   // --- Karşılama (onboarding_screen) ---
   'Ne oluyor?': 'What is happening?',
   'Dünyadan ve Türkiye\'den güvenilir kaynakların haberlerini tek yerde, aynı konu tek seferde, sade bir akışta gör.':

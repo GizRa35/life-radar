@@ -1,4 +1,6 @@
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:app_tracking_transparency/app_tracking_transparency.dart';
+import 'package:flutter/foundation.dart'
+    show defaultTargetPlatform, kIsWeb, TargetPlatform;
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import '../core/ads_config.dart';
@@ -16,11 +18,29 @@ class AdsService {
   Future<void> init() async {
     if (kIsWeb) return;
     try {
+      // iOS: reklam motorunu başlatmadan ÖNCE ATT iznini iste. İzin verilirse
+      // kişiselleştirilmiş reklam + daha yüksek dolum; reddedilse de reklam
+      // çıkar (kişiselleştirilmez). SKAdNetwork Info.plist'te tanımlı.
+      await _requestTrackingIfNeeded();
       await MobileAds.instance.initialize();
       _ready = true;
       _loadInterstitial();
     } catch (_) {
       _ready = false;
+    }
+  }
+
+  Future<void> _requestTrackingIfNeeded() async {
+    if (defaultTargetPlatform != TargetPlatform.iOS) return;
+    try {
+      final status =
+          await AppTrackingTransparency.trackingAuthorizationStatus;
+      if (status == TrackingStatus.notDetermined) {
+        // iOS sistem izin penceresini gösterir (Info.plist metniyle).
+        await AppTrackingTransparency.requestTrackingAuthorization();
+      }
+    } catch (_) {
+      // İzin alınamazsa reklamlar yine non-personalized olarak gösterilir.
     }
   }
 

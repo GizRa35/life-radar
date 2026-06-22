@@ -880,6 +880,9 @@ class AppState extends ChangeNotifier {
     return 'belirtilmedi';
   }
 
+  /// Hazırlık önerilerinde güncel fiyat anchor'u için içinde bulunulan yıl.
+  String get _priceYear => DateTime.now().year.toString();
+
   Future<String> _vip(String system, String user) =>
       _ai.custom(apiKey: _apiKey, system: system, user: user);
 
@@ -941,11 +944,15 @@ class AppState extends ChangeNotifier {
       '**Evi Güvenceye Al**; ekonomi haberinde **Bütçe & Tasarruf**, **Döviz/Altın**; '
       'salgın haberinde **Hijyen & Sağlık Stoğu**).\n'
       '- Her bölümde 2-4 madde; her madde "- " ile başlasın, miktar net olsun, '
-      've mümkünse sonunda yaklaşık fiyatı parantezde ₺ ile belirt '
-      '(örn. "- 48 L şişe su (~₺350)").\n'
+      've mümkünse sonunda yaklaşık fiyatı parantezde ₺ ile belirt.\n'
+      'FİYATLANDIRMA KURALI (çok önemli): Fiyatları $_priceYear yılının GÜNCEL '
+      'Türkiye perakende piyasasına göre ver. Türkiye\'de yüksek enflasyon var; '
+      'fiyatlar her yıl ciddi artar, bu yüzden ESKİ/DÜŞÜK fiyat verme. Örneğin '
+      '6\'lı 5 litrelik su (30 L) market rafında bugün yaklaşık ₺250-₺400 '
+      'bandındadır; tek tek ürünleri buna oranla güncel tahminle.\n'
       '- EN SONDA tek satır tahmini toplam bütçe ver, tam olarak şu biçimde:\n'
       '**Tahmini Bütçe:** ₺X – ₺Y\n'
-      'Fiyatlar Türkiye için kaba/yaklaşık tahmindir.',
+      'Fiyatlar $_priceYear Türkiye perakendesi için kaba/yaklaşık tahmindir.',
       'HABER\nBaşlık: ${event.title}\nKategori: ${event.category.label}\n'
       'Risk: ${event.risk.label}\nÖzet: ${event.summary}'
       '${articleExcerpt.isEmpty ? '' : '\n\nHaber metni (özet için):\n$articleExcerpt'}',
@@ -959,7 +966,9 @@ class AppState extends ChangeNotifier {
       'hane halkı sayısına göre, önümüzdeki dönem için SOMUT ve MİKTARLI '
       'hazırlık önerileri ver (gıda, su, enerji, sağlık, finans vb. — hangi '
       'konular öne çıkıyorsa). Miktarları haneye ölçekle (örn. "$_householdDesc '
-      'kişi için ..."). Kehanet yok, panik yok, gerçekçi ol. Hane: $_householdDesc kişi. '
+      'kişi için ..."). Fiyat verirsen $_priceYear yılının GÜNCEL Türkiye perakende '
+      'fiyatlarını kullan; enflasyon yüksek, eski/düşük fiyat verme. '
+      'Kehanet yok, panik yok, gerçekçi ol. Hane: $_householdDesc kişi. '
       'Bağlam: $_ctxLine',
       'Güncel başlıklar:\n$_topHeadlines',
     );

@@ -31,7 +31,7 @@ class EmergencyCallScreen extends StatelessWidget {
     } catch (_) {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Arama başlatılamadı.')),
+        SnackBar(content: Text(t('Arama başlatılamadı.'))),
       );
     }
   }
