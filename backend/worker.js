@@ -61,6 +61,7 @@ export default {
       if (p === '/api/gdelt') return await gdelt(url);
       if (p === '/api/rates') return await rates();
       if (p === '/api/weather') return await weather(url);
+      if (p === '/api/tts') return await tts(request, env);
       if (p === '/api/health') return json({ ok: true, service: 'Life Radar API' });
       // /api dışındaki her şey → Flutter web uygulaması (statik dosyalar + SPA fallback)
       if (env.ASSETS) return env.ASSETS.fetch(request);
@@ -267,6 +268,45 @@ async function rates() {
     eur: round2(eur),
     gold: round2(gold),
     currency: 'TRY',
+  });
+}
+
+// ---- /api/tts ---- (Google Cloud Text-to-Speech; anahtar Worker secret'ında)
+// POST { text, voice? } → audio/mpeg (MP3). Doğal Wavenet Türkçe ses.
+async function tts(request, env) {
+  if (!env.GOOGLE_TTS_KEY) return json({ error: 'tts not configured' }, 503);
+  const body = await request.json().catch(() => ({}));
+  let text = String(body.text || '').trim();
+  if (!text) return json({ error: 'no text' }, 400);
+  // Google TTS tek istekte en fazla ~5000 bayt kabul eder.
+  if (text.length > 4800) text = text.slice(0, 4800);
+  const voice = String(body.voice || 'tr-TR-Wavenet-E');
+  const r = await fetch(
+    `https://texttospeech.googleapis.com/v1/text:synthesize?key=${env.GOOGLE_TTS_KEY}`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        input: { text },
+        voice: { languageCode: 'tr-TR', name: voice },
+        audioConfig: { audioEncoding: 'MP3', speakingRate: 1.0, pitch: 0.0 },
+      }),
+    });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok || !j.audioContent) {
+    return json({ error: 'tts failed', detail: j?.error?.message || r.status }, 502);
+  }
+  // base64 → ikili MP3
+  const bin = atob(j.audioContent);
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  return new Response(bytes, {
+    status: 200,
+    headers: {
+      'Content-Type': 'audio/mpeg',
+      'Cache-Control': 'public, max-age=86400',
+      ...CORS,
+    },
   });
 }
 

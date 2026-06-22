@@ -1,15 +1,73 @@
-import 'package:flutter_tts/flutter_tts.dart';
+import 'dart:convert';
 
-/// Web dışı (Android/iOS/masaüstü) sesli okuma — flutter_tts ile.
-/// Web'de bu dosya yerine tts_web.dart (tarayıcı sesi) kullanılır.
+import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter_tts/flutter_tts.dart';
+import 'package:http/http.dart' as http;
+
+import '../../core/api_config.dart';
+
+/// Web dışı (Android/iOS/masaüstü) sesli okuma.
+///
+/// 1) ÖNCE bulut TTS (Google Cloud Text-to-Speech, worker üzerinden) denenir —
+///    doğal Wavenet Türkçe ses.
+/// 2) Ağ/anahtar yoksa veya hata olursa cihazın kendi sesine (flutter_tts) düşer.
 final FlutterTts _tts = FlutterTts();
-bool _configured = false;
+final AudioPlayer _player = AudioPlayer();
+bool _deviceConfigured = false;
+bool _playerConfigured = false;
+
+Future<void> _ensurePlayerConfigured() async {
+  if (_playerConfigured) return;
+  _playerConfigured = true;
+  // iOS: sessiz modda bile çalsın, hoparlöre yönlensin.
+  try {
+    await AudioPlayer.global.setAudioContext(
+      AudioContext(
+        iOS: AudioContextIOS(
+          category: AVAudioSessionCategory.playback,
+          options: const {
+            AVAudioSessionOptions.mixWithOthers,
+            AVAudioSessionOptions.defaultToSpeaker,
+          },
+        ),
+        android: const AudioContextAndroid(
+          contentType: AndroidContentType.speech,
+          usageType: AndroidUsageType.media,
+        ),
+      ),
+    );
+  } catch (_) {}
+}
+
+/// Buluttan doğal sesli MP3 al ve çal. Başarılıysa true döner.
+Future<bool> _speakCloud(String text) async {
+  // Lokal geliştirme adresinde TTS yok; sadece gerçek backend'de dene.
+  if (ApiConfig.base.contains('localhost')) return false;
+  try {
+    await _ensurePlayerConfigured();
+    final res = await http
+        .post(
+          Uri.parse('${ApiConfig.base}/api/tts'),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({'text': text}),
+        )
+        .timeout(const Duration(seconds: 12));
+    final ct = (res.headers['content-type'] ?? '').toLowerCase();
+    if (res.statusCode != 200 || !ct.contains('audio')) return false;
+    await _tts.stop();
+    await _player.stop();
+    await _player.play(BytesSource(res.bodyBytes, mimeType: 'audio/mpeg'));
+    return true;
+  } catch (_) {
+    return false;
+  }
+}
 
 /// iOS'ta sessiz modda bile ses çıkması için ses oturumunu hazırlar ve
-/// mevcut en kaliteli Türkçe sesi seçer.
-Future<void> _ensureConfigured() async {
-  if (_configured) return;
-  _configured = true;
+/// mevcut en kaliteli (robotik olmayan) Türkçe cihaz sesini seçer.
+Future<void> _ensureDeviceConfigured() async {
+  if (_deviceConfigured) return;
+  _deviceConfigured = true;
   try {
     await _tts.setSharedInstance(true);
     await _tts.setIosAudioCategory(
@@ -53,19 +111,32 @@ Future<void> _ensureConfigured() async {
   } catch (_) {}
 }
 
-void speakText(String text) async {
-  if (text.trim().isEmpty) return;
+Future<void> _speakDevice(String text) async {
   try {
-    await _ensureConfigured();
+    await _ensureDeviceConfigured();
     await _tts.setLanguage('tr-TR');
     await _tts.setSpeechRate(0.48); // doğal tempo
-    await _tts.setPitch(1.0); // 1.05 fazla tizdi; 1.0 daha doğal
+    await _tts.setPitch(1.0);
     await _tts.setVolume(1.0);
     await _tts.stop();
     await _tts.speak(text);
   } catch (_) {}
 }
 
+void speakText(String text) async {
+  if (text.trim().isEmpty) return;
+  // 1) Önce bulut (doğal ses).
+  final ok = await _speakCloud(text);
+  if (ok) return;
+  // 2) Olmadıysa cihaz sesi.
+  await _speakDevice(text);
+}
+
 void stopSpeak() {
-  _tts.stop();
+  try {
+    _player.stop();
+  } catch (_) {}
+  try {
+    _tts.stop();
+  } catch (_) {}
 }
