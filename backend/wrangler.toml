@@ -16,9 +16,7 @@ not_found_handling = "single-page-application"
 #   wrangler secret put GOOGLE_TTS_KEY      (sesli okuma)
 #   wrangler secret put FCM_SERVICE_ACCOUNT (push gönderimi — Aşama 2)
 
-# Push token'ları için KV. Oluşturma:
-#   npx wrangler kv namespace create TOKENS
-# Çıkan id'yi aşağıya yapıştır ve yorumu kaldır:
-# [[kv_namespaces]]
-# binding = "TOKENS"
-# id = "BURAYA_KV_ID"
+# Push token'ları için KV.
+[[kv_namespaces]]
+binding = "TOKENS"
+id = "e6b6d0a5f969435a822705946a3a11c3"
