@@ -410,15 +410,10 @@ async function sendPush(request, env) {
     const sa = JSON.parse(env.FCM_SERVICE_ACCOUNT);
     const auth = await _fcmAccessToken(sa);
     if (!auth.token) {
-      return json({
-        error: 'oauth failed',
-        oauthStatus: auth.httpStatus,
-        oauthError: auth.raw?.error || auth.raw?.error_description || auth.raw,
-        clientEmail: sa.client_email,
-      }, 502);
+      return json({ error: 'oauth failed', oauthStatus: auth.httpStatus }, 502);
     }
     const res = await _broadcast(env, auth.token, sa.project_id, title, text);
-    return json({ ok: true, tokenLen: auth.token.length, ...res });
+    return json({ ok: true, ...res });
   } catch (e) {
     return json({ error: String(e) }, 502);
   }
