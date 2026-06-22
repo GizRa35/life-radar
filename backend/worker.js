@@ -62,6 +62,7 @@ export default {
       if (p === '/api/rates') return await rates();
       if (p === '/api/weather') return await weather(url);
       if (p === '/api/tts') return await tts(request, env);
+      if (p === '/api/register-token') return await registerToken(request, env);
       if (p === '/api/health') return json({ ok: true, service: 'Life Radar API' });
       // /api dışındaki her şey → Flutter web uygulaması (statik dosyalar + SPA fallback)
       if (env.ASSETS) return env.ASSETS.fetch(request);
@@ -269,6 +270,22 @@ async function rates() {
     gold: round2(gold),
     currency: 'TRY',
   });
+}
+
+// ---- /api/register-token ---- (FCM cihaz token'ını KV'ye kaydet)
+// POST { token, platform } → KV'de "tok:<token>" anahtarıyla saklanır.
+// Kritik gelişmede bu token'lara push gönderilir (gönderim: sendPush, Aşama 2).
+async function registerToken(request, env) {
+  if (!env.TOKENS) return json({ error: 'kv not configured' }, 503);
+  const body = await request.json().catch(() => ({}));
+  const token = String(body.token || '').trim();
+  if (!token) return json({ error: 'no token' }, 400);
+  const platform = String(body.platform || 'unknown');
+  await env.TOKENS.put(
+    `tok:${token}`,
+    JSON.stringify({ platform, ts: Date.now() }),
+  );
+  return json({ ok: true });
 }
 
 // ---- /api/tts ---- (Google Cloud Text-to-Speech; anahtar Worker secret'ında)

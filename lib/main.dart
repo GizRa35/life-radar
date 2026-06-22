@@ -7,6 +7,7 @@ import 'core/theme.dart';
 import 'screens/auth_screen.dart';
 import 'screens/onboarding_screen.dart';
 import 'services/local_store.dart';
+import 'services/push_service.dart';
 import 'state/app_state.dart';
 import 'widgets/main_scaffold.dart';
 
@@ -15,6 +16,7 @@ Future<void> main() async {
   await lsInit(); // kalıcı depolamayı belleğe yükle (mobil/masaüstü)
   await initializeDateFormatting('tr', null);
   await initializeDateFormatting('en', null);
+  await initPush(); // push bildirim (Firebase + FCM token kaydı)
   runApp(const LifeRadarApp());
 }
 
