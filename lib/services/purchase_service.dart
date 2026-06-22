@@ -1,8 +1,12 @@
 import 'dart:async';
+import 'dart:convert';
 
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart'
+    show defaultTargetPlatform, kIsWeb, TargetPlatform;
+import 'package:http/http.dart' as http;
 import 'package:in_app_purchase/in_app_purchase.dart';
 
+import '../core/api_config.dart';
 import '../models/subscription.dart';
 
 /// App Store / Google Play abonelik satın alma servisi (Premium / VIP).
@@ -36,12 +40,18 @@ class PurchaseService {
   /// Bilgi/hata mesajı (UI'da göstermek için).
   void Function(String message)? onMessage;
 
+  /// Mevcut kullanıcı kimliği (e-posta) — sunucu doğrulamasında kim abone
+  /// bilgisini eşlemek için. app_state güncel e-postayı döndürür.
+  String Function()? identity;
+
   Future<void> init({
     required void Function(SubscriptionTier, bool) onTier,
     void Function(String)? onMsg,
+    String Function()? userIdentity,
   }) async {
     onTierUnlocked = onTier;
     onMessage = onMsg;
+    identity = userIdentity;
     if (kIsWeb) return; // IAP yalnızca mobilde
     try {
       available = await _iap.isAvailable();
@@ -109,14 +119,7 @@ class PurchaseService {
       switch (pd.status) {
         case PurchaseStatus.purchased:
         case PurchaseStatus.restored:
-          final tier = (pd.productID == vipMonthly || pd.productID == vipYearly)
-              ? SubscriptionTier.vip
-              : SubscriptionTier.premium;
-          final isNew = pd.status == PurchaseStatus.purchased;
-          onTierUnlocked?.call(tier, isNew);
-          if (isNew) {
-            onMessage?.call('Aboneliğin etkinleştirildi. Teşekkürler!');
-          }
+          _handleValidPurchase(pd);
           break;
         case PurchaseStatus.error:
           onMessage?.call('Satın alma başarısız oldu.');
@@ -129,6 +132,53 @@ class PurchaseService {
       if (pd.pendingCompletePurchase) {
         _iap.completePurchase(pd);
       }
+    }
+  }
+
+  Future<void> _handleValidPurchase(PurchaseDetails pd) async {
+    final tier = (pd.productID == vipMonthly || pd.productID == vipYearly)
+        ? SubscriptionTier.vip
+        : SubscriptionTier.premium;
+    final isNew = pd.status == PurchaseStatus.purchased;
+    // Sunucu doğrulaması: makbuz/token'ı worker'a gönder. Açıkça GEÇERSİZ
+    // dönerse (sahte) tier'ı AÇMA. Sunucuya ulaşılamazsa ödeme yapan
+    // kullanıcıyı mağdur etmemek için yine açılır (sunucu sonradan teyit eder).
+    final verdict = await _verifyOnServer(pd);
+    if (verdict == false) {
+      onMessage?.call('Satın alma doğrulanamadı. Destekle iletişime geç.');
+      return;
+    }
+    onTierUnlocked?.call(tier, isNew);
+    if (isNew) {
+      onMessage?.call('Aboneliğin etkinleştirildi. Teşekkürler!');
+    }
+  }
+
+  /// Worker'a satın almayı doğrulat. true=geçerli, false=GEÇERSİZ (sahte),
+  /// null=sunucuya ulaşılamadı/karar yok (tier yine açılır).
+  Future<bool?> _verifyOnServer(PurchaseDetails pd) async {
+    if (ApiConfig.base.contains('localhost')) return null;
+    try {
+      final platform =
+          defaultTargetPlatform == TargetPlatform.iOS ? 'ios' : 'android';
+      final res = await http
+          .post(
+            Uri.parse('${ApiConfig.base}/api/verify-purchase'),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({
+              'platform': platform,
+              'productId': pd.productID,
+              'verificationData': pd.verificationData.serverVerificationData,
+              'userId': identity?.call() ?? 'anon',
+              'email': identity?.call() ?? '',
+            }),
+          )
+          .timeout(const Duration(seconds: 12));
+      if (res.statusCode != 200) return null; // karar yok
+      final j = jsonDecode(res.body) as Map<String, dynamic>;
+      return j['valid'] == true; // true/false net karar
+    } catch (_) {
+      return null; // ağ hatası → engelleme
     }
   }
 

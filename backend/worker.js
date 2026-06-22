@@ -64,6 +64,8 @@ export default {
       if (p === '/api/tts') return await tts(request, env);
       if (p === '/api/register-token') return await registerToken(request, env);
       if (p === '/api/send-push') return await sendPush(request, env);
+      if (p === '/api/verify-purchase') return await verifyPurchase(request, env);
+      if (p === '/api/subscribers') return await subscribers(request, env);
       if (p === '/api/health') return json({ ok: true, service: 'Life Radar API' });
       // AdMob doğrulaması: yetkili satıcı beyanı (app-ads.txt).
       if (p === '/app-ads.txt') {
@@ -315,13 +317,14 @@ function _pemToArrayBuffer(pem) {
   for (let i = 0; i < bin.length; i++) buf[i] = bin.charCodeAt(i);
   return buf.buffer;
 }
-async function _fcmAccessToken(sa) {
+async function _fcmAccessToken(
+    sa, scope = 'https://www.googleapis.com/auth/firebase.messaging') {
   const now = Math.floor(Date.now() / 1000);
   const aud = sa.token_uri || 'https://oauth2.googleapis.com/token';
   const header = _b64url(JSON.stringify({ alg: 'RS256', typ: 'JWT' }));
   const claim = _b64url(JSON.stringify({
     iss: sa.client_email,
-    scope: 'https://www.googleapis.com/auth/firebase.messaging',
+    scope,
     aud,
     iat: now,
     exp: now + 3600,
@@ -417,6 +420,105 @@ async function sendPush(request, env) {
   } catch (e) {
     return json({ error: String(e) }, 502);
   }
+}
+
+// ---- /api/verify-purchase ---- (Apple/Google satın alma doğrulama)
+// POST { platform:'ios'|'android', productId, verificationData, userId, email }
+// Geçerliyse KV'ye "sub:<userId>" yazar; client tier'ı bu onaydan sonra açar.
+async function verifyPurchase(request, env) {
+  const b = await request.json().catch(() => ({}));
+  const platform = String(b.platform || '');
+  const productId = String(b.productId || '');
+  const vdata = String(b.verificationData || '');
+  const userId = String(b.userId || 'anon');
+  const email = String(b.email || '');
+  if (!vdata || !productId) return json({ valid: false, error: 'missing data' }, 400);
+  const tier = productId.includes('vip') ? 'vip' : 'premium';
+  let valid = false, expiresMs = null, detail = null;
+  try {
+    if (platform === 'ios') {
+      const r = await _verifyApple(env, vdata);
+      valid = r.valid; expiresMs = r.expiresMs; detail = r.detail;
+    } else if (platform === 'android') {
+      const r = await _verifyGoogle(env, vdata);
+      valid = r.valid; expiresMs = r.expiresMs; detail = r.detail;
+    } else {
+      return json({ valid: false, error: 'bad platform' }, 400);
+    }
+  } catch (e) {
+    return json({ valid: false, error: String(e) }, 502);
+  }
+  if (valid && env.TOKENS) {
+    await env.TOKENS.put(`sub:${userId}`, JSON.stringify(
+      { tier, productId, platform, email, expiresMs, ts: Date.now() }));
+  }
+  return json({ valid, tier, expiresMs, detail });
+}
+
+// Apple makbuz doğrulama (verifyReceipt; önce prod, 21007 ise sandbox).
+async function _verifyApple(env, receipt) {
+  if (!env.APPLE_SHARED_SECRET) return { valid: false, detail: 'no apple secret' };
+  const body = JSON.stringify({
+    'receipt-data': receipt,
+    password: env.APPLE_SHARED_SECRET,
+    'exclude-old-transactions': true,
+  });
+  let r = await fetch('https://buy.itunes.apple.com/verifyReceipt', { method: 'POST', body });
+  let j = await r.json().catch(() => ({}));
+  if (j.status === 21007) {
+    r = await fetch('https://sandbox.itunes.apple.com/verifyReceipt', { method: 'POST', body });
+    j = await r.json().catch(() => ({}));
+  }
+  if (j.status !== 0) return { valid: false, detail: 'apple status ' + j.status };
+  let exp = 0;
+  for (const it of (j.latest_receipt_info || [])) {
+    const e = parseInt(it.expires_date_ms || '0', 10);
+    if (e > exp) exp = e;
+  }
+  return { valid: exp > Date.now(), expiresMs: exp || null, detail: 'apple ok' };
+}
+
+// Google Play abonelik doğrulama (Play Developer API, subscriptionsv2).
+async function _verifyGoogle(env, purchaseToken) {
+  if (!env.FCM_SERVICE_ACCOUNT) return { valid: false, detail: 'no service account' };
+  const sa = JSON.parse(env.FCM_SERVICE_ACCOUNT);
+  const auth = await _fcmAccessToken(
+    sa, 'https://www.googleapis.com/auth/androidpublisher');
+  if (!auth.token) return { valid: false, detail: 'google oauth fail' };
+  const pkg = 'com.liferadar.life_radar';
+  const url = `https://androidpublisher.googleapis.com/androidpublisher/v3/applications/${pkg}/purchases/subscriptionsv2/tokens/${encodeURIComponent(purchaseToken)}`;
+  const r = await fetch(url, { headers: { Authorization: `Bearer ${auth.token}` } });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) return { valid: false, detail: 'play ' + (j?.error?.status || r.status) };
+  const state = j.subscriptionState;
+  const active = state === 'SUBSCRIPTION_STATE_ACTIVE' ||
+      state === 'SUBSCRIPTION_STATE_IN_GRACE_PERIOD';
+  let exp = null;
+  const line = (j.lineItems || [])[0];
+  if (line?.expiryTime) exp = Date.parse(line.expiryTime);
+  return { valid: active, expiresMs: exp, detail: state || 'unknown' };
+}
+
+// ---- /api/subscribers ---- (korumalı: kim abone, KV'den liste)
+async function subscribers(request, env) {
+  const url = new URL(request.url);
+  const secret =
+    request.headers.get('x-admin-secret') || url.searchParams.get('secret');
+  if (!env.PUSH_ADMIN_SECRET || secret !== env.PUSH_ADMIN_SECRET) {
+    return json({ error: 'unauthorized' }, 401);
+  }
+  if (!env.TOKENS) return json({ error: 'kv not configured' }, 503);
+  const out = [];
+  let cursor;
+  do {
+    const list = await env.TOKENS.list({ prefix: 'sub:', cursor });
+    cursor = list.list_complete ? null : list.cursor;
+    for (const k of list.keys) {
+      const v = await env.TOKENS.get(k.name);
+      out.push({ userId: k.name.slice(4), ...(JSON.parse(v || '{}')) });
+    }
+  } while (cursor);
+  return json({ count: out.length, subscribers: out });
 }
 
 // ---- /api/tts ---- (Google Cloud Text-to-Speech; anahtar Worker secret'ında)

@@ -1182,6 +1182,7 @@ class AppState extends ChangeNotifier {
         _purchaseMessage = m;
         notifyListeners();
       },
+      userIdentity: () => _authEmail ?? '',
     );
   }
 
