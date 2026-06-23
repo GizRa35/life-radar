@@ -45,41 +45,67 @@ struct Provider: TimelineProvider {
 struct RiskWidgetEntryView: View {
     var entry: RiskEntry
 
+    private var levelColor: Color {
+        if entry.score >= 67 { return Color(red: 0.91, green: 0.30, blue: 0.24) } // kırmızı
+        if entry.score >= 34 { return Color(red: 0.96, green: 0.65, blue: 0.14) } // turuncu
+        return Color(red: 0.18, green: 0.80, blue: 0.44) // yeşil
+    }
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: 7) {
+            // Üst: marka + hava
             HStack {
                 Text("LIFE RADAR")
-                    .font(.system(size: 11, weight: .bold))
+                    .font(.system(size: 11, weight: .heavy))
+                    .tracking(1.0)
                     .foregroundColor(kTurquoise)
                 Spacer()
                 Text(entry.weather)
-                    .font(.system(size: 11))
-                    .foregroundColor(.gray)
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundColor(.white.opacity(0.65))
             }
-            HStack(alignment: .firstTextBaseline, spacing: 8) {
+
+            // Risk puanı + seviye (renkli)
+            HStack(alignment: .lastTextBaseline, spacing: 10) {
                 Text("\(entry.score)")
-                    .font(.system(size: 34, weight: .bold))
-                    .foregroundColor(.white)
-                VStack(alignment: .leading, spacing: 0) {
-                    Text("Risk Puanı")
-                        .font(.system(size: 10))
-                        .foregroundColor(.gray)
+                    .font(.system(size: 40, weight: .heavy, design: .rounded))
+                    .foregroundColor(levelColor)
+                VStack(alignment: .leading, spacing: 1) {
+                    Text("RİSK PUANI")
+                        .font(.system(size: 9, weight: .semibold))
+                        .tracking(0.5)
+                        .foregroundColor(.white.opacity(0.5))
                     Text(entry.label)
-                        .font(.system(size: 14, weight: .bold))
-                        .foregroundColor(kTurquoise)
+                        .font(.system(size: 15, weight: .bold))
+                        .foregroundColor(levelColor)
                 }
+                Spacer()
             }
-            Text("🌍 " + entry.quake)
-                .font(.system(size: 11))
-                .foregroundColor(Color(white: 0.9))
-                .lineLimit(1)
-            Text("⚠️ " + entry.alert)
-                .font(.system(size: 10))
-                .foregroundColor(.gray)
-                .lineLimit(2)
+
+            Rectangle()
+                .fill(Color.white.opacity(0.12))
+                .frame(height: 1)
+
+            // Son deprem + günün uyarısı
+            HStack(alignment: .top, spacing: 5) {
+                Text("🌍")
+                    .font(.system(size: 11))
+                Text(entry.quake)
+                    .font(.system(size: 11, weight: .medium))
+                    .foregroundColor(.white.opacity(0.92))
+                    .lineLimit(1)
+            }
+            HStack(alignment: .top, spacing: 5) {
+                Text("⚠️")
+                    .font(.system(size: 10))
+                Text(entry.alert)
+                    .font(.system(size: 10))
+                    .foregroundColor(.white.opacity(0.6))
+                    .lineLimit(2)
+            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .padding(12)
+        .padding(14)
     }
 }
 

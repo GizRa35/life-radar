@@ -470,23 +470,53 @@ class AppState extends ChangeNotifier {
 
   /// Ana ekran widget'ını güncel özetle yeniler (risk, deprem, hava, uyarı).
   void _refreshWidget() {
+    // Deprem: önce Türkiye'ye yakın olanı tercih et, yoksa en güncel deprem.
+    final quakes = _events
+        .where((e) =>
+            e.category == EventCategory.disaster &&
+            e.title.toLowerCase().contains('deprem'))
+        .toList();
     RadarEvent? quakeEvent;
-    for (final e in _events) {
-      if (e.category == EventCategory.disaster &&
-          e.title.toLowerCase().contains('deprem')) {
+    for (final e in quakes) {
+      final t = e.title.toLowerCase();
+      if (t.contains('turkey') ||
+          t.contains('türkiye') ||
+          t.contains('aegean') ||
+          t.contains('izmir') ||
+          t.contains('istanbul')) {
         quakeEvent = e;
         break;
       }
     }
+    quakeEvent ??= quakes.isNotEmpty ? quakes.first : null;
     final quake = quakeEvent?.title ?? 'Yakın deprem yok';
+
     final temp = _weather?['temp'];
     final city = _location?.label ?? '';
     final weatherStr = temp != null
         ? '${temp.round()}°${city.isNotEmpty ? ' $city' : ''}'
         : (city.isNotEmpty ? city : '—');
+
+    // Uyarı: önce afet, sonra Türkiye, sonra herhangi bir kritik gelişme.
     final warnings = earlyWarnings;
-    final alert =
-        warnings.isNotEmpty ? warnings.first.title : 'Kritik uyarı yok';
+    RadarEvent? alertEvent;
+    for (final e in warnings) {
+      if (e.category == EventCategory.disaster) {
+        alertEvent = e;
+        break;
+      }
+    }
+    if (alertEvent == null) {
+      for (final e in warnings) {
+        if (e.category == EventCategory.turkey) {
+          alertEvent = e;
+          break;
+        }
+      }
+    }
+    alertEvent ??= warnings.isNotEmpty ? warnings.first : null;
+    final alert = alertEvent?.title ?? 'Kritik uyarı yok';
+
     HomeWidgetService.update(
       score: personalRiskScore,
       quake: quake,

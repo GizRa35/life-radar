@@ -22,8 +22,16 @@ class RiskWidgetProvider : HomeWidgetProvider() {
                 val weather = widgetData.getString("weather", "—") ?: "—"
                 val quake = widgetData.getString("quake", "—") ?: "—"
                 val alert = widgetData.getString("alert", "—") ?: "—"
+                // Seviyeye göre renk: yeşil / turuncu / kırmızı.
+                val color = when {
+                    score >= 67 -> 0xFFE84C3D.toInt()
+                    score >= 34 -> 0xFFF5A623.toInt()
+                    else -> 0xFF2ECC71.toInt()
+                }
                 setTextViewText(R.id.widget_score, score.toString())
+                setTextColor(R.id.widget_score, color)
                 setTextViewText(R.id.widget_label, label)
+                setTextColor(R.id.widget_label, color)
                 setTextViewText(R.id.widget_weather, weather)
                 setTextViewText(R.id.widget_quake, "🌍 " + quake)
                 setTextViewText(R.id.widget_alert, "⚠️ " + alert)
