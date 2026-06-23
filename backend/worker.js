@@ -81,7 +81,55 @@ export default {
       return json({ error: String(e) }, 502);
     }
   },
+
+  // Cron tetikleyici: Türkiye bölgesinde yeni önemli deprem olunca otomatik push.
+  async scheduled(event, env, ctx) {
+    ctx.waitUntil(checkEarthquakesAndPush(env));
+  },
 };
+
+// USGS'ten Türkiye bölgesi son depremleri tara; yeni + güçlü olanlara otomatik
+// push gönder (KV ile tekrar engellenir).
+async function checkEarthquakesAndPush(env) {
+  if (!env.FCM_SERVICE_ACCOUNT || !env.TOKENS) return;
+  const start = new Date(Date.now() - 70 * 60 * 1000).toISOString();
+  const url =
+    'https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson' +
+    '&orderby=time&minmagnitude=4.5' +
+    `&starttime=${encodeURIComponent(start)}` +
+    '&minlatitude=35&maxlatitude=43&minlongitude=25&maxlongitude=45';
+  let features;
+  try {
+    const r = await fetch(url, { headers: { 'User-Agent': UA } });
+    const j = await r.json();
+    features = j.features || [];
+  } catch (_) {
+    return;
+  }
+  if (features.length === 0) return;
+
+  // OAuth token'ı bir kez al.
+  const sa = JSON.parse(env.FCM_SERVICE_ACCOUNT);
+  const auth = await _fcmAccessToken(sa);
+  if (!auth.token) return;
+
+  for (const f of features) {
+    const id = f.id;
+    if (!id) continue;
+    const key = `pushed:${id}`;
+    if (await env.TOKENS.get(key)) continue; // zaten bildirildi
+    const mag = f.properties?.mag;
+    const place = f.properties?.place || 'bilinmeyen bölge';
+    if (mag == null) continue;
+    const title = `⚠️ M${mag.toFixed(1)} Deprem`;
+    const body = `${place} — Life Radar'da detayları ve hazırlık önerilerini gör.`;
+    try {
+      await _broadcast(env, auth.token, sa.project_id, title, body);
+    } catch (_) {}
+    // 7 gün boyunca tekrar gönderme.
+    await env.TOKENS.put(key, '1', { expirationTtl: 7 * 24 * 3600 });
+  }
+}
 
 // ---- /api/rss ----
 async function rss(url) {

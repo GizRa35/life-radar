@@ -20,3 +20,7 @@ not_found_handling = "single-page-application"
 [[kv_namespaces]]
 binding = "TOKENS"
 id = "e6b6d0a5f969435a822705946a3a11c3"
+
+# Otomatik deprem-push: 15 dakikada bir Türkiye bölgesini tarar.
+[triggers]
+crons = ["*/15 * * * *"]
