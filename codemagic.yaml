@@ -34,10 +34,19 @@ workflows:
           echo "plist yazildi: $(wc -c < ios/Runner/GoogleService-Info.plist) bayt"
       - name: CocoaPods kurulumu
         script: find . -name "Podfile" -execdir pod install \;
+      - name: iOS widget hedefini ekle (RiskWidget — xcodeproj)
+        script: |
+          # WidgetKit extension hedefini Runner.xcodeproj'a programatik ekle.
+          ruby ios/add_widget_target.rb
       - name: İmzalama (kalıcı anahtarla sertifika+profil oluştur ve uygula)
         script: |
           keychain initialize
           app-store-connect fetch-signing-files "com.liferadar.lifeRadar" \
+            --type IOS_APP_STORE \
+            --certificate-key @env:CERTIFICATE_PRIVATE_KEY \
+            --create
+          # Widget extension için ayrı profil (App Group'lu App ID).
+          app-store-connect fetch-signing-files "com.liferadar.lifeRadar.RiskWidget" \
             --type IOS_APP_STORE \
             --certificate-key @env:CERTIFICATE_PRIVATE_KEY \
             --create
