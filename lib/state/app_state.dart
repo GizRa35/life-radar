@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart'
+    show WidgetsBinding, WidgetsBindingObserver, AppLifecycleState;
 
 import '../core/i18n.dart';
 import '../core/text_utils.dart';
@@ -38,8 +40,9 @@ import '../services/purchase_service.dart';
 ///
 /// MVP'de veriler MockData'dan gelir; Faz 1+'de USGS/GDELT/Claude servisleriyle
 /// değiştirilecek.
-class AppState extends ChangeNotifier {
+class AppState extends ChangeNotifier with WidgetsBindingObserver {
   AppState() {
+    WidgetsBinding.instance.addObserver(this);
     _loadSession();
     _loadUserContext();
     _loadAvatar();
@@ -63,8 +66,31 @@ class AppState extends ChangeNotifier {
     loadRates();
     // Açılışta gerçek haber/afet verisini çek (başlangıçta mock gösterilir).
     loadFeeds();
-    // Konumu tespit et (IP tabanlı) — afet riski buna göre güncellenir.
+    // Konumu tespit et (önce GPS, olmazsa IP) — afet riski buna göre güncellenir.
     detectLocation();
+  }
+
+  // ---- Uygulama öne geldiğinde otomatik yenileme ----
+  DateTime? _lastResumeRefresh;
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState lifecycle) {
+    if (lifecycle != AppLifecycleState.resumed) return;
+    // Çok sık tetiklenmesin: en az 5 dakikada bir yenile.
+    final now = DateTime.now();
+    if (_lastResumeRefresh != null &&
+        now.difference(_lastResumeRefresh!).inMinutes < 5) {
+      return;
+    }
+    _lastResumeRefresh = now;
+    detectLocation(); // konum kendini düzeltsin (yanlış IP'de kalmasın)
+    loadFeeds(); // haberler + risk analizi güncellensin (statik kalmasın)
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 
   // ---- Bildirim ayarları (eşik + kategori + tür + sessiz saatler) ----

@@ -7,7 +7,7 @@ import '../core/theme.dart';
 import '../state/app_state.dart';
 import '../widgets/form_widgets.dart';
 
-/// İnteraktif acil durum çantası listesi — maddeleri işaretle, hazırlık yüzdeni gör.
+/// İnteraktif acil durum çantası — maddeleri işaretle, hazırlık yüzdeni gör.
 class EmergencyKitScreen extends StatelessWidget {
   const EmergencyKitScreen({super.key});
 
@@ -53,8 +53,15 @@ class EmergencyKitScreen extends StatelessWidget {
     'Diğer': Icons.inventory_2_outlined,
   };
 
-  int get _total =>
-      _sections.values.fold(0, (sum, list) => sum + list.length);
+  static const Map<String, Color> _sectionColors = {
+    'Su ve Gıda': Color(0xFF2E86DE),
+    'Sağlık': Color(0xFFE74C3C),
+    'Aydınlatma & İletişim': Color(0xFFF5A623),
+    'Belgeler & Para': Color(0xFF27AE60),
+    'Diğer': Color(0xFF8E44AD),
+  };
+
+  int get _total => _sections.values.fold(0, (sum, list) => sum + list.length);
 
   @override
   Widget build(BuildContext context) {
@@ -67,33 +74,98 @@ class EmergencyKitScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 40),
         children: [
-          // Hazırlık durumu kartı (açık tema + dairesel halka)
-          CircularStatusCard(
-            icon: Icons.backpack,
-            title: t('Çanta Hazırlık Durumu'),
-            subtitle: '%${(pct * 100).round()} ${t('Tamamlandı')}',
-            percent: pct,
-          ),
-          for (final entry in _sections.entries) ...[
-            FormSectionHeader(
-              icon: _sectionIcons[entry.key] ?? Icons.check,
-              title: t(entry.key),
-            ),
-            Card(
-              margin: EdgeInsets.zero,
-              child: Column(
-                children: [
-                  for (var k = 0; k < entry.value.length; k++) ...[
-                    _KitTile(
-                        item: entry.value[k],
-                        checked: state.isKitChecked(entry.value[k])),
-                    if (k < entry.value.length - 1)
-                      const Divider(height: 1, indent: 56, endIndent: 12),
-                  ],
-                ],
+          // Gradyan hazırlık başlığı
+          Container(
+            padding: const EdgeInsets.all(18),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [LifeRadarColors.navy, LifeRadarColors.turquoise],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
               ),
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: LifeRadarColors.turquoise.withOpacity(0.3),
+                  blurRadius: 16,
+                  offset: const Offset(0, 6),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Icon(Icons.backpack, color: Colors.white, size: 34),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            t('Çanta Hazırlık Durumu'),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          Text(
+                            '$done / $_total ${t('madde')}',
+                            style: const TextStyle(
+                              color: Colors.white70,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Text(
+                      '%${(pct * 100).round()}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 28,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 14),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: LinearProgressIndicator(
+                    value: pct,
+                    minHeight: 8,
+                    backgroundColor: Colors.white.withOpacity(0.25),
+                    valueColor:
+                        const AlwaysStoppedAnimation<Color>(Colors.white),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  pct >= 1.0
+                      ? t('Harika! Çantan tam hazır. 🎒')
+                      : t('Eksikleri tamamla, hazırlıklı ol.'),
+                  style: const TextStyle(color: Colors.white, fontSize: 12),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 8),
+
+          for (final entry in _sections.entries) ...[
+            const SizedBox(height: 12),
+            _SectionCard(
+              title: entry.key,
+              icon: _sectionIcons[entry.key] ?? Icons.check,
+              color: _sectionColors[entry.key] ?? LifeRadarColors.turquoise,
+              items: entry.value,
+              doneCount:
+                  entry.value.where((i) => state.isKitChecked(i)).length,
             ),
           ],
+
           const SizedBox(height: 18),
           FormTipCard(
             title: t('Önemli İpucu'),
@@ -106,29 +178,95 @@ class EmergencyKitScreen extends StatelessWidget {
   }
 }
 
-class _KitTile extends StatelessWidget {
-  final String item;
-  final bool checked;
-  const _KitTile({required this.item, required this.checked});
+class _SectionCard extends StatelessWidget {
+  final String title;
+  final IconData icon;
+  final Color color;
+  final List<String> items;
+  final int doneCount;
+  const _SectionCard({
+    required this.title,
+    required this.icon,
+    required this.color,
+    required this.items,
+    required this.doneCount,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return CheckboxListTile(
-      value: checked,
-      onChanged: (_) {
-        HapticFeedback.selectionClick();
-        context.read<AppState>().toggleKit(item);
-      },
-      activeColor: LifeRadarColors.turquoise,
-      controlAffinity: ListTileControlAffinity.leading,
-      title: Text(
-        t(item),
-        style: TextStyle(
-          decoration: checked ? TextDecoration.lineThrough : null,
-          color: checked
-              ? LifeRadarColors.textSecondary
-              : LifeRadarColors.textPrimary,
-        ),
+    final state = context.watch<AppState>();
+    return Card(
+      margin: EdgeInsets.zero,
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        children: [
+          // Renkli bölüm başlığı + bölüm ilerlemesi
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            color: color.withOpacity(0.10),
+            child: Row(
+              children: [
+                CircleAvatar(
+                  radius: 16,
+                  backgroundColor: color.withOpacity(0.18),
+                  child: Icon(icon, color: color, size: 18),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    t(title),
+                    style: TextStyle(
+                      fontWeight: FontWeight.w800,
+                      color: color,
+                      fontSize: 15,
+                    ),
+                  ),
+                ),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: color.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    '$doneCount/${items.length}',
+                    style: TextStyle(
+                      color: color,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          for (var k = 0; k < items.length; k++) ...[
+            CheckboxListTile(
+              value: state.isKitChecked(items[k]),
+              onChanged: (_) {
+                HapticFeedback.selectionClick();
+                context.read<AppState>().toggleKit(items[k]);
+              },
+              activeColor: color,
+              controlAffinity: ListTileControlAffinity.leading,
+              dense: true,
+              title: Text(
+                t(items[k]),
+                style: TextStyle(
+                  decoration: state.isKitChecked(items[k])
+                      ? TextDecoration.lineThrough
+                      : null,
+                  color: state.isKitChecked(items[k])
+                      ? LifeRadarColors.textSecondary
+                      : LifeRadarColors.textPrimary,
+                ),
+              ),
+            ),
+            if (k < items.length - 1)
+              const Divider(height: 1, indent: 56, endIndent: 12),
+          ],
+        ],
       ),
     );
   }

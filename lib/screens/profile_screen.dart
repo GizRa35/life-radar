@@ -19,8 +19,7 @@ import 'usage_guide_screen.dart';
 import 'vip_screen.dart';
 
 /// SAYFA 11 — PROFİL
-/// Kayıtlı Haberler · Takip Edilen Konular · Bildirim Ayarları · Dil ·
-/// Gizlilik · Hesap Yönetimi (+ Claude API anahtarı).
+/// Renkli başlık + açılır bölümler (Abonelik / Kayıtlı / Takip / Ayarlar).
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
@@ -29,119 +28,139 @@ class ProfileScreen extends StatelessWidget {
     final state = context.watch<AppState>();
 
     return ListView(
-      padding: const EdgeInsets.symmetric(vertical: 12),
+      padding: const EdgeInsets.only(top: 8, bottom: 24),
       children: [
-        // Profil başlığı (abonelik renkli çerçeve, resme tıkla → avatar seç)
+        // Renkli profil başlığı (abonelik tonuna göre gradyan)
         const _ProfileHeader(),
 
         _SectionTitle(t('Kişisel Bilgiler'), icon: Icons.badge_outlined),
         const _PersonalInfoTile(),
 
-        _SectionTitle(t('Aboneliğiniz'),
-            icon: Icons.workspace_premium_outlined),
-        const _UpgradeCards(),
+        _ExpandSection(
+          title: t('Aboneliğiniz'),
+          icon: Icons.workspace_premium_outlined,
+          children: const [_UpgradeCards()],
+        ),
 
-        _SectionTitle(t('Kayıtlı Haberler'), icon: Icons.bookmark_outline),
-        if (state.savedEvents.isEmpty)
-          _EmptyHint(t('Henüz kaydedilmiş haber yok. Haberlerdeki kaydet simgesine dokunarak buraya ekleyebilirsiniz.'))
-        else
-          // Konuya göre klasörlenmiş kayıtlar.
-          ...state.savedByCategory.entries.expand((entry) => [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
-                  child: Row(
-                    children: [
-                      Icon(entry.key.icon, size: 16, color: entry.key.color),
-                      const SizedBox(width: 6),
-                      Text(
-                        '${t(entry.key.label)} (${entry.value.length})',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w700,
-                          color: entry.key.color,
-                          fontSize: 13,
-                        ),
+        _ExpandSection(
+          title: '${t('Kayıtlı Haberler')} (${state.savedEvents.length})',
+          icon: Icons.bookmark_outline,
+          children: [
+            if (state.savedEvents.isEmpty)
+              _EmptyHint(t('Henüz kaydedilmiş haber yok. Haberlerdeki kaydet simgesine dokunarak buraya ekleyebilirsiniz.'))
+            else
+              ...state.savedByCategory.entries.expand((entry) => [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+                      child: Row(
+                        children: [
+                          Icon(entry.key.icon,
+                              size: 16, color: entry.key.color),
+                          const SizedBox(width: 6),
+                          Text(
+                            '${t(entry.key.label)} (${entry.value.length})',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w700,
+                              color: entry.key.color,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                ),
-                ...entry.value
-                    .map((e) => EventCard(event: e, showActions: false)),
-              ]),
-
-        _SectionTitle(t('Takip Edilen Konular'), icon: Icons.topic_outlined),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: EventCategory.values.map((c) {
-              final followed = state.isFollowed(c);
-              return FilterChip(
-                label: Text(t(c.label)),
-                selected: followed,
-                onSelected: (_) => context.read<AppState>().toggleFollowed(c),
-                avatar: Icon(c.icon,
-                    size: 16,
-                    color: followed ? Colors.white : LifeRadarColors.navy),
-                selectedColor: LifeRadarColors.turquoise,
-                checkmarkColor: Colors.white,
-                labelStyle: TextStyle(
-                  color: followed ? Colors.white : LifeRadarColors.navy,
-                  fontWeight: FontWeight.w600,
-                ),
-                backgroundColor: LifeRadarColors.cardBackground,
-                side: BorderSide.none,
-              );
-            }).toList(),
-          ),
+                    ),
+                    ...entry.value
+                        .map((e) => EventCard(event: e, showActions: false)),
+                  ]),
+          ],
         ),
 
-        _SectionTitle(t('Ayarlar'), icon: Icons.settings_outlined),
-        _SettingTile(
-          icon: Icons.help_outline,
-          title: t('Nasıl Kullanılır?'),
-          onTap: () => Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) => const UsageGuideScreen()),
-          ),
+        _ExpandSection(
+          title: t('Takip Edilen Konular'),
+          icon: Icons.topic_outlined,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
+              child: Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: EventCategory.values.map((c) {
+                  final followed = state.isFollowed(c);
+                  return FilterChip(
+                    label: Text(t(c.label)),
+                    selected: followed,
+                    onSelected: (_) =>
+                        context.read<AppState>().toggleFollowed(c),
+                    avatar: Icon(c.icon,
+                        size: 16,
+                        color:
+                            followed ? Colors.white : LifeRadarColors.navy),
+                    selectedColor: LifeRadarColors.turquoise,
+                    checkmarkColor: Colors.white,
+                    labelStyle: TextStyle(
+                      color: followed ? Colors.white : LifeRadarColors.navy,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    backgroundColor: LifeRadarColors.cardBackground,
+                    side: BorderSide.none,
+                  );
+                }).toList(),
+              ),
+            ),
+          ],
         ),
-        _SettingTile(
-          icon: Icons.notifications_outlined,
-          title: t('Bildirim Ayarları'),
-          trailing: state.alertsEnabled ? t('Açık') : t('Kapalı'),
-          onTap: () => Navigator.of(context).push(
-            MaterialPageRoute(
-                builder: (_) => const NotificationSettingsScreen()),
-          ),
-        ),
-        _SettingTile(
-          icon: Icons.language,
-          title: t('Haber Dili'),
-          trailing: state.userContext.language == 'en' ? 'English' : 'Türkçe',
-          onTap: () => Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) => const LanguageScreen()),
-          ),
-        ),
-        _SettingTile(
-          icon: Icons.rss_feed,
-          title: t('Kaynak Seçimi'),
-          onTap: () => Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) => const SourceSettingsScreen()),
-          ),
-        ),
-        _SettingTile(
-          icon: Icons.lock_outline,
-          title: t('Gizlilik'),
-          onTap: () => Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) => const PrivacyScreen()),
-          ),
-        ),
-        _SettingTile(
-          icon: Icons.manage_accounts_outlined,
-          title: t('Hesap Yönetimi'),
-          onTap: () => Navigator.of(context).push(
-            MaterialPageRoute(
-                builder: (_) => const AccountManagementScreen()),
-          ),
+
+        _ExpandSection(
+          title: t('Ayarlar'),
+          icon: Icons.settings_outlined,
+          children: [
+            _SettingTile(
+              icon: Icons.help_outline,
+              title: t('Nasıl Kullanılır?'),
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const UsageGuideScreen()),
+              ),
+            ),
+            _SettingTile(
+              icon: Icons.notifications_outlined,
+              title: t('Bildirim Ayarları'),
+              trailing: state.alertsEnabled ? t('Açık') : t('Kapalı'),
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(
+                    builder: (_) => const NotificationSettingsScreen()),
+              ),
+            ),
+            _SettingTile(
+              icon: Icons.language,
+              title: t('Haber Dili'),
+              trailing:
+                  state.userContext.language == 'en' ? 'English' : 'Türkçe',
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const LanguageScreen()),
+              ),
+            ),
+            _SettingTile(
+              icon: Icons.rss_feed,
+              title: t('Kaynak Seçimi'),
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const SourceSettingsScreen()),
+              ),
+            ),
+            _SettingTile(
+              icon: Icons.lock_outline,
+              title: t('Gizlilik'),
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const PrivacyScreen()),
+              ),
+            ),
+            _SettingTile(
+              icon: Icons.manage_accounts_outlined,
+              title: t('Hesap Yönetimi'),
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(
+                    builder: (_) => const AccountManagementScreen()),
+              ),
+            ),
+          ],
         ),
 
         _SectionTitle(t('Hesap'), icon: Icons.account_circle_outlined),
@@ -175,34 +194,40 @@ Color _tierRingColor(SubscriptionTier tier) {
   }
 }
 
+/// Başlık gradyanı (abonelik tonuna göre).
+List<Color> _headerGradient(SubscriptionTier tier) {
+  switch (tier) {
+    case SubscriptionTier.vip:
+      return const [Color(0xFFB8901C), Color(0xFFE9C766)];
+    case SubscriptionTier.premium:
+      return const [LifeRadarColors.navy, LifeRadarColors.turquoise];
+    case SubscriptionTier.free:
+      return const [LifeRadarColors.navy, Color(0xFF1B4F72)];
+  }
+}
+
 /// Seçilebilir avatarlar — DiceBear "avataaars" (canlı, renkli), net cinsiyetli.
 const String _avBase = 'https://api.dicebear.com/9.x/avataaars/png?seed=';
 
-/// Kadın: uzun/feminen saç, sakalsız.
 String _avWoman(String seed) =>
     '$_avBase$seed&top=straight01,straight02,bob,bun,curvy,longButNotTooLong,miaWallace,bigHair'
     '&facialHairProbability=0&accessoriesProbability=10';
 
-/// Erkek: kısa saç, sakallı.
 String _avMan(String seed) =>
     '$_avBase$seed&top=shortFlat,shortRound,theCaesar,shortCurly,shortWaved,dreads01'
     '&facialHair=beardLight,beardMedium,beardMajestic&facialHairProbability=100';
 
-/// Unisex: karışık (varsayılan).
 String _avUnisex(String seed) => '$_avBase$seed';
 
 final Map<String, List<String>> _avatarGroups = {
   'Kadın': [
-    for (final s in ['Zoe', 'Mia', 'Aria', 'Luna', 'Defne'])
-      _avWoman(s),
+    for (final s in ['Zoe', 'Mia', 'Aria', 'Luna', 'Defne']) _avWoman(s),
   ],
   'Erkek': [
-    for (final s in ['Can', 'Emir', 'Ali', 'Mert', 'Efe'])
-      _avMan(s),
+    for (final s in ['Can', 'Emir', 'Ali', 'Mert', 'Efe']) _avMan(s),
   ],
   'Unisex': [
-    for (final s in ['Sky', 'River', 'Robin', 'Alex', 'Sam'])
-      _avUnisex(s),
+    for (final s in ['Sky', 'River', 'Robin', 'Alex', 'Sam']) _avUnisex(s),
   ],
 };
 
@@ -281,8 +306,8 @@ void showAvatarSheet(BuildContext context) {
                         child: Image.network(
                           Media.proxiedImage(url),
                           fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => const Icon(
-                              Icons.person, color: LifeRadarColors.navy),
+                          errorBuilder: (_, __, ___) => const Icon(Icons.person,
+                              color: LifeRadarColors.navy),
                           loadingBuilder: (c, child, p) => p == null
                               ? child
                               : const Center(
@@ -315,11 +340,27 @@ class _ProfileHeader extends StatelessWidget {
     final ring = _tierRingColor(tier);
     final loc = state.location?.label ?? state.userContext.location;
 
-    return Padding(
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 8, 16, 4),
       padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: _headerGradient(tier),
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: _headerGradient(tier).last.withOpacity(0.35),
+            blurRadius: 16,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
       child: Row(
         children: [
-          // Abonelik renkli çerçeve — tıklayınca avatar seçimi açılır
+          // Avatar — tıklayınca avatar seçimi açılır
           GestureDetector(
             onTap: () => showAvatarSheet(context),
             child: Stack(
@@ -327,13 +368,9 @@ class _ProfileHeader extends StatelessWidget {
               children: [
                 Container(
                   padding: const EdgeInsets.all(3),
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     shape: BoxShape.circle,
-                    gradient: tier == SubscriptionTier.vip
-                        ? const LinearGradient(
-                            colors: [Color(0xFFC9A227), Color(0xFFE9C766)])
-                        : null,
-                    color: tier == SubscriptionTier.vip ? null : ring,
+                    color: Colors.white,
                   ),
                   child: CircleAvatar(
                     radius: 30,
@@ -370,7 +407,8 @@ class _ProfileHeader extends StatelessWidget {
                       shape: BoxShape.circle,
                       border: Border.all(color: Colors.white, width: 2),
                     ),
-                    child: const Icon(Icons.edit, size: 12, color: Colors.white),
+                    child:
+                        const Icon(Icons.edit, size: 12, color: Colors.white),
                   ),
                 ),
               ],
@@ -389,7 +427,7 @@ class _ProfileHeader extends StatelessWidget {
                           style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w800,
-                              color: LifeRadarColors.navy)),
+                              color: Colors.white)),
                     ),
                     if (tier != SubscriptionTier.free) ...[
                       const SizedBox(width: 8),
@@ -397,14 +435,15 @@ class _ProfileHeader extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 8, vertical: 3),
                         decoration: BoxDecoration(
-                          color: ring.withOpacity(0.15),
+                          color: Colors.white.withOpacity(0.22),
                           borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: ring),
+                          border:
+                              Border.all(color: Colors.white.withOpacity(0.6)),
                         ),
                         child: Text(
                           t(tier.label),
-                          style: TextStyle(
-                            color: ring,
+                          style: const TextStyle(
+                            color: Colors.white,
                             fontWeight: FontWeight.w800,
                             fontSize: 11,
                           ),
@@ -413,9 +452,19 @@ class _ProfileHeader extends StatelessWidget {
                     ],
                   ],
                 ),
-                Text(loc,
-                    style: const TextStyle(
-                        color: LifeRadarColors.textSecondary)),
+                const SizedBox(height: 2),
+                Row(
+                  children: [
+                    const Icon(Icons.location_on,
+                        size: 14, color: Colors.white70),
+                    const SizedBox(width: 3),
+                    Flexible(
+                      child: Text(loc,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(color: Colors.white70)),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
@@ -432,7 +481,7 @@ class _UpgradeCards extends StatelessWidget {
   Widget build(BuildContext context) {
     final tier = context.watch<AppState>().tier;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 12),
       child: Column(
         children: [
           Card(
@@ -460,7 +509,8 @@ class _UpgradeCards extends StatelessWidget {
           ),
           _UpgradeTile(
             title: t('Life Radar Premium'),
-            subtitle: t('Sınırsız Life Radar Asistan, kişisel risk analizi, reklamsız.'),
+            subtitle: t(
+                'Sınırsız Life Radar Asistan, kişisel risk analizi, reklamsız.'),
             icon: Icons.star,
             color: LifeRadarColors.turquoise,
             onTap: () => Navigator.of(context).push(
@@ -598,7 +648,8 @@ class _SettingTile extends StatelessWidget {
               Text(trailing!,
                   style: const TextStyle(color: LifeRadarColors.textSecondary)),
             const SizedBox(width: 4),
-            const Icon(Icons.chevron_right, color: LifeRadarColors.textSecondary),
+            const Icon(Icons.chevron_right,
+                color: LifeRadarColors.textSecondary),
           ],
         ),
         onTap: onTap ??
@@ -607,6 +658,50 @@ class _SettingTile extends StatelessWidget {
                 SnackBar(content: Text('$title ${t('yakında')}')),
               );
             },
+      ),
+    );
+  }
+}
+
+/// Açılır/kapanır bölüm — başlığa dokununca içerik açılır (sayfa sadeleşir).
+class _ExpandSection extends StatelessWidget {
+  final String title;
+  final IconData icon;
+  final List<Widget> children;
+  final bool initiallyExpanded;
+  const _ExpandSection({
+    required this.title,
+    required this.icon,
+    required this.children,
+    this.initiallyExpanded = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+      child: Card(
+        clipBehavior: Clip.antiAlias,
+        child: Theme(
+          data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+          child: ExpansionTile(
+            initiallyExpanded: initiallyExpanded,
+            tilePadding: const EdgeInsets.symmetric(horizontal: 16),
+            leading: Icon(icon, color: LifeRadarColors.navy),
+            iconColor: LifeRadarColors.turquoise,
+            collapsedIconColor: LifeRadarColors.navy,
+            title: Text(
+              title,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+                color: LifeRadarColors.navy,
+              ),
+            ),
+            childrenPadding: const EdgeInsets.only(bottom: 8),
+            children: children,
+          ),
+        ),
       ),
     );
   }

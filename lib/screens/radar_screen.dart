@@ -47,7 +47,15 @@ class RadarScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final state = context.watch<AppState>();
 
-    return ListView(
+    return RefreshIndicator(
+      color: LifeRadarColors.turquoise,
+      onRefresh: () async {
+        // Aşağı çekince: konum + haberler + risk analizi yenilensin.
+        await context.read<AppState>().detectLocation();
+        await context.read<AppState>().loadFeeds();
+      },
+      child: ListView(
+      physics: const AlwaysScrollableScrollPhysics(),
       padding: const EdgeInsets.symmetric(vertical: 16),
       children: [
         // Konum çubuğu — risk skoru bu konuma göre hesaplanır
@@ -214,6 +222,7 @@ class RadarScreen extends StatelessWidget {
           ),
         const SizedBox(height: 24),
       ],
+      ),
     );
   }
 }
