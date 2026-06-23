@@ -61,19 +61,19 @@ class _FamilyPlanScreenState extends State<FamilyPlanScreen> {
           _field(
             _home,
             Icons.home_outlined,
-            'Örn: Apartman önü / sokak köşesindeki park',
+            t('Örn: Apartman önü / sokak köşesindeki park'),
           ),
           FormFieldLabel(t('Bölge dışı buluşma noktası')),
           _field(
             _area,
             Icons.location_city_outlined,
-            'Örn: Mahalle meydanı / okul bahçesi',
+            t('Örn: Mahalle meydanı / okul bahçesi'),
           ),
           FormFieldLabel(t('İletişim ve toplanma notu')),
           _field(
             _note,
             Icons.notes_outlined,
-            'Örn: Şehir dışındaki ... teyzeyi arayın; herkes oraya haber versin',
+            t('Örn: Şehir dışındaki ... teyzeyi arayın; herkes oraya haber versin'),
             maxLines: 4,
           ),
           const SizedBox(height: 8),

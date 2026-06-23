@@ -135,7 +135,7 @@ class EventCard extends StatelessWidget {
                       ),
                     ),
                     IconButton(
-                      tooltip: 'Paylaş',
+                      tooltip: t('Paylaş'),
                       onPressed: () async {
                         final res = await Media.share(
                           title: event.title,
@@ -146,8 +146,8 @@ class EventCard extends StatelessWidget {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text(res == 'copied'
-                                ? 'Haber panoya kopyalandı.'
-                                : 'Paylaşım yapılamadı.'),
+                                ? t('Haber panoya kopyalandı.')
+                                : t('Paylaşım yapılamadı.')),
                           ),
                         );
                       },
@@ -155,7 +155,7 @@ class EventCard extends StatelessWidget {
                           color: LifeRadarColors.textSecondary),
                     ),
                     IconButton(
-                      tooltip: saved ? 'Kayıttan çıkar' : 'Kaydet',
+                      tooltip: saved ? t('Kayıttan çıkar') : t('Kaydet'),
                       onPressed: () {
                         HapticFeedback.selectionClick();
                         context.read<AppState>().toggleSaved(event.id);

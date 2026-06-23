@@ -64,7 +64,7 @@ class LanguageScreen extends StatelessWidget {
       SnackBar(
           content: Text(lang == 'en'
               ? 'News language: English'
-              : 'Haber dili: Türkçe')),
+              : t('Haber dili: Türkçe'))),
     );
   }
 }

@@ -38,6 +38,50 @@ const Map<String, String> _en = {
   'Tamam': 'OK',
   'Devam': 'Continue',
   'Başla': 'Start',
+
+  // --- Eksik çeviriler (tarama ile bulundu) ---
+  'Eksikleri tamamla, hazırlıklı ol.': 'Complete the missing items, be ready.',
+  'Harika! Çantan tam hazır. 🎒': 'Great! Your kit is fully ready. 🎒',
+  'Hızlı Acil Arama': 'Quick Emergency Call',
+  'Risk Geçmişi': 'Risk History',
+  'Seyahat Brifingi': 'Travel Briefing',
+  'VIP\'i Keşfet': 'Explore VIP',
+  'madde': 'items',
+  'Şehir / Ülke': 'City / Country',
+  // Risk geçmişi grafiği
+  'Sabit': 'Stable',
+  'Son ölçümler · sağdaki nokta bugünkü puanın':
+      "Recent readings · the right dot is today's score",
+
+  // --- Ek tarama: kalan çıplak metinler ---
+  'Türkçe': 'Turkish',
+  'Haber dili: Türkçe': 'News language: Turkish',
+  'Öneriler': 'Recommendations',
+  'Çıkış yapıp yeniden giriş yaptıktan sonra tekrar dene.':
+      'Sign out and sign back in, then try again.',
+  'Örn: Apartman önü / sokak köşesindeki park':
+      'e.g. In front of the building / park at the street corner',
+  'Örn: Mahalle meydanı / okul bahçesi':
+      'e.g. Neighborhood square / school yard',
+  'Örn: Şehir dışındaki ... teyzeyi arayın; herkes oraya haber versin':
+      'e.g. Call a relative outside the city; everyone checks in there',
+  // AI asistan örnek (anahtarsız) yanıtı
+  'Özet:': 'Summary:',
+  'Risk Analizi:': 'Risk Analysis:',
+  'Öneriler:': 'Recommendations:',
+  'Kaynaklar:': 'Sources:',
+  'Sorunuzu güvenilir kaynaklara ve profilinize göre değerlendiriyorum. (Bu bir örnek yanıttır; gerçek analiz için Profil ekranından Claude API anahtarınızı ekleyin.)':
+      "I'm evaluating your question against reliable sources and your profile. (This is a sample response; to get a real analysis, add your Claude API key from the Profile screen.)",
+  'Mevcut verilere göre doğrudan kişisel riskiniz orta-düşük seviyede görünüyor. Durum geliştikçe radar puanınız güncellenir.':
+      'Based on current data, your direct personal risk appears low-to-moderate. Your radar score will update as the situation develops.',
+  '• Resmi kurum açıklamalarını takip edin':
+      '• Follow official agency announcements',
+  '• Doğrulanmamış bilgileri paylaşmayın':
+      '• Do not share unverified information',
+  '• Gerekiyorsa hazırlık listenizi gözden geçirin':
+      '• Review your preparedness list if needed',
+  'WHO, Reuters, resmi afet ve meteoroloji kurumları.':
+      'WHO, Reuters, and official disaster and meteorology agencies.',
   'Atla': 'Skip',
   'Sil': 'Delete',
   'Düzenle': 'Edit',

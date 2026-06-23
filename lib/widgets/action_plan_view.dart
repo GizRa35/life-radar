@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../core/i18n.dart';
 import '../core/theme.dart';
 
 /// "Bana Özel Aksiyon Planı" çıktısını başlıklı kartlar + bütçe kutusu olarak
@@ -62,7 +63,7 @@ class ActionPlanView extends StatelessWidget {
   }
 
   _Section _ensure(List<_Section> sections) {
-    if (sections.isEmpty) sections.add(_Section('Öneriler'));
+    if (sections.isEmpty) sections.add(_Section(t('Öneriler')));
     return sections.last;
   }
 

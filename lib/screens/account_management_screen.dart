@@ -170,7 +170,7 @@ class _AccountManagementScreenState extends State<AccountManagementScreen> {
         builder: (_) => AlertDialog(
           title: Text(t('Silinemedi')),
           content: Text(err.contains('tekrar giriş')
-              ? '$err\n\nÇıkış yapıp yeniden giriş yaptıktan sonra tekrar dene.'
+              ? '$err\n\n${t('Çıkış yapıp yeniden giriş yaptıktan sonra tekrar dene.')}'
               : err),
           actions: [
             TextButton(

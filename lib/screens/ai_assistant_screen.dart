@@ -153,19 +153,16 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
 
   // Faz 3'te Claude API ile değiştirilecek; guardrail'lere uygun örnek yanıt.
   String _mockAnswer(String q) {
-    return 'Özet:\n'
-        'Sorunuzu güvenilir kaynaklara ve profilinize göre değerlendiriyorum. '
-        '(Bu bir örnek yanıttır; gerçek analiz için Profil ekranından Claude API '
-        'anahtarınızı ekleyin.)\n\n'
-        'Risk Analizi:\n'
-        'Mevcut verilere göre doğrudan kişisel riskiniz orta-düşük seviyede '
-        'görünüyor. Durum geliştikçe radar puanınız güncellenir.\n\n'
-        'Öneriler:\n'
-        '• Resmi kurum açıklamalarını takip edin\n'
-        '• Doğrulanmamış bilgileri paylaşmayın\n'
-        '• Gerekiyorsa hazırlık listenizi gözden geçirin\n\n'
-        'Kaynaklar:\n'
-        'WHO, Reuters, resmi afet ve meteoroloji kurumları.';
+    return '${t('Özet:')}\n'
+        '${t('Sorunuzu güvenilir kaynaklara ve profilinize göre değerlendiriyorum. (Bu bir örnek yanıttır; gerçek analiz için Profil ekranından Claude API anahtarınızı ekleyin.)')}\n\n'
+        '${t('Risk Analizi:')}\n'
+        '${t('Mevcut verilere göre doğrudan kişisel riskiniz orta-düşük seviyede görünüyor. Durum geliştikçe radar puanınız güncellenir.')}\n\n'
+        '${t('Öneriler:')}\n'
+        '${t('• Resmi kurum açıklamalarını takip edin')}\n'
+        '${t('• Doğrulanmamış bilgileri paylaşmayın')}\n'
+        '${t('• Gerekiyorsa hazırlık listenizi gözden geçirin')}\n\n'
+        '${t('Kaynaklar:')}\n'
+        '${t('WHO, Reuters, resmi afet ve meteoroloji kurumları.')}';
   }
 
   @override
@@ -284,7 +281,7 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
                       padding: const EdgeInsets.only(right: 8),
                       child: ActionChip(
                         label: Text(t(s)),
-                        onPressed: () => _send(s),
+                        onPressed: () => _send(t(s)),
                         backgroundColor:
                             LifeRadarColors.turquoise.withOpacity(0.1),
                         labelStyle: const TextStyle(
@@ -337,7 +334,7 @@ class _EmptyState extends StatelessWidget {
           (e) => Padding(
             padding: const EdgeInsets.only(bottom: 10),
             child: OutlinedButton(
-              onPressed: () => onPick(e),
+              onPressed: () => onPick(t(e)),
               style: OutlinedButton.styleFrom(
                 foregroundColor: LifeRadarColors.navy,
                 side: const BorderSide(color: LifeRadarColors.cardBackground),

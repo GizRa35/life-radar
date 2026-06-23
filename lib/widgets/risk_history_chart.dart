@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../core/i18n.dart';
 import '../core/theme.dart';
 
 /// Kişisel risk puanı geçmişi — gradyan dolgulu, profesyonel çizgi grafik.
@@ -43,7 +44,7 @@ class RiskHistoryChart extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(top: 8),
               child: Text(
-                '/100  ·  ${_levelLabel(last)}',
+                '/100  ·  ${t(_levelLabel(last))}',
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
@@ -75,8 +76,8 @@ class RiskHistoryChart extends StatelessWidget {
                 ],
               )
             else
-              const Text('Sabit',
-                  style: TextStyle(
+              Text(t('Sabit'),
+                  style: const TextStyle(
                       fontSize: 11, color: LifeRadarColors.textSecondary)),
           ],
         ),
@@ -89,9 +90,10 @@ class RiskHistoryChart extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 2),
-        const Text(
-          'Son ölçümler · sağdaki nokta bugünkü puanın',
-          style: TextStyle(fontSize: 10, color: LifeRadarColors.textSecondary),
+        Text(
+          t('Son ölçümler · sağdaki nokta bugünkü puanın'),
+          style: const TextStyle(
+              fontSize: 10, color: LifeRadarColors.textSecondary),
         ),
       ],
     );
