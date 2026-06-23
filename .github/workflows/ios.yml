@@ -1,0 +1,80 @@
+name: iOS TestFlight
+
+# Codemagic dakikalarından bağımsız, ÜCRETSİZ iOS derlemesi (public repo →
+# macOS runner ücretsiz). Codemagic'teki imzalama adımlarının birebir aynısı,
+# aynı codemagic-cli-tools ile. Actions sekmesinden elle başlatılır.
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-14
+    env:
+      # codemagic-cli-tools App Store Connect kimlik doğrulaması (env'den okur)
+      APP_STORE_CONNECT_PRIVATE_KEY: ${{ secrets.ASC_PRIVATE_KEY }}
+      APP_STORE_CONNECT_KEY_IDENTIFIER: ${{ secrets.ASC_KEY_ID }}
+      APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+      CERTIFICATE_PRIVATE_KEY: ${{ secrets.CERTIFICATE_PRIVATE_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.24.5
+          channel: stable
+          cache: true
+
+      - name: Araçlar (codemagic-cli-tools + xcodeproj)
+        run: |
+          pip3 install --break-system-packages codemagic-cli-tools || pip3 install codemagic-cli-tools
+          gem install xcodeproj || sudo gem install xcodeproj
+
+      - name: Flutter paketleri
+        run: flutter pub get
+
+      - name: Dart analizi (teşhis — durdurmaz)
+        run: flutter analyze 2>&1 | tail -40 || true
+
+      - name: GoogleService-Info.plist çöz
+        run: echo "$GOOGLE_SERVICE_INFO_PLIST" | base64 -d > ios/Runner/GoogleService-Info.plist
+        env:
+          GOOGLE_SERVICE_INFO_PLIST: ${{ secrets.GOOGLE_SERVICE_INFO_PLIST }}
+
+      - name: CocoaPods
+        run: cd ios && pod install
+
+      - name: Widget hedefini ekle (RiskWidget)
+        run: ruby ios/add_widget_target.rb
+
+      - name: İmzalama (sertifika + profiller)
+        run: |
+          keychain initialize
+          app-store-connect fetch-signing-files "com.liferadar.lifeRadar" \
+            --type IOS_APP_STORE \
+            --certificate-key @env:CERTIFICATE_PRIVATE_KEY \
+            --create
+          app-store-connect fetch-signing-files "com.liferadar.lifeRadar.RiskWidget" \
+            --type IOS_APP_STORE \
+            --certificate-key @env:CERTIFICATE_PRIVATE_KEY \
+            --create
+          keychain add-certificates
+          xcode-project use-profiles --export-options-plist "$HOME/export_options.plist"
+
+      - name: iOS IPA derle
+        run: |
+          BUILD_NUM=$(date +%s)
+          echo "Build number: $BUILD_NUM"
+          flutter build ipa --release \
+            --build-number=$BUILD_NUM \
+            --dart-define=API_BASE=https://life-radar.liferadar-kaya.workers.dev \
+            --export-options-plist="$HOME/export_options.plist"
+
+      - name: TestFlight'a yükle
+        run: app-store-connect publish --path "build/ios/ipa/*.ipa" --testflight
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: app-release-ipa
+          path: build/ios/ipa/*.ipa
+          if-no-files-found: warn

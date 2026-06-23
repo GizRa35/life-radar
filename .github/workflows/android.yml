@@ -1,0 +1,59 @@
+name: Android AAB (Google Play)
+
+# Codemagic dakikalarından bağımsız, ÜCRETSİZ Android derlemesi (public repo).
+# Actions sekmesinden elle başlatılır → biten AAB "Artifacts" altından indirilir.
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.24.5
+          channel: stable
+          cache: true
+
+      - name: Flutter paketleri
+        run: flutter pub get
+
+      - name: Dart analizi (teşhis — durdurmaz)
+        run: flutter analyze 2>&1 | tail -40 || true
+
+      - name: Keystore çöz
+        run: echo "$KEYSTORE_BASE64" | base64 -d > android/upload-keystore.jks
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+
+      - name: key.properties oluştur
+        run: |
+          cat > android/key.properties <<EOF
+          storeFile=upload-keystore.jks
+          storePassword=${{ secrets.KEYSTORE_PASSWORD }}
+          keyAlias=${{ secrets.KEY_ALIAS }}
+          keyPassword=${{ secrets.KEY_PASSWORD }}
+          EOF
+
+      - name: google-services.json çöz
+        run: echo "$GOOGLE_SERVICES_JSON" | base64 -d > android/app/google-services.json
+        env:
+          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
+
+      - name: AAB derle (imzalı)
+        run: |
+          # Play'in reddetmemesi için her zaman artan versionCode (Unix zamanı).
+          BUILD_NUM=$(date +%s)
+          echo "versionCode: $BUILD_NUM"
+          flutter build appbundle --release \
+            --build-number=$BUILD_NUM \
+            --dart-define=API_BASE=https://life-radar.liferadar-kaya.workers.dev
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: app-release-aab
+          path: build/app/outputs/bundle/release/app-release.aab
+          if-no-files-found: error
