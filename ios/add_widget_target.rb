@@ -60,14 +60,16 @@ embed.symbol_dst_subfolder_spec = :plug_ins
 ref = embed.add_file_reference(widget.product_reference, true)
 ref.settings = { 'ATTRIBUTES' => ['RemoveHeadersOnCopy'] }
 
-# Döngü (cycle) önle: "Embed App Extensions"ı Flutter/Pods script fazlarından
-# ÖNCE çalıştır. new_copy_files_build_phase fazı sona ekler; ilk shell-script
-# fazından (Flutter "Run Script") hemen öncesine taşı.
+# Döngü (cycle) önle: "Embed App Extensions"ı "Resources" fazından HEMEN
+# SONRA çalıştır (Xcode'un standart yeri). Böylece Pods-embed/Thin-Binary
+# script fazlarından ÖNCE olur (döngü kırılır) ama Sources/Frameworks/Resources
+# sonrası olduğu için Runner.app paketi mevcuttur.
 runner.build_phases.delete(embed)
-script_index = runner.build_phases.index do |ph|
-  ph.is_a?(Xcodeproj::Project::Object::PBXShellScriptBuildPhase)
+res_index = runner.build_phases.index do |ph|
+  ph.is_a?(Xcodeproj::Project::Object::PBXResourcesBuildPhase)
 end
-runner.build_phases.insert(script_index || runner.build_phases.size, embed)
+insert_at = res_index ? res_index + 1 : runner.build_phases.size
+runner.build_phases.insert(insert_at, embed)
 
 project.save
 puts "[widget] '#{WIDGET}' hedefi eklendi (bundle: #{BUNDLE}, group: #{GROUP})."
