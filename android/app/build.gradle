@@ -3,7 +3,8 @@ plugins {
     id "kotlin-android"
     id "dev.flutter.flutter-gradle-plugin"
     id "com.google.gms.google-services"
-    id "com.google.firebase.crashlytics"
+    // Crashlytics Gradle eklentisi kaldırıldı (build-anı mapping yükleme AAB'yi
+    // bozuyordu). Çökme raporlama firebase_crashlytics Flutter paketiyle çalışır.
 }
 
 def localProperties = new Properties()

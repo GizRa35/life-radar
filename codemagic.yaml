@@ -27,6 +27,11 @@ workflows:
     scripts:
       - name: Flutter paketlerini al
         script: flutter pub get
+      - name: Dart analizi (hata teşhisi — build'i durdurmaz)
+        script: |
+          # Dart derleme hatalarını native build'den ÖNCE net göster.
+          # '|| true' → sadece teşhis; gerçek hatalar derlemede yine durdurur.
+          flutter analyze 2>&1 | tail -40 || true
       - name: GoogleService-Info.plist enjekte et (push için)
         script: |
           # Public repo: plist commit edilmez, Codemagic env'inden çözülür.
@@ -112,6 +117,10 @@ workflows:
           EOF
       - name: Flutter paketlerini al
         script: flutter pub get
+      - name: Dart analizi (hata teşhisi — build'i durdurmaz)
+        script: |
+          # Dart derleme hatalarını native build'den ÖNCE net göster.
+          flutter analyze 2>&1 | tail -40 || true
       - name: google-services.json enjekte et (push için)
         script: |
           # Public repo: json commit edilmez, Codemagic env'inden çözülür.
