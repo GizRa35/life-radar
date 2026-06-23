@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, kIsWeb, TargetPlatform, debugPrint;
@@ -26,7 +25,7 @@ Future<void> initPush() async {
     return; // masaüstünde push yok
   }
   try {
-    await Firebase.initializeApp();
+    // Firebase main() içinde başlatıldı (Crashlytics ile birlikte).
     final messaging = FirebaseMessaging.instance;
 
     FirebaseMessaging.onBackgroundMessage(_firebaseBgHandler);

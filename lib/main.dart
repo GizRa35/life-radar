@@ -1,3 +1,9 @@
+import 'dart:ui' show PlatformDispatcher;
+
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/foundation.dart'
+    show defaultTargetPlatform, kIsWeb, TargetPlatform;
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
@@ -16,8 +22,30 @@ Future<void> main() async {
   await lsInit(); // kalıcı depolamayı belleğe yükle (mobil/masaüstü)
   await initializeDateFormatting('tr', null);
   await initializeDateFormatting('en', null);
-  await initPush(); // push bildirim (Firebase + FCM token kaydı)
+  await _initFirebaseAndCrashlytics(); // Firebase + çökme takibi
+  await initPush(); // push bildirim (FCM token kaydı)
   runApp(const LifeRadarApp());
+}
+
+/// Firebase'i bir kez başlatır ve Crashlytics'i (çökme takibi) bağlar.
+/// Mobil dışında (web/masaüstü) atlanır.
+Future<void> _initFirebaseAndCrashlytics() async {
+  if (kIsWeb) return;
+  if (defaultTargetPlatform != TargetPlatform.iOS &&
+      defaultTargetPlatform != TargetPlatform.android) {
+    return;
+  }
+  try {
+    await Firebase.initializeApp();
+    // Flutter çerçeve hataları + yakalanmamış asenkron hatalar → Crashlytics.
+    FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+    PlatformDispatcher.instance.onError = (error, stack) {
+      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+      return true;
+    };
+  } catch (_) {
+    // Firebase yapılandırması yoksa sessizce geç (uygulama yine çalışır).
+  }
 }
 
 class LifeRadarApp extends StatelessWidget {
