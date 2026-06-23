@@ -58,6 +58,7 @@ dependencies:
   app_tracking_transparency: ^2.0.6  # iOS ATT izni (kişiselleştirilmiş reklam + dolum)
   firebase_core: ^3.8.0       # push için Firebase başlatma (Xcode 26 uyumlu sürüm)
   firebase_messaging: ^15.1.5 # FCM push bildirim — non-modular import sorunu yok
+  home_widget: ^0.7.0         # ana ekran widget'ı (risk puanı)
 
 dev_dependencies:
   flutter_test:

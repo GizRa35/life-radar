@@ -23,6 +23,7 @@ import '../services/review_service.dart';
 import '../services/market_service.dart';
 import '../services/weather_service.dart';
 import '../services/ads_service.dart';
+import '../services/widget_service.dart';
 import '../services/local_store.dart';
 import '../services/notify.dart';
 import '../services/ai/groq_service.dart';
@@ -464,6 +465,8 @@ class AppState extends ChangeNotifier {
       _riskHistory = _riskHistory.sublist(_riskHistory.length - 30);
     }
     lsSet('lr_riskhist', jsonEncode(_riskHistory));
+    // Ana ekran widget'ını güncel risk puanıyla yenile.
+    HomeWidgetService.update(personalRiskScore);
   }
 
   // ---- VIP: Seyahat modu brifingi ----
