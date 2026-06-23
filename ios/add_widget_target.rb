@@ -72,12 +72,20 @@ has_crashlytics = runner.build_phases.any? do |ph|
 end
 unless has_crashlytics
   cl = runner.new_shell_script_build_phase(CRASHLYTICS_PHASE)
-  cl.shell_script = '"${PODS_ROOT}/FirebaseCrashlytics/run"'
-  cl.input_paths = [
-    '${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${TARGET_NAME}',
-    '$(SRCROOT)/$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)',
-  ]
-  puts '[crashlytics] dSYM yükleme fazı eklendi.'
+  # NOT: input_paths BİLEREK tanımlanmıyor. DWARF_DSYM_FOLDER_PATH gibi build
+  # çıktılarına girdi olarak referans vermek Xcode'un yeni build sisteminde
+  # "Cycle inside Runner" hatası yaratıp arşivi daha başında düşürüyordu.
+  # Girdisiz script her arşivde çalışır; Crashlytics run dSYM'leri otomatik bulur.
+  # '|| true' → yükleme başarısız olsa bile (ağ/yetki) build kırılmaz.
+  cl.shell_script = '"${PODS_ROOT}/FirebaseCrashlytics/run" || true'
+  puts '[crashlytics] dSYM yükleme fazı eklendi (girdisiz, non-fatal).'
+end
+
+# Xcode 16+/26: kullanıcı script fazı kum havuzunu kapat. Açıkken Crashlytics
+# run script'i dosya yazma/ağ erişimi yapamayıp "Sandbox: ... deny" ile build'i
+# düşürebiliyor. Firebase'in resmî olarak önerdiği ayar.
+runner.build_configurations.each do |c|
+  c.build_settings['ENABLE_USER_SCRIPT_SANDBOXING'] = 'NO'
 end
 
 project.save
