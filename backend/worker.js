@@ -66,6 +66,7 @@ export default {
       if (p === '/api/send-push') return await sendPush(request, env);
       if (p === '/api/verify-purchase') return await verifyPurchase(request, env);
       if (p === '/api/subscribers') return await subscribers(request, env);
+      if (p === '/abuneler') return subscribersPage();
       if (p === '/api/health') return json({ ok: true, service: 'Life Radar API' });
       // AdMob doğrulaması: yetkili satıcı beyanı (app-ads.txt).
       if (p === '/app-ads.txt') {
@@ -564,6 +565,60 @@ async function _verifyGoogle(env, purchaseToken) {
   const line = (j.lineItems || [])[0];
   if (line?.expiryTime) exp = Date.parse(line.expiryTime);
   return { valid: active, expiresMs: exp, detail: state || 'unknown' };
+}
+
+// ---- /abuneler ---- (tarayıcıda açılan basit abone paneli)
+function subscribersPage() {
+  const html = `<!doctype html><html lang="tr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Life Radar — Aboneler</title>
+<style>
+  body{font-family:-apple-system,Segoe UI,Roboto,sans-serif;background:#0A2342;color:#fff;margin:0;padding:24px}
+  h1{color:#00B8D9;font-size:22px;margin:0 0 4px}
+  .sub{color:#9FB3C4;font-size:13px;margin-bottom:20px}
+  input{padding:12px;border-radius:10px;border:1px solid #244;background:#0f2b4d;color:#fff;width:220px;font-size:15px}
+  button{padding:12px 18px;border:0;border-radius:10px;background:#00B8D9;color:#022;font-weight:800;font-size:15px;cursor:pointer;margin-left:8px}
+  table{width:100%;border-collapse:collapse;margin-top:20px}
+  th,td{text-align:left;padding:10px 8px;border-bottom:1px solid #1c3a5e;font-size:14px}
+  th{color:#00B8D9;font-size:12px;text-transform:uppercase;letter-spacing:.05em}
+  .tier{padding:3px 10px;border-radius:20px;font-weight:800;font-size:12px}
+  .vip{background:#C9A22733;color:#E9C766}.premium{background:#00B8D933;color:#00B8D9}
+  .count{font-size:28px;font-weight:900;color:#fff;margin:8px 0}
+  .err{color:#E74C3C;margin-top:12px}
+</style></head><body>
+<h1>📊 Life Radar — Aboneler</h1>
+<div class="sub">Admin şifreni gir ve listeyi gör.</div>
+<div><input id="s" type="password" placeholder="Admin şifresi" autocomplete="off">
+<button onclick="load()">Göster</button></div>
+<div id="out"></div>
+<script>
+async function load(){
+  const sec=document.getElementById('s').value.trim();
+  const out=document.getElementById('out');
+  out.innerHTML='Yükleniyor...';
+  try{
+    const r=await fetch('/api/subscribers',{headers:{'x-admin-secret':sec}});
+    if(r.status===401){out.innerHTML='<div class="err">Şifre yanlış.</div>';return;}
+    const j=await r.json();
+    const subs=j.subscribers||[];
+    let h='<div class="count">'+(j.count||0)+' abone</div>';
+    if(subs.length===0){h+='<div class="sub">Henüz doğrulanmış abone yok.</div>';}
+    else{
+      h+='<table><tr><th>Kullanıcı</th><th>Plan</th><th>Platform</th><th>Bitiş</th></tr>';
+      for(const s of subs){
+        const exp=s.expiresMs?new Date(s.expiresMs).toLocaleDateString('tr-TR'):'-';
+        const cls=(s.tier==='vip')?'vip':'premium';
+        h+='<tr><td>'+(s.email||s.userId||'-')+'</td><td><span class="tier '+cls+'">'+(s.tier||'-')+'</span></td><td>'+(s.platform||'-')+'</td><td>'+exp+'</td></tr>';
+      }
+      h+='</table>';
+    }
+    out.innerHTML=h;
+  }catch(e){out.innerHTML='<div class="err">Hata: '+e+'</div>';}
+}
+</script></body></html>`;
+  return new Response(html, {
+    headers: { 'Content-Type': 'text/html; charset=utf-8', ...CORS },
+  });
 }
 
 // ---- /api/subscribers ---- (korumalı: kim abone, KV'den liste)
