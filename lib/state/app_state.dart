@@ -465,8 +465,34 @@ class AppState extends ChangeNotifier {
       _riskHistory = _riskHistory.sublist(_riskHistory.length - 30);
     }
     lsSet('lr_riskhist', jsonEncode(_riskHistory));
-    // Ana ekran widget'ını güncel risk puanıyla yenile.
-    HomeWidgetService.update(personalRiskScore);
+    _refreshWidget();
+  }
+
+  /// Ana ekran widget'ını güncel özetle yeniler (risk, deprem, hava, uyarı).
+  void _refreshWidget() {
+    RadarEvent? quakeEvent;
+    for (final e in _events) {
+      if (e.category == EventCategory.disaster &&
+          e.title.toLowerCase().contains('deprem')) {
+        quakeEvent = e;
+        break;
+      }
+    }
+    final quake = quakeEvent?.title ?? 'Yakın deprem yok';
+    final temp = _weather?['temp'];
+    final city = _location?.label ?? '';
+    final weatherStr = temp != null
+        ? '${temp.round()}°${city.isNotEmpty ? ' $city' : ''}'
+        : (city.isNotEmpty ? city : '—');
+    final warnings = earlyWarnings;
+    final alert =
+        warnings.isNotEmpty ? warnings.first.title : 'Kritik uyarı yok';
+    HomeWidgetService.update(
+      score: personalRiskScore,
+      quake: quake,
+      weather: weatherStr,
+      alert: alert,
+    );
   }
 
   // ---- VIP: Seyahat modu brifingi ----

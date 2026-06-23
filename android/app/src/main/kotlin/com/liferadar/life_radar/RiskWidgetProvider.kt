@@ -19,8 +19,14 @@ class RiskWidgetProvider : HomeWidgetProvider() {
             val views = RemoteViews(context.packageName, R.layout.risk_widget).apply {
                 val score = widgetData.getInt("risk_score", 0)
                 val label = widgetData.getString("risk_label", "—") ?: "—"
+                val weather = widgetData.getString("weather", "—") ?: "—"
+                val quake = widgetData.getString("quake", "—") ?: "—"
+                val alert = widgetData.getString("alert", "—") ?: "—"
                 setTextViewText(R.id.widget_score, score.toString())
                 setTextViewText(R.id.widget_label, label)
+                setTextViewText(R.id.widget_weather, weather)
+                setTextViewText(R.id.widget_quake, "🌍 " + quake)
+                setTextViewText(R.id.widget_alert, "⚠️ " + alert)
 
                 // Widget'a dokununca uygulamayı aç.
                 val pendingIntent = HomeWidgetLaunchIntent.getActivity(
