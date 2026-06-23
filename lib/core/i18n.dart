@@ -45,7 +45,6 @@ const Map<String, String> _en = {
   'Hızlı Acil Arama': 'Quick Emergency Call',
   'Risk Geçmişi': 'Risk History',
   'Seyahat Brifingi': 'Travel Briefing',
-  'VIP\'i Keşfet': 'Explore VIP',
   'madde': 'items',
   'Şehir / Ülke': 'City / Country',
   // Risk geçmişi grafiği
